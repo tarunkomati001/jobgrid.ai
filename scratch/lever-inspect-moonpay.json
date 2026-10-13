@@ -1,0 +1,1489 @@
+{
+  "forms": [],
+  "inputs": [
+    {
+      "tagName": "input",
+      "type": "file",
+      "name": "resume",
+      "id": "resume-upload-input",
+      "placeholder": "",
+      "required": false,
+      "label": "Resume/CV ✱ATTACH RESUME/CVCouldn't auto-read resume.Analyzing resume...Success!",
+      "className": "application-file-input invisible-resume-upload"
+    },
+    {
+      "tagName": "input",
+      "type": "text",
+      "name": "name",
+      "id": "",
+      "placeholder": "",
+      "required": true,
+      "label": "Full name✱",
+      "className": ""
+    },
+    {
+      "tagName": "input",
+      "type": "email",
+      "name": "email",
+      "id": "",
+      "placeholder": "",
+      "required": true,
+      "label": "Email✱",
+      "className": ""
+    },
+    {
+      "tagName": "input",
+      "type": "text",
+      "name": "phone",
+      "id": "",
+      "placeholder": "",
+      "required": false,
+      "label": "Phone",
+      "className": ""
+    },
+    {
+      "tagName": "input",
+      "type": "text",
+      "name": "location",
+      "id": "location-input",
+      "placeholder": "",
+      "required": true,
+      "label": "Current location ✱No location found. Try entering a different locationLoading",
+      "className": "location-input"
+    },
+    {
+      "tagName": "input",
+      "type": "hidden",
+      "name": "selectedLocation",
+      "id": "selected-location",
+      "placeholder": "",
+      "required": false,
+      "label": "Current location ✱No location found. Try entering a different locationLoading",
+      "className": ""
+    },
+    {
+      "tagName": "input",
+      "type": "text",
+      "name": "org",
+      "id": "",
+      "placeholder": "",
+      "required": false,
+      "label": "Current company",
+      "className": ""
+    },
+    {
+      "tagName": "input",
+      "type": "text",
+      "name": "urls[LinkedIn]",
+      "id": "",
+      "placeholder": "",
+      "required": true,
+      "label": "LinkedIn URL✱",
+      "className": ""
+    },
+    {
+      "tagName": "input",
+      "type": "text",
+      "name": "urls[GitHub/Portfolio]",
+      "id": "",
+      "placeholder": "",
+      "required": false,
+      "label": "GitHub/Portfolio URL",
+      "className": ""
+    },
+    {
+      "tagName": "input",
+      "type": "text",
+      "name": "urls[Other]",
+      "id": "",
+      "placeholder": "",
+      "required": false,
+      "label": "MoonPay",
+      "className": ""
+    },
+    {
+      "tagName": "input",
+      "type": "hidden",
+      "name": "cards[aae745a0-dcbf-4dfe-b87e-3a247a8b22e6][baseTemplate]",
+      "id": "",
+      "placeholder": "",
+      "required": false,
+      "label": "",
+      "className": ""
+    },
+    {
+      "tagName": "input",
+      "type": "radio",
+      "name": "cards[aae745a0-dcbf-4dfe-b87e-3a247a8b22e6][field0]",
+      "id": "",
+      "placeholder": "",
+      "required": true,
+      "label": "I have friends/family who work at MoonPay",
+      "className": ""
+    },
+    {
+      "tagName": "input",
+      "type": "radio",
+      "name": "cards[aae745a0-dcbf-4dfe-b87e-3a247a8b22e6][field0]",
+      "id": "",
+      "placeholder": "",
+      "required": true,
+      "label": "I have participated in event with MoonPay presence (conference, meet-up, job fair, etc.)",
+      "className": ""
+    },
+    {
+      "tagName": "input",
+      "type": "radio",
+      "name": "cards[aae745a0-dcbf-4dfe-b87e-3a247a8b22e6][field0]",
+      "id": "",
+      "placeholder": "",
+      "required": true,
+      "label": "Social media or online ads (LinkedIn post or ad, Facebook, Instagram, Google Ads, etc.))",
+      "className": ""
+    },
+    {
+      "tagName": "input",
+      "type": "radio",
+      "name": "cards[aae745a0-dcbf-4dfe-b87e-3a247a8b22e6][field0]",
+      "id": "",
+      "placeholder": "",
+      "required": true,
+      "label": "Media (newspaper, magazine, news website, TV, etc.)",
+      "className": ""
+    },
+    {
+      "tagName": "input",
+      "type": "radio",
+      "name": "cards[aae745a0-dcbf-4dfe-b87e-3a247a8b22e6][field0]",
+      "id": "",
+      "placeholder": "",
+      "required": true,
+      "label": "Job portal or job search (LinkedIn, Google search, etc.)",
+      "className": ""
+    },
+    {
+      "tagName": "input",
+      "type": "radio",
+      "name": "cards[aae745a0-dcbf-4dfe-b87e-3a247a8b22e6][field0]",
+      "id": "",
+      "placeholder": "",
+      "required": true,
+      "label": "I am a MoonPay customer",
+      "className": ""
+    },
+    {
+      "tagName": "input",
+      "type": "radio",
+      "name": "cards[aae745a0-dcbf-4dfe-b87e-3a247a8b22e6][field0]",
+      "id": "",
+      "placeholder": "",
+      "required": true,
+      "label": "A MoonPay recruiter contacted me",
+      "className": ""
+    },
+    {
+      "tagName": "input",
+      "type": "radio",
+      "name": "cards[aae745a0-dcbf-4dfe-b87e-3a247a8b22e6][field0]",
+      "id": "",
+      "placeholder": "",
+      "required": true,
+      "label": "Other",
+      "className": ""
+    },
+    {
+      "tagName": "input",
+      "type": "text",
+      "name": "cards[aae745a0-dcbf-4dfe-b87e-3a247a8b22e6][field1]",
+      "id": "",
+      "placeholder": "Type your response",
+      "required": true,
+      "label": "",
+      "className": "card-field-input"
+    },
+    {
+      "tagName": "select",
+      "type": "select-one",
+      "name": "cards[aae745a0-dcbf-4dfe-b87e-3a247a8b22e6][field2]",
+      "id": "",
+      "placeholder": "",
+      "required": true,
+      "label": "",
+      "className": ""
+    },
+    {
+      "tagName": "input",
+      "type": "radio",
+      "name": "cards[aae745a0-dcbf-4dfe-b87e-3a247a8b22e6][field3]",
+      "id": "",
+      "placeholder": "",
+      "required": true,
+      "label": "0 to 1 month",
+      "className": ""
+    },
+    {
+      "tagName": "input",
+      "type": "radio",
+      "name": "cards[aae745a0-dcbf-4dfe-b87e-3a247a8b22e6][field3]",
+      "id": "",
+      "placeholder": "",
+      "required": true,
+      "label": "2 months",
+      "className": ""
+    },
+    {
+      "tagName": "input",
+      "type": "radio",
+      "name": "cards[aae745a0-dcbf-4dfe-b87e-3a247a8b22e6][field3]",
+      "id": "",
+      "placeholder": "",
+      "required": true,
+      "label": "3+ months",
+      "className": ""
+    },
+    {
+      "tagName": "input",
+      "type": "radio",
+      "name": "cards[aae745a0-dcbf-4dfe-b87e-3a247a8b22e6][field4]",
+      "id": "",
+      "placeholder": "",
+      "required": true,
+      "label": "Yes",
+      "className": ""
+    },
+    {
+      "tagName": "input",
+      "type": "radio",
+      "name": "cards[aae745a0-dcbf-4dfe-b87e-3a247a8b22e6][field4]",
+      "id": "",
+      "placeholder": "",
+      "required": true,
+      "label": "No",
+      "className": ""
+    },
+    {
+      "tagName": "input",
+      "type": "radio",
+      "name": "cards[aae745a0-dcbf-4dfe-b87e-3a247a8b22e6][field5]",
+      "id": "",
+      "placeholder": "",
+      "required": true,
+      "label": "Yes",
+      "className": ""
+    },
+    {
+      "tagName": "input",
+      "type": "radio",
+      "name": "cards[aae745a0-dcbf-4dfe-b87e-3a247a8b22e6][field5]",
+      "id": "",
+      "placeholder": "",
+      "required": true,
+      "label": "No",
+      "className": ""
+    },
+    {
+      "tagName": "input",
+      "type": "hidden",
+      "name": "cards[64c9d4d9-bd7a-4541-ae85-6dffc3b2cf8d][baseTemplate]",
+      "id": "",
+      "placeholder": "",
+      "required": false,
+      "label": "",
+      "className": ""
+    },
+    {
+      "tagName": "input",
+      "type": "radio",
+      "name": "cards[64c9d4d9-bd7a-4541-ae85-6dffc3b2cf8d][field0]",
+      "id": "",
+      "placeholder": "",
+      "required": false,
+      "label": "Yes",
+      "className": ""
+    },
+    {
+      "tagName": "input",
+      "type": "radio",
+      "name": "cards[64c9d4d9-bd7a-4541-ae85-6dffc3b2cf8d][field0]",
+      "id": "",
+      "placeholder": "",
+      "required": false,
+      "label": "No",
+      "className": ""
+    },
+    {
+      "tagName": "input",
+      "type": "hidden",
+      "name": "accountId",
+      "id": "",
+      "placeholder": "",
+      "required": false,
+      "label": "",
+      "className": ""
+    },
+    {
+      "tagName": "input",
+      "type": "hidden",
+      "name": "linkedInData",
+      "id": "",
+      "placeholder": "",
+      "required": false,
+      "label": "",
+      "className": ""
+    },
+    {
+      "tagName": "input",
+      "type": "hidden",
+      "name": "origin",
+      "id": "",
+      "placeholder": "",
+      "required": false,
+      "label": "",
+      "className": ""
+    },
+    {
+      "tagName": "input",
+      "type": "hidden",
+      "name": "referer",
+      "id": "",
+      "placeholder": "",
+      "required": false,
+      "label": "",
+      "className": ""
+    },
+    {
+      "tagName": "input",
+      "type": "hidden",
+      "name": "timezone",
+      "id": "applicant-timezone",
+      "placeholder": "",
+      "required": false,
+      "label": "",
+      "className": ""
+    },
+    {
+      "tagName": "input",
+      "type": "hidden",
+      "name": "socialReferralKey",
+      "id": "",
+      "placeholder": "",
+      "required": false,
+      "label": "",
+      "className": ""
+    },
+    {
+      "tagName": "input",
+      "type": "hidden",
+      "name": "socialSource",
+      "id": "",
+      "placeholder": "",
+      "required": false,
+      "label": "",
+      "className": ""
+    },
+    {
+      "tagName": "input",
+      "type": "hidden",
+      "name": "resumeStorageId",
+      "id": "",
+      "placeholder": "",
+      "required": false,
+      "label": "",
+      "className": ""
+    },
+    {
+      "tagName": "input",
+      "type": "hidden",
+      "name": "h-captcha-response",
+      "id": "hcaptchaResponseInput",
+      "placeholder": "",
+      "required": false,
+      "label": "",
+      "className": ""
+    },
+    {
+      "tagName": "input",
+      "type": "hidden",
+      "name": "source",
+      "id": "",
+      "placeholder": "",
+      "required": false,
+      "label": "",
+      "className": ""
+    }
+  ],
+  "customQuestions": [
+    {
+      "label": "LinkedIn profile",
+      "required": false,
+      "inputs": [],
+      "customDropdowns": [],
+      "htmlSnippet": "<li class=\"application-question awli-application-row\"><div class=\"application-label\">LinkedIn profile</div><div class=\"application-field\"><div class=\"awli-button-container\"><button type=\"button\" class=\"template-btn-utility awli-button awli-v3 state-ready button-masked\"><div class=\"loading\"><svg clas"
+    },
+    {
+      "label": "Resume/CV ✱ATTACH RESUME/CVCouldn't auto-read resume.Analyzing resume...Success!",
+      "required": true,
+      "inputs": [
+        {
+          "type": "file",
+          "name": "resume",
+          "id": "resume-upload-input",
+          "value": "",
+          "options": []
+        }
+      ],
+      "customDropdowns": [],
+      "htmlSnippet": "<li class=\"application-question resume\"><label><div class=\"application-label\">Resume/CV <span class=\"required\">✱</span></div><div class=\"application-field\"><a href=\"#\" class=\"postings-btn template-btn-utility visible-resume-upload\"><svg class=\" icon icon-paperclip\" width=\"16\" height=\"16\" viewBox=\"0 "
+    },
+    {
+      "label": "Full name✱",
+      "required": true,
+      "inputs": [
+        {
+          "type": "text",
+          "name": "name",
+          "id": "",
+          "value": "",
+          "options": []
+        }
+      ],
+      "customDropdowns": [],
+      "htmlSnippet": "<li class=\"application-question\"><label><div class=\"application-label\">Full name<span class=\"required\">✱</span></div><div class=\"application-field\"><input type=\"text\" data-qa=\"name-input\" name=\"name\" required=\"\"></div></label></li>"
+    },
+    {
+      "label": "Email✱",
+      "required": true,
+      "inputs": [
+        {
+          "type": "email",
+          "name": "email",
+          "id": "",
+          "value": "",
+          "options": []
+        }
+      ],
+      "customDropdowns": [],
+      "htmlSnippet": "<li class=\"application-question\"><label><div class=\"application-label\">Email<span class=\"required\">✱</span></div><div class=\"application-field\"><input name=\"email\" data-qa=\"email-input\" type=\"email\" pattern=\"[a-zA-Z0-9.#$%&amp;'*+\\/=?^_`{|}~][a-zA-Z0-9.!#$%&amp;'*+\\/=?^_`{|}~-]*@[a-zA-Z0-9](?:[a-zA-"
+    },
+    {
+      "label": "Phone",
+      "required": false,
+      "inputs": [
+        {
+          "type": "text",
+          "name": "phone",
+          "id": "",
+          "value": "",
+          "options": []
+        }
+      ],
+      "customDropdowns": [],
+      "htmlSnippet": "<li class=\"application-question\"><label><div class=\"application-label\">Phone </div><div class=\"application-field\"><input type=\"text\" data-qa=\"phone-input\" name=\"phone\"></div></label></li>"
+    },
+    {
+      "label": "Current location ✱No location found. Try entering a different locationLoading",
+      "required": true,
+      "inputs": [
+        {
+          "type": "text",
+          "name": "location",
+          "id": "location-input",
+          "value": "",
+          "options": []
+        },
+        {
+          "type": "hidden",
+          "name": "selectedLocation",
+          "id": "selected-location",
+          "value": "",
+          "options": []
+        }
+      ],
+      "customDropdowns": [
+        {
+          "tag": "DIV",
+          "class": "momentum-body flex flex-column items-start width-full height-auto bg-gray-800 text-gray-200 rounded dropdown-container",
+          "role": null
+        },
+        {
+          "tag": "DIV",
+          "class": "dropdown-results width-full cursor-pointer",
+          "role": null
+        },
+        {
+          "tag": "DIV",
+          "class": "dropdown-no-results width-full break-word py1 px2 pointer-events-none",
+          "role": null
+        },
+        {
+          "tag": "DIV",
+          "class": "dropdown-loading-results width-full break-word height-full py1 px2 pointer-events-none",
+          "role": null
+        }
+      ],
+      "htmlSnippet": "<li class=\"application-question\" data-qa=\"structured-contact-location-question\"><label><div class=\"application-label\">Current location <span class=\"required\" data-qa=\"SCL-question-required-asterisk\">✱</span></div><div class=\"application-field\"><input class=\"location-input\" data-qa=\"location-input\" i"
+    },
+    {
+      "label": "Current company",
+      "required": false,
+      "inputs": [
+        {
+          "type": "text",
+          "name": "org",
+          "id": "",
+          "value": "",
+          "options": []
+        }
+      ],
+      "customDropdowns": [],
+      "htmlSnippet": "<li class=\"application-question\"><label><div class=\"application-label\">Current company </div><div class=\"application-field\"><input type=\"text\" data-qa=\"org-input\" name=\"org\"></div></label></li>"
+    },
+    {
+      "label": "LinkedIn URL✱",
+      "required": true,
+      "inputs": [
+        {
+          "type": "text",
+          "name": "urls[LinkedIn]",
+          "id": "",
+          "value": "",
+          "options": []
+        }
+      ],
+      "customDropdowns": [],
+      "htmlSnippet": "<li class=\"application-question\"><label><div class=\"application-label\">LinkedIn URL<span class=\"required\">✱</span></div><div class=\"application-field\"><input type=\"text\" name=\"urls[LinkedIn]\" required=\"\"></div></label></li>"
+    },
+    {
+      "label": "GitHub/Portfolio URL",
+      "required": false,
+      "inputs": [
+        {
+          "type": "text",
+          "name": "urls[GitHub/Portfolio]",
+          "id": "",
+          "value": "",
+          "options": []
+        }
+      ],
+      "customDropdowns": [],
+      "htmlSnippet": "<li class=\"application-question\"><label><div class=\"application-label\">GitHub/Portfolio URL</div><div class=\"application-field\"><input type=\"text\" name=\"urls[GitHub/Portfolio]\"></div></label></li>"
+    },
+    {
+      "label": "MoonPay",
+      "required": false,
+      "inputs": [
+        {
+          "type": "text",
+          "name": "urls[Other]",
+          "id": "",
+          "value": "",
+          "options": []
+        }
+      ],
+      "customDropdowns": [],
+      "htmlSnippet": "<li class=\"application-question\"><label><div class=\"application-label\">MoonPay</div><div class=\"application-field\"><input type=\"text\" name=\"urls[Other]\"></div></label></li>"
+    },
+    {
+      "label": "How did you hear about MoonPay's job listing?✱",
+      "required": true,
+      "inputs": [
+        {
+          "type": "radio",
+          "name": "cards[aae745a0-dcbf-4dfe-b87e-3a247a8b22e6][field0]",
+          "id": "",
+          "value": "I have friends/family who work at MoonPay",
+          "options": []
+        },
+        {
+          "type": "radio",
+          "name": "cards[aae745a0-dcbf-4dfe-b87e-3a247a8b22e6][field0]",
+          "id": "",
+          "value": "I have participated in event with MoonPay presence (conference, meet-up, job fair, etc.)",
+          "options": []
+        },
+        {
+          "type": "radio",
+          "name": "cards[aae745a0-dcbf-4dfe-b87e-3a247a8b22e6][field0]",
+          "id": "",
+          "value": "Social media or online ads (LinkedIn post or ad, Facebook, Instagram, Google Ads, etc.))",
+          "options": []
+        },
+        {
+          "type": "radio",
+          "name": "cards[aae745a0-dcbf-4dfe-b87e-3a247a8b22e6][field0]",
+          "id": "",
+          "value": "Media (newspaper, magazine, news website, TV, etc.)",
+          "options": []
+        },
+        {
+          "type": "radio",
+          "name": "cards[aae745a0-dcbf-4dfe-b87e-3a247a8b22e6][field0]",
+          "id": "",
+          "value": "Job portal or job search (LinkedIn, Google search, etc.)",
+          "options": []
+        },
+        {
+          "type": "radio",
+          "name": "cards[aae745a0-dcbf-4dfe-b87e-3a247a8b22e6][field0]",
+          "id": "",
+          "value": "I am a MoonPay customer",
+          "options": []
+        },
+        {
+          "type": "radio",
+          "name": "cards[aae745a0-dcbf-4dfe-b87e-3a247a8b22e6][field0]",
+          "id": "",
+          "value": "A MoonPay recruiter contacted me",
+          "options": []
+        },
+        {
+          "type": "radio",
+          "name": "cards[aae745a0-dcbf-4dfe-b87e-3a247a8b22e6][field0]",
+          "id": "",
+          "value": "Other",
+          "options": []
+        }
+      ],
+      "customDropdowns": [],
+      "htmlSnippet": "<li class=\"application-question custom-question\"><div><div class=\"application-label full-width multiple-choice\"><div class=\"text\">How did you hear about MoonPay's job listing?<span class=\"required\">✱</span></div></div><div class=\"application-field full-width required-field\"><ul data-qa=\"multiple-cho"
+    },
+    {
+      "label": "What is your annual salary expectation? Please enter the amount in full numbers only, without any commas, periods, or letters (e.g., for fifty thousand, write \"50000\").✱",
+      "required": true,
+      "inputs": [
+        {
+          "type": "text",
+          "name": "cards[aae745a0-dcbf-4dfe-b87e-3a247a8b22e6][field1]",
+          "id": "",
+          "value": "",
+          "options": []
+        }
+      ],
+      "customDropdowns": [],
+      "htmlSnippet": "<li class=\"application-question custom-question\"><div><div class=\"application-label full-width text\"><div class=\"text\">What is your annual salary expectation? Please enter the amount in full numbers only, without any commas, periods, or letters (e.g., for fifty thousand, write \"50000\").<span class=\""
+    },
+    {
+      "label": "Select the currency for your salary expectation.✱",
+      "required": true,
+      "inputs": [
+        {
+          "type": "select-one",
+          "name": "cards[aae745a0-dcbf-4dfe-b87e-3a247a8b22e6][field2]",
+          "id": "",
+          "value": "",
+          "options": [
+            {
+              "text": "Select...",
+              "val": ""
+            },
+            {
+              "text": "AED",
+              "val": "AED"
+            },
+            {
+              "text": "AFN",
+              "val": "AFN"
+            },
+            {
+              "text": "ALL",
+              "val": "ALL"
+            },
+            {
+              "text": "AMD",
+              "val": "AMD"
+            },
+            {
+              "text": "ANG",
+              "val": "ANG"
+            },
+            {
+              "text": "AOA",
+              "val": "AOA"
+            },
+            {
+              "text": "ARS",
+              "val": "ARS"
+            },
+            {
+              "text": "AUD",
+              "val": "AUD"
+            },
+            {
+              "text": "AWG",
+              "val": "AWG"
+            },
+            {
+              "text": "AZN",
+              "val": "AZN"
+            },
+            {
+              "text": "BAM",
+              "val": "BAM"
+            },
+            {
+              "text": "BBD",
+              "val": "BBD"
+            },
+            {
+              "text": "BDT",
+              "val": "BDT"
+            },
+            {
+              "text": "BGN",
+              "val": "BGN"
+            },
+            {
+              "text": "BHD",
+              "val": "BHD"
+            },
+            {
+              "text": "BIF",
+              "val": "BIF"
+            },
+            {
+              "text": "BMD",
+              "val": "BMD"
+            },
+            {
+              "text": "BND",
+              "val": "BND"
+            },
+            {
+              "text": "BOB",
+              "val": "BOB"
+            },
+            {
+              "text": "BRL",
+              "val": "BRL"
+            },
+            {
+              "text": "BSD",
+              "val": "BSD"
+            },
+            {
+              "text": "BTN",
+              "val": "BTN"
+            },
+            {
+              "text": "BWP",
+              "val": "BWP"
+            },
+            {
+              "text": "BYN",
+              "val": "BYN"
+            },
+            {
+              "text": "BZD",
+              "val": "BZD"
+            },
+            {
+              "text": "CAD",
+              "val": "CAD"
+            },
+            {
+              "text": "CDF",
+              "val": "CDF"
+            },
+            {
+              "text": "CHF",
+              "val": "CHF"
+            },
+            {
+              "text": "CLP",
+              "val": "CLP"
+            },
+            {
+              "text": "CNY",
+              "val": "CNY"
+            },
+            {
+              "text": "COP",
+              "val": "COP"
+            },
+            {
+              "text": "CRC",
+              "val": "CRC"
+            },
+            {
+              "text": "CUP",
+              "val": "CUP"
+            },
+            {
+              "text": "CVE",
+              "val": "CVE"
+            },
+            {
+              "text": "CZK",
+              "val": "CZK"
+            },
+            {
+              "text": "DJF",
+              "val": "DJF"
+            },
+            {
+              "text": "DKK",
+              "val": "DKK"
+            },
+            {
+              "text": "DOP",
+              "val": "DOP"
+            },
+            {
+              "text": "DZD",
+              "val": "DZD"
+            },
+            {
+              "text": "EGP",
+              "val": "EGP"
+            },
+            {
+              "text": "ERN",
+              "val": "ERN"
+            },
+            {
+              "text": "ETB",
+              "val": "ETB"
+            },
+            {
+              "text": "EUR",
+              "val": "EUR"
+            },
+            {
+              "text": "FJD",
+              "val": "FJD"
+            },
+            {
+              "text": "FKP",
+              "val": "FKP"
+            },
+            {
+              "text": "FOK",
+              "val": "FOK"
+            },
+            {
+              "text": "GBP",
+              "val": "GBP"
+            },
+            {
+              "text": "GEL",
+              "val": "GEL"
+            },
+            {
+              "text": "GGP",
+              "val": "GGP"
+            },
+            {
+              "text": "GHS",
+              "val": "GHS"
+            },
+            {
+              "text": "GIP",
+              "val": "GIP"
+            },
+            {
+              "text": "GMD",
+              "val": "GMD"
+            },
+            {
+              "text": "GNF",
+              "val": "GNF"
+            },
+            {
+              "text": "GTQ",
+              "val": "GTQ"
+            },
+            {
+              "text": "GYD",
+              "val": "GYD"
+            },
+            {
+              "text": "HKD",
+              "val": "HKD"
+            },
+            {
+              "text": "HNL",
+              "val": "HNL"
+            },
+            {
+              "text": "HRK",
+              "val": "HRK"
+            },
+            {
+              "text": "HTG",
+              "val": "HTG"
+            },
+            {
+              "text": "HUF",
+              "val": "HUF"
+            },
+            {
+              "text": "IDR",
+              "val": "IDR"
+            },
+            {
+              "text": "ILS",
+              "val": "ILS"
+            },
+            {
+              "text": "IMP",
+              "val": "IMP"
+            },
+            {
+              "text": "INR",
+              "val": "INR"
+            },
+            {
+              "text": "IQD",
+              "val": "IQD"
+            },
+            {
+              "text": "IRR",
+              "val": "IRR"
+            },
+            {
+              "text": "ISK",
+              "val": "ISK"
+            },
+            {
+              "text": "JEP",
+              "val": "JEP"
+            },
+            {
+              "text": "JMD",
+              "val": "JMD"
+            },
+            {
+              "text": "JOD",
+              "val": "JOD"
+            },
+            {
+              "text": "JPY",
+              "val": "JPY"
+            },
+            {
+              "text": "KES",
+              "val": "KES"
+            },
+            {
+              "text": "KGS",
+              "val": "KGS"
+            },
+            {
+              "text": "KHR",
+              "val": "KHR"
+            },
+            {
+              "text": "KID",
+              "val": "KID"
+            },
+            {
+              "text": "KMF",
+              "val": "KMF"
+            },
+            {
+              "text": "KRW",
+              "val": "KRW"
+            },
+            {
+              "text": "KWD",
+              "val": "KWD"
+            },
+            {
+              "text": "KYD",
+              "val": "KYD"
+            },
+            {
+              "text": "KZT",
+              "val": "KZT"
+            },
+            {
+              "text": "LAK",
+              "val": "LAK"
+            },
+            {
+              "text": "LBP",
+              "val": "LBP"
+            },
+            {
+              "text": "LKR",
+              "val": "LKR"
+            },
+            {
+              "text": "LRD",
+              "val": "LRD"
+            },
+            {
+              "text": "LSL",
+              "val": "LSL"
+            },
+            {
+              "text": "LYD",
+              "val": "LYD"
+            },
+            {
+              "text": "MAD",
+              "val": "MAD"
+            },
+            {
+              "text": "MDL",
+              "val": "MDL"
+            },
+            {
+              "text": "MGA",
+              "val": "MGA"
+            },
+            {
+              "text": "MKD",
+              "val": "MKD"
+            },
+            {
+              "text": "MMK",
+              "val": "MMK"
+            },
+            {
+              "text": "MNT",
+              "val": "MNT"
+            },
+            {
+              "text": "MOP",
+              "val": "MOP"
+            },
+            {
+              "text": "MRU",
+              "val": "MRU"
+            },
+            {
+              "text": "MUR",
+              "val": "MUR"
+            },
+            {
+              "text": "MVR",
+              "val": "MVR"
+            },
+            {
+              "text": "MWK",
+              "val": "MWK"
+            },
+            {
+              "text": "MXN",
+              "val": "MXN"
+            },
+            {
+              "text": "MYR",
+              "val": "MYR"
+            },
+            {
+              "text": "MZN",
+              "val": "MZN"
+            },
+            {
+              "text": "NAD",
+              "val": "NAD"
+            },
+            {
+              "text": "NGN",
+              "val": "NGN"
+            },
+            {
+              "text": "NIO",
+              "val": "NIO"
+            },
+            {
+              "text": "NOK",
+              "val": "NOK"
+            },
+            {
+              "text": "NPR",
+              "val": "NPR"
+            },
+            {
+              "text": "NZD",
+              "val": "NZD"
+            },
+            {
+              "text": "OMR",
+              "val": "OMR"
+            },
+            {
+              "text": "PAB",
+              "val": "PAB"
+            },
+            {
+              "text": "PEN",
+              "val": "PEN"
+            },
+            {
+              "text": "PGK",
+              "val": "PGK"
+            },
+            {
+              "text": "PHP",
+              "val": "PHP"
+            },
+            {
+              "text": "PKR",
+              "val": "PKR"
+            },
+            {
+              "text": "PLN",
+              "val": "PLN"
+            },
+            {
+              "text": "PYG",
+              "val": "PYG"
+            },
+            {
+              "text": "QAR",
+              "val": "QAR"
+            },
+            {
+              "text": "RON",
+              "val": "RON"
+            },
+            {
+              "text": "RSD",
+              "val": "RSD"
+            },
+            {
+              "text": "RUB",
+              "val": "RUB"
+            },
+            {
+              "text": "RWF",
+              "val": "RWF"
+            },
+            {
+              "text": "SAR",
+              "val": "SAR"
+            },
+            {
+              "text": "SBD",
+              "val": "SBD"
+            },
+            {
+              "text": "SCR",
+              "val": "SCR"
+            },
+            {
+              "text": "SDG",
+              "val": "SDG"
+            },
+            {
+              "text": "SEK",
+              "val": "SEK"
+            },
+            {
+              "text": "SGD",
+              "val": "SGD"
+            },
+            {
+              "text": "SHP",
+              "val": "SHP"
+            },
+            {
+              "text": "SLL",
+              "val": "SLL"
+            },
+            {
+              "text": "SOS",
+              "val": "SOS"
+            },
+            {
+              "text": "SRD",
+              "val": "SRD"
+            },
+            {
+              "text": "SSP",
+              "val": "SSP"
+            },
+            {
+              "text": "STN",
+              "val": "STN"
+            },
+            {
+              "text": "SYP",
+              "val": "SYP"
+            },
+            {
+              "text": "SZL",
+              "val": "SZL"
+            },
+            {
+              "text": "THB",
+              "val": "THB"
+            },
+            {
+              "text": "TJS",
+              "val": "TJS"
+            },
+            {
+              "text": "TMT",
+              "val": "TMT"
+            },
+            {
+              "text": "TND",
+              "val": "TND"
+            },
+            {
+              "text": "TOP",
+              "val": "TOP"
+            },
+            {
+              "text": "TRY",
+              "val": "TRY"
+            },
+            {
+              "text": "TTD",
+              "val": "TTD"
+            },
+            {
+              "text": "TVD",
+              "val": "TVD"
+            },
+            {
+              "text": "TWD",
+              "val": "TWD"
+            },
+            {
+              "text": "TZS",
+              "val": "TZS"
+            },
+            {
+              "text": "UAH",
+              "val": "UAH"
+            },
+            {
+              "text": "UGX",
+              "val": "UGX"
+            },
+            {
+              "text": "USD",
+              "val": "USD"
+            },
+            {
+              "text": "UYU",
+              "val": "UYU"
+            },
+            {
+              "text": "UZS",
+              "val": "UZS"
+            },
+            {
+              "text": "VES",
+              "val": "VES"
+            },
+            {
+              "text": "VND",
+              "val": "VND"
+            },
+            {
+              "text": "VUV",
+              "val": "VUV"
+            },
+            {
+              "text": "WST",
+              "val": "WST"
+            },
+            {
+              "text": "XAF",
+              "val": "XAF"
+            },
+            {
+              "text": "XCD",
+              "val": "XCD"
+            },
+            {
+              "text": "XOF",
+              "val": "XOF"
+            },
+            {
+              "text": "XPF",
+              "val": "XPF"
+            },
+            {
+              "text": "YER",
+              "val": "YER"
+            },
+            {
+              "text": "ZAR",
+              "val": "ZAR"
+            },
+            {
+              "text": "ZMW",
+              "val": "ZMW"
+            },
+            {
+              "text": "ZWL",
+              "val": "ZWL"
+            }
+          ]
+        }
+      ],
+      "customDropdowns": [
+        {
+          "tag": "DIV",
+          "class": "application-label full-width dropdown",
+          "role": null
+        },
+        {
+          "tag": "DIV",
+          "class": "application-dropdown",
+          "role": null
+        }
+      ],
+      "htmlSnippet": "<li class=\"application-question custom-question\"><div><div class=\"application-label full-width dropdown\"><div class=\"text\">Select the currency for your salary expectation.<span class=\"required\">✱</span></div></div><div class=\"application-field full-width required-field\"><div class=\"application-dropd"
+    },
+    {
+      "label": "What is your notice period? (Select the closest that applies)✱",
+      "required": true,
+      "inputs": [
+        {
+          "type": "radio",
+          "name": "cards[aae745a0-dcbf-4dfe-b87e-3a247a8b22e6][field3]",
+          "id": "",
+          "value": "0 to 1 month",
+          "options": []
+        },
+        {
+          "type": "radio",
+          "name": "cards[aae745a0-dcbf-4dfe-b87e-3a247a8b22e6][field3]",
+          "id": "",
+          "value": "2 months",
+          "options": []
+        },
+        {
+          "type": "radio",
+          "name": "cards[aae745a0-dcbf-4dfe-b87e-3a247a8b22e6][field3]",
+          "id": "",
+          "value": "3+ months",
+          "options": []
+        }
+      ],
+      "customDropdowns": [],
+      "htmlSnippet": "<li class=\"application-question custom-question\"><div><div class=\"application-label full-width multiple-choice\"><div class=\"text\">What is your notice period? (Select the closest that applies)<span class=\"required\">✱</span></div></div><div class=\"application-field full-width required-field\"><ul data-"
+    },
+    {
+      "label": "Will you need visa sponsorship now or in the future for your selected work location? (Please note we are only able to support work from locations designated in the job description)✱",
+      "required": true,
+      "inputs": [
+        {
+          "type": "radio",
+          "name": "cards[aae745a0-dcbf-4dfe-b87e-3a247a8b22e6][field4]",
+          "id": "",
+          "value": "Yes",
+          "options": []
+        },
+        {
+          "type": "radio",
+          "name": "cards[aae745a0-dcbf-4dfe-b87e-3a247a8b22e6][field4]",
+          "id": "",
+          "value": "No",
+          "options": []
+        }
+      ],
+      "customDropdowns": [],
+      "htmlSnippet": "<li class=\"application-question custom-question\"><div><div class=\"application-label full-width multiple-choice\"><div class=\"text\">Will you need visa sponsorship now or in the future for your selected work location? (Please note we are only able to support work from locations designated in the job de"
+    },
+    {
+      "label": "Do you personally own any crypto?✱",
+      "required": true,
+      "inputs": [
+        {
+          "type": "radio",
+          "name": "cards[aae745a0-dcbf-4dfe-b87e-3a247a8b22e6][field5]",
+          "id": "",
+          "value": "Yes",
+          "options": []
+        },
+        {
+          "type": "radio",
+          "name": "cards[aae745a0-dcbf-4dfe-b87e-3a247a8b22e6][field5]",
+          "id": "",
+          "value": "No",
+          "options": []
+        }
+      ],
+      "customDropdowns": [],
+      "htmlSnippet": "<li class=\"application-question custom-question\"><div><div class=\"application-label full-width multiple-choice\"><div class=\"text\">Do you personally own any crypto?<span class=\"required\">✱</span></div></div><div class=\"application-field full-width required-field\"><ul data-qa=\"multiple-choice\"><li><la"
+    },
+    {
+      "label": "Do you have 5+ years building production software end-to-end (not just contributing to an existing large codebase)?",
+      "required": false,
+      "inputs": [
+        {
+          "type": "radio",
+          "name": "cards[64c9d4d9-bd7a-4541-ae85-6dffc3b2cf8d][field0]",
+          "id": "",
+          "value": "Yes",
+          "options": []
+        },
+        {
+          "type": "radio",
+          "name": "cards[64c9d4d9-bd7a-4541-ae85-6dffc3b2cf8d][field0]",
+          "id": "",
+          "value": "No",
+          "options": []
+        }
+      ],
+      "customDropdowns": [],
+      "htmlSnippet": "<li class=\"application-question custom-question\"><div><div class=\"application-label full-width multiple-choice\"><div class=\"text\">Do you have 5+ years building production software end-to-end (not just contributing to an existing large codebase)?</div></div><div class=\"application-field full-width\"><"
+    },
+    {
+      "label": "",
+      "required": false,
+      "inputs": [],
+      "customDropdowns": [],
+      "htmlSnippet": "<li class=\"application-question\"><p data-qa=\"legitimate-interest-copy\">By applying for this position, your data will be processed as per MoonPay&nbsp;<span class=\"text-muted mt1 underline\"><a href=\"https://www.moonpay.com/privacy_policy_for_job_applicants\" target=\"_blank\" data-qa=\"privacy-link\">Priv"
+    }
+  ],
+  "dropdowns": [
+    {
+      "name": "cards[aae745a0-dcbf-4dfe-b87e-3a247a8b22e6][field2]",
+      "id": "",
+      "optionsCount": 161,
+      "sampleOptions": [
+        {
+          "text": "Select...",
+          "val": ""
+        },
+        {
+          "text": "AED",
+          "val": "AED"
+        },
+        {
+          "text": "AFN",
+          "val": "AFN"
+        },
+        {
+          "text": "ALL",
+          "val": "ALL"
+        },
+        {
+          "text": "AMD",
+          "val": "AMD"
+        },
+        {
+          "text": "ANG",
+          "val": "ANG"
+        },
+        {
+          "text": "AOA",
+          "val": "AOA"
+        },
+        {
+          "text": "ARS",
+          "val": "ARS"
+        },
+        {
+          "text": "AUD",
+          "val": "AUD"
+        },
+        {
+          "text": "AWG",
+          "val": "AWG"
+        }
+      ]
+    }
+  ],
+  "cards": []
+}

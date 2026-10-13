@@ -1,0 +1,2141 @@
+[
+  {
+    "tag": "oc-app-root",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "Data Platform Software Engineer\nPreliminary questions\nHere you can find details "
+  },
+  {
+    "tag": "spl-wrapper",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "Data Platform Software Engineer\nPreliminary questions\nHere you can find details "
+  },
+  {
+    "tag": "spl-context-provider",
+    "id": "c7de79e4-1281-485d-a683-deaaf1b05335",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "oc-oneclick-form-root",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "Data Platform Software Engineer\nPreliminary questions\nHere you can find details "
+  },
+  {
+    "tag": "spl-toaster",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "oc-global-warning",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-icon",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": "Location",
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "oc-global-loader",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "h1",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "Data Platform Software Engineer"
+  },
+  {
+    "tag": "oc-screening-questions",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "Preliminary questions\nHere you can find details of our privacy notice.\nYou decla"
+  },
+  {
+    "tag": "oc-footer",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "powered by\n\nCookie Settings"
+  },
+  {
+    "tag": "oc-screening-questions-form",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "Preliminary questions"
+  },
+  {
+    "tag": "oc-consent",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "Here you can find details of our privacy notice.\nYou declare that you have read "
+  },
+  {
+    "tag": "oc-nav-screening-questions",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "Back\nSubmit"
+  },
+  {
+    "tag": "oc-company-policy",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "Privacy Notice"
+  },
+  {
+    "tag": "oc-powered-by",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "powered by"
+  },
+  {
+    "tag": "button",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "type": "submit",
+    "text": "Cookie Settings"
+  },
+  {
+    "tag": "h2",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "Preliminary questions"
+  },
+  {
+    "tag": "spl-wrapper",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "Have you ever worked at ServiceNow in any capacity, e.g., full-time/part-time em"
+  },
+  {
+    "tag": "spl-context-provider",
+    "id": "c7de79e4-1281-485d-a683-deaaf1b05335",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-form",
+    "id": "question-form-1",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "Have you ever worked at ServiceNow in any capacity, e.g., full-time/part-time em"
+  },
+  {
+    "tag": "oc-consent-decisions",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "Here you can find details of our privacy notice.\nYou declare that you have read "
+  },
+  {
+    "tag": "oc-button",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": "footer-back",
+    "text": "Back"
+  },
+  {
+    "tag": "oc-button",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": "footer-submit",
+    "text": "Submit"
+  },
+  {
+    "tag": "spl-typography-body",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "Here you can find details of our privacy notice."
+  },
+  {
+    "tag": "spl-divider",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-checkbox",
+    "id": "spl-form-element_14",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": "consent-box",
+    "text": "You declare that you have read and understand the privacy notice of ServiceNow."
+  },
+  {
+    "tag": "spl-button",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": "",
+    "dataTest": "",
+    "type": "secondary",
+    "text": "Back"
+  },
+  {
+    "tag": "spl-button",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": "",
+    "dataTest": "",
+    "type": "primary",
+    "text": "Submit"
+  },
+  {
+    "tag": "spl-internal-form-field",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "*"
+  },
+  {
+    "tag": "spl-typography-label",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "You declare that you have read and understand the privacy notice of ServiceNow."
+  },
+  {
+    "tag": "button",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "type": "button",
+    "text": ""
+  },
+  {
+    "tag": "button",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "type": "button",
+    "text": ""
+  },
+  {
+    "tag": "spl-autocomplete",
+    "id": "question_b92f8b3e-4559-4139-8a4a-139c6d2a89db",
+    "name": "question_b92f8b3e-4559-4139-8a4a-139c6d2a89db",
+    "formControlName": null,
+    "label": "Select Have you ever worked at ServiceNow in any capacity, e.g., full-time/part-time employee, independent contractor or temporary worker?",
+    "dataTest": null,
+    "text": "Have you ever worked at ServiceNow in any capacity, e.g., full-time/part-time em"
+  },
+  {
+    "tag": "spl-autocomplete",
+    "id": "question_1b3a4ee7-2336-4490-b656-f65da4078f78",
+    "name": "question_1b3a4ee7-2336-4490-b656-f65da4078f78",
+    "formControlName": null,
+    "label": "Select If applicable, would you consider relocating for a role with ServiceNow?*",
+    "dataTest": null,
+    "text": "If applicable, would you consider relocating for a role with ServiceNow?*"
+  },
+  {
+    "tag": "spl-radio-group",
+    "id": "spl-form-element_17",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "Is your current employer a customer of ServiceNow?"
+  },
+  {
+    "tag": "spl-radio-group",
+    "id": "spl-form-element_20",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "Are you legally authorized to work in the country in which you are applying for "
+  },
+  {
+    "tag": "spl-radio-group",
+    "id": "spl-form-element_23",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "Do you now, or will you in the future, require visa sponsorship to work for Serv"
+  },
+  {
+    "tag": "spl-autocomplete",
+    "id": "question_16c477b2-a46f-4c40-925b-1e5b83254c65",
+    "name": "question_16c477b2-a46f-4c40-925b-1e5b83254c65",
+    "formControlName": null,
+    "label": "Select Are you currently employed or have you ever been employed by PwC?",
+    "dataTest": null,
+    "text": "Are you currently employed or have you ever been employed by PwC?"
+  },
+  {
+    "tag": "spl-autocomplete",
+    "id": "question_31d52728-741b-4482-afaf-e38b12366773",
+    "name": "question_31d52728-741b-4482-afaf-e38b12366773",
+    "formControlName": null,
+    "label": "Select Are you a citizen or lawful permanent resident of Cuba, Syria, Iran, North Korea, or the Crimea, Donetsk, or Luhansk regions of Ukraine? (If yes, any offer we make to you will be contingent upon our receipt of all necessary export control authorizations).",
+    "dataTest": null,
+    "text": "Are you a citizen or lawful permanent resident of Cuba, Syria, Iran, North Korea"
+  },
+  {
+    "tag": "spl-radio-group",
+    "id": "spl-form-element_28",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "A. Within the past 5 years, have you ever been an employee of the U.S. Federal G"
+  },
+  {
+    "tag": "spl-radio-group",
+    "id": "spl-form-element_31",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "B. Are you a current employee of the U.S. Federal Government who is either: (i) "
+  },
+  {
+    "tag": "spl-radio-group",
+    "id": "spl-form-element_34",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "C. Within the past 5 years, have you ever been an employee of a state, local, or"
+  },
+  {
+    "tag": "spl-radio-group",
+    "id": "spl-form-element_37",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "D. Within the past 5 years, has a member of your Immediate Family (spouse or chi"
+  },
+  {
+    "tag": "spl-radio-group",
+    "id": "spl-form-element_40",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "E. Are you currently, or have you been previously, suspended/debarred, proposed "
+  },
+  {
+    "tag": "spl-autocomplete",
+    "id": "question_6cd0252d-c002-4f58-8127-38378d2f2d81",
+    "name": "question_6cd0252d-c002-4f58-8127-38378d2f2d81",
+    "formControlName": null,
+    "label": "Select Are you a graduate of the RiseUp with ServiceNow (formerly NextGen) Program?",
+    "dataTest": null,
+    "text": "Are you a graduate of the RiseUp with ServiceNow (formerly NextGen) Program?"
+  },
+  {
+    "tag": "spl-input",
+    "id": "question_dde4d928-a10c-4da3-bb18-d4593a299fcb",
+    "name": "question_dde4d928-a10c-4da3-bb18-d4593a299fcb",
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "type": "text",
+    "text": "Name (Signature Field):"
+  },
+  {
+    "tag": "spl-input",
+    "id": "question_057e7627-9be4-409c-a40c-eb7d40790eff",
+    "name": "question_057e7627-9be4-409c-a40c-eb7d40790eff",
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "type": "text",
+    "text": "Today's date"
+  },
+  {
+    "tag": "spl-radio-group",
+    "id": "spl-form-element_48",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "Do you have (or have a history/record of having) a disability? (definitions)"
+  },
+  {
+    "tag": "spl-radio-group",
+    "id": "spl-form-element_52",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "Are you a protected veteran? (definitions)"
+  },
+  {
+    "tag": "spl-internal-form-field",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "*"
+  },
+  {
+    "tag": "spl-radio",
+    "id": "spl-form-element_18",
+    "name": null,
+    "formControlName": null,
+    "label": "Yes",
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-radio",
+    "id": "spl-form-element_19",
+    "name": null,
+    "formControlName": null,
+    "label": "No",
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-internal-form-field",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "*"
+  },
+  {
+    "tag": "spl-radio",
+    "id": "spl-form-element_21",
+    "name": null,
+    "formControlName": null,
+    "label": "Yes",
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-radio",
+    "id": "spl-form-element_22",
+    "name": null,
+    "formControlName": null,
+    "label": "No",
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-internal-form-field",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "*"
+  },
+  {
+    "tag": "spl-radio",
+    "id": "spl-form-element_24",
+    "name": null,
+    "formControlName": null,
+    "label": "Yes",
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-radio",
+    "id": "spl-form-element_25",
+    "name": null,
+    "formControlName": null,
+    "label": "No",
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-internal-form-field",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "*"
+  },
+  {
+    "tag": "spl-radio",
+    "id": "spl-form-element_29",
+    "name": null,
+    "formControlName": null,
+    "label": "Yes",
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-radio",
+    "id": "spl-form-element_30",
+    "name": null,
+    "formControlName": null,
+    "label": "No",
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-internal-form-field",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "*"
+  },
+  {
+    "tag": "spl-radio",
+    "id": "spl-form-element_32",
+    "name": null,
+    "formControlName": null,
+    "label": "Yes",
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-radio",
+    "id": "spl-form-element_33",
+    "name": null,
+    "formControlName": null,
+    "label": "No",
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-internal-form-field",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "*"
+  },
+  {
+    "tag": "spl-radio",
+    "id": "spl-form-element_35",
+    "name": null,
+    "formControlName": null,
+    "label": "Yes",
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-radio",
+    "id": "spl-form-element_36",
+    "name": null,
+    "formControlName": null,
+    "label": "No",
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-internal-form-field",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "*"
+  },
+  {
+    "tag": "spl-radio",
+    "id": "spl-form-element_38",
+    "name": null,
+    "formControlName": null,
+    "label": "Yes",
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-radio",
+    "id": "spl-form-element_39",
+    "name": null,
+    "formControlName": null,
+    "label": "No",
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-internal-form-field",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "*"
+  },
+  {
+    "tag": "spl-radio",
+    "id": "spl-form-element_41",
+    "name": null,
+    "formControlName": null,
+    "label": "Yes",
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-radio",
+    "id": "spl-form-element_42",
+    "name": null,
+    "formControlName": null,
+    "label": "No",
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-form-field",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-internal-form-field",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "*"
+  },
+  {
+    "tag": "spl-typography-label",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "0/200"
+  },
+  {
+    "tag": "spl-internal-form-field",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "*"
+  },
+  {
+    "tag": "spl-typography-label",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "0/200"
+  },
+  {
+    "tag": "spl-form-field",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-internal-form-field",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-radio",
+    "id": "spl-form-element_49",
+    "name": null,
+    "formControlName": null,
+    "label": "Yes, I have a disability, or have had one in the past.",
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-radio",
+    "id": "spl-form-element_50",
+    "name": null,
+    "formControlName": null,
+    "label": "No, I do not have a disability and have not had one in the past.",
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-radio",
+    "id": "spl-form-element_51",
+    "name": null,
+    "formControlName": null,
+    "label": "I do not want to answer.",
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-form-field",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-internal-form-field",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "*"
+  },
+  {
+    "tag": "spl-radio",
+    "id": "spl-form-element_53",
+    "name": null,
+    "formControlName": null,
+    "label": "Yes",
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-radio",
+    "id": "spl-form-element_54",
+    "name": null,
+    "formControlName": null,
+    "label": "No",
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-radio",
+    "id": "spl-form-element_55",
+    "name": null,
+    "formControlName": null,
+    "label": "Prefer not to answer",
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-typography-label",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "*"
+  },
+  {
+    "tag": "spl-icon",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "input",
+    "id": "spl-form-element_14",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "type": "checkbox",
+    "text": ""
+  },
+  {
+    "tag": "spl-internal-form-field",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-internal-form-field",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-internal-form-field",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "Yes"
+  },
+  {
+    "tag": "spl-internal-form-field",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "No"
+  },
+  {
+    "tag": "spl-internal-form-field",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "Yes"
+  },
+  {
+    "tag": "spl-internal-form-field",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "No"
+  },
+  {
+    "tag": "spl-internal-form-field",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "Yes"
+  },
+  {
+    "tag": "spl-internal-form-field",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "No"
+  },
+  {
+    "tag": "spl-internal-form-field",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-internal-form-field",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-internal-form-field",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "Yes"
+  },
+  {
+    "tag": "spl-internal-form-field",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "No"
+  },
+  {
+    "tag": "spl-internal-form-field",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "Yes"
+  },
+  {
+    "tag": "spl-internal-form-field",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "No"
+  },
+  {
+    "tag": "spl-internal-form-field",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "Yes"
+  },
+  {
+    "tag": "spl-internal-form-field",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "No"
+  },
+  {
+    "tag": "spl-internal-form-field",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "Yes"
+  },
+  {
+    "tag": "spl-internal-form-field",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "No"
+  },
+  {
+    "tag": "spl-internal-form-field",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "Yes"
+  },
+  {
+    "tag": "spl-internal-form-field",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "No"
+  },
+  {
+    "tag": "spl-internal-form-field",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-internal-form-field",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-internal-form-field",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "*"
+  },
+  {
+    "tag": "spl-internal-form-field",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "Yes, I have a disability, or have had one in the past."
+  },
+  {
+    "tag": "spl-internal-form-field",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "No, I do not have a disability and have not had one in the past."
+  },
+  {
+    "tag": "spl-internal-form-field",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "I do not want to answer."
+  },
+  {
+    "tag": "spl-internal-form-field",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-internal-form-field",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "Yes"
+  },
+  {
+    "tag": "spl-internal-form-field",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "No"
+  },
+  {
+    "tag": "spl-internal-form-field",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "Prefer not to answer"
+  },
+  {
+    "tag": "spl-typography-body",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-dropdown",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-dropdown",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-typography-body",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-typography-label",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "*"
+  },
+  {
+    "tag": "spl-typography-body",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-typography-label",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "*"
+  },
+  {
+    "tag": "spl-typography-body",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-typography-label",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "*"
+  },
+  {
+    "tag": "spl-dropdown",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-dropdown",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-typography-body",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-typography-label",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "*"
+  },
+  {
+    "tag": "spl-typography-body",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-typography-label",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "*"
+  },
+  {
+    "tag": "spl-typography-body",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-typography-label",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "*"
+  },
+  {
+    "tag": "spl-typography-body",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-typography-label",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "*"
+  },
+  {
+    "tag": "spl-typography-body",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-typography-label",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "*"
+  },
+  {
+    "tag": "spl-dropdown",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-typography-body",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-typography-label",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "*"
+  },
+  {
+    "tag": "spl-typography-body",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-typography-label",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "*"
+  },
+  {
+    "tag": "spl-typography-body",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-typography-label",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-typography-body",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-typography-label",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "*"
+  },
+  {
+    "tag": "spl-typography-body",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-typography-body",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-typography-label",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "Yes"
+  },
+  {
+    "tag": "spl-typography-label",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "No"
+  },
+  {
+    "tag": "spl-typography-label",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "Yes"
+  },
+  {
+    "tag": "spl-typography-label",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "No"
+  },
+  {
+    "tag": "spl-typography-label",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "Yes"
+  },
+  {
+    "tag": "spl-typography-label",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "No"
+  },
+  {
+    "tag": "spl-typography-body",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-typography-body",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-typography-label",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "Yes"
+  },
+  {
+    "tag": "spl-typography-label",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "No"
+  },
+  {
+    "tag": "spl-typography-label",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "Yes"
+  },
+  {
+    "tag": "spl-typography-label",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "No"
+  },
+  {
+    "tag": "spl-typography-label",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "Yes"
+  },
+  {
+    "tag": "spl-typography-label",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "No"
+  },
+  {
+    "tag": "spl-typography-label",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "Yes"
+  },
+  {
+    "tag": "spl-typography-label",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "No"
+  },
+  {
+    "tag": "spl-typography-label",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "Yes"
+  },
+  {
+    "tag": "spl-typography-label",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "No"
+  },
+  {
+    "tag": "spl-typography-body",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-typography-body",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-typography-label",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "input",
+    "id": "question_dde4d928-a10c-4da3-bb18-d4593a299fcb",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "type": "text",
+    "text": ""
+  },
+  {
+    "tag": "input",
+    "id": "question_057e7627-9be4-409c-a40c-eb7d40790eff",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "type": "text",
+    "text": ""
+  },
+  {
+    "tag": "spl-typography-body",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-typography-label",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "*"
+  },
+  {
+    "tag": "spl-autocomplete",
+    "id": "question_00e5e82a-2024-46e1-abc6-60a3f28f9284_gender",
+    "name": "question_00e5e82a-2024-46e1-abc6-60a3f28f9284_gender",
+    "formControlName": null,
+    "label": "Select Gender",
+    "dataTest": "question-eeo-gender-select",
+    "text": ""
+  },
+  {
+    "tag": "spl-autocomplete",
+    "id": "question_00e5e82a-2024-46e1-abc6-60a3f28f9284_ethnicity",
+    "name": "question_00e5e82a-2024-46e1-abc6-60a3f28f9284_ethnicity",
+    "formControlName": null,
+    "label": "Select Race/Ethnicity",
+    "dataTest": "question-eeo-ethnicity-select",
+    "text": ""
+  },
+  {
+    "tag": "spl-typography-label",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "Yes, I have a disability, or have had one in the past."
+  },
+  {
+    "tag": "spl-typography-label",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "No, I do not have a disability and have not had one in the past."
+  },
+  {
+    "tag": "spl-typography-label",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "I do not want to answer."
+  },
+  {
+    "tag": "spl-typography-body",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-typography-label",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-typography-label",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "Yes"
+  },
+  {
+    "tag": "spl-typography-label",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "No"
+  },
+  {
+    "tag": "spl-typography-label",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "Prefer not to answer"
+  },
+  {
+    "tag": "spl-input",
+    "id": "question_b92f8b3e-4559-4139-8a4a-139c6d2a89db",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "type": "text",
+    "text": ""
+  },
+  {
+    "tag": "spl-input",
+    "id": "question_1b3a4ee7-2336-4490-b656-f65da4078f78",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "type": "text",
+    "text": ""
+  },
+  {
+    "tag": "spl-input",
+    "id": "question_16c477b2-a46f-4c40-925b-1e5b83254c65",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "type": "text",
+    "text": ""
+  },
+  {
+    "tag": "spl-input",
+    "id": "question_31d52728-741b-4482-afaf-e38b12366773",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "type": "text",
+    "text": ""
+  },
+  {
+    "tag": "spl-input",
+    "id": "question_6cd0252d-c002-4f58-8127-38378d2f2d81",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "type": "text",
+    "text": ""
+  },
+  {
+    "tag": "spl-internal-form-field",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "*"
+  },
+  {
+    "tag": "spl-internal-form-field",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "*"
+  },
+  {
+    "tag": "spl-internal-form-field",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "*"
+  },
+  {
+    "tag": "spl-internal-form-field",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "*"
+  },
+  {
+    "tag": "spl-internal-form-field",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "*"
+  },
+  {
+    "tag": "spl-internal-form-field",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-internal-form-field",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-keyboard-list-navigator",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-icon",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-keyboard-list-navigator",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-icon",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-keyboard-list-navigator",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-icon",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-keyboard-list-navigator",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-icon",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-keyboard-list-navigator",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-icon",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-dropdown",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-dropdown",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-typography-label",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "*"
+  },
+  {
+    "tag": "spl-typography-label",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "*"
+  },
+  {
+    "tag": "spl-typography-label",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "*"
+  },
+  {
+    "tag": "spl-typography-label",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "*"
+  },
+  {
+    "tag": "spl-typography-label",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": "*"
+  },
+  {
+    "tag": "spl-typography-body",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-typography-body",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "input",
+    "id": "question_b92f8b3e-4559-4139-8a4a-139c6d2a89db",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "type": "text",
+    "text": ""
+  },
+  {
+    "tag": "input",
+    "id": "question_1b3a4ee7-2336-4490-b656-f65da4078f78",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "type": "text",
+    "text": ""
+  },
+  {
+    "tag": "input",
+    "id": "question_16c477b2-a46f-4c40-925b-1e5b83254c65",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "type": "text",
+    "text": ""
+  },
+  {
+    "tag": "input",
+    "id": "question_31d52728-741b-4482-afaf-e38b12366773",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "type": "text",
+    "text": ""
+  },
+  {
+    "tag": "input",
+    "id": "question_6cd0252d-c002-4f58-8127-38378d2f2d81",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "type": "text",
+    "text": ""
+  },
+  {
+    "tag": "spl-input",
+    "id": "question_00e5e82a-2024-46e1-abc6-60a3f28f9284_gender",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "type": "text",
+    "text": ""
+  },
+  {
+    "tag": "spl-input",
+    "id": "question_00e5e82a-2024-46e1-abc6-60a3f28f9284_ethnicity",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "type": "text",
+    "text": ""
+  },
+  {
+    "tag": "spl-internal-form-field",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-internal-form-field",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-keyboard-list-navigator",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-icon",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-keyboard-list-navigator",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "spl-icon",
+    "id": "",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "text": ""
+  },
+  {
+    "tag": "input",
+    "id": "question_00e5e82a-2024-46e1-abc6-60a3f28f9284_gender",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "type": "text",
+    "text": ""
+  },
+  {
+    "tag": "input",
+    "id": "question_00e5e82a-2024-46e1-abc6-60a3f28f9284_ethnicity",
+    "name": null,
+    "formControlName": null,
+    "label": null,
+    "dataTest": null,
+    "type": "text",
+    "text": ""
+  }
+]
