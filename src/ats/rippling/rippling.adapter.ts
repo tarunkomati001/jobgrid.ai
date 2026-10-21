@@ -446,7 +446,7 @@ export class RipplingAdapter implements ATSAdapter {
       }
 
       // Handle custom radio questions
-      const radioInputs = await field.locator("input[type='radio'], [role='radiogroup'] [role='radio'], label:has(input[type='radio'])").all();
+      const radioInputs = await field.locator("input[type='radio'], [role='radiogroup'] [role='radio']").all();
       if (radioInputs.length > 0) {
         console.log(`🔘 [RipplingAdapter]: Answering custom radio question: "${qText.slice(0, 80)}"`);
         let chosenRadio = "No";
@@ -464,11 +464,32 @@ export class RipplingAdapter implements ATSAdapter {
           chosenRadio = "Yes";
         }
 
-        const targetRadio = field.locator(`label:has-text('${chosenRadio}'), input[value='${chosenRadio}'], [data-value='${chosenRadio}']`).first();
-        if (await targetRadio.count() > 0) {
-          await targetRadio.click({ force: true }).catch(() => {});
-          console.log(`   Selected radio: "${chosenRadio}"`);
+        // Click via DOM evaluate directly to trigger React state updates
+        const radioName = await radioInputs[0].getAttribute("name").catch(() => "");
+        const clicked = await page.evaluate(({ rName, val }) => {
+          const matchingRadio = Array.from(document.querySelectorAll<HTMLInputElement>("input[type='radio']")).find(r => {
+            if (rName && r.name !== rName) return false;
+            return r.value?.toLowerCase() === val.toLowerCase();
+          });
+          if (matchingRadio) {
+            matchingRadio.focus();
+            matchingRadio.click();
+            matchingRadio.checked = true;
+            matchingRadio.dispatchEvent(new Event("change", { bubbles: true }));
+            matchingRadio.dispatchEvent(new Event("input", { bubbles: true }));
+            if (matchingRadio.parentElement) (matchingRadio.parentElement as HTMLElement).click();
+            return true;
+          }
+          return false;
+        }, { rName: radioName, val: chosenRadio });
+
+        if (!clicked) {
+          const targetRadio = field.locator(`label:has-text('${chosenRadio}'), input[value='${chosenRadio}'], [data-value='${chosenRadio}']`).first();
+          if (await targetRadio.count() > 0) {
+            await targetRadio.click({ force: true }).catch(() => {});
+          }
         }
+        console.log(`   Selected radio: "${chosenRadio}"`);
         continue;
       }
 
@@ -476,7 +497,17 @@ export class RipplingAdapter implements ATSAdapter {
       const selectCtrl = field.locator("[data-testid='select-controller'], [role='combobox']").first();
       if (await selectCtrl.count() > 0) {
         console.log(`❓ [RipplingAdapter]: Answering custom combobox question: "${qText.slice(0, 80)}"`);
-        let answer = "No";
+
+        // Click to open options list
+        await selectCtrl.click().catch(() => {});
+        await page.waitForTimeout(500);
+
+        // Extract available options
+        const availableOptions = await page.evaluate(() => {
+          return Array.from(document.querySelectorAll("li[role='option'], div[role='option']")).map(el => (el.textContent || "").trim()).filter(Boolean);
+        });
+
+        let answer = "";
         if (
           lowerQ.includes("require work authorization") ||
           lowerQ.includes("require visa") ||
@@ -499,20 +530,17 @@ export class RipplingAdapter implements ATSAdapter {
           } else if (userSavedAnswers[norm]) {
             answer = userSavedAnswers[norm];
           } else {
-            answer = await suggestAnswerForQuestion(qText, profile, { company: "Rippling", title: "Role", ats: "RIPPLING" });
+            answer = suggestAnswerForQuestion(qText, availableOptions);
           }
         }
 
-        await selectCtrl.click().catch(() => {});
-        await page.waitForTimeout(500);
-
         // Match option
-        const targetOption = page.locator(`li[role='option']:has-text('${answer}')`).first();
+        const targetOption = page.locator(`li[role='option']:has-text('${answer}'), div[role='option']:has-text('${answer}')`).first();
         if (await targetOption.count() > 0) {
           await targetOption.click().catch(() => {});
           console.log(`   Selected: "${answer}"`);
         } else {
-          const fallback = page.locator("li[role='option']").first();
+          const fallback = page.locator("li[role='option'], div[role='option']").first();
           if (await fallback.count() > 0) {
             const txt = await fallback.innerText().catch(() => "");
             await fallback.click().catch(() => {});

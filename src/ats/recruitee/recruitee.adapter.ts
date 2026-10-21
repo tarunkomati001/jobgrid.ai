@@ -217,9 +217,36 @@ export class RecruiteeAdapter implements ATSAdapter {
   }
 
   /**
-   * Automatically fills out all form fields using Hrutin's US details,
-   * sets the Country Code dropdown to United States (+1), types the phone number,
-   * answers technical questions, and handles checkboxes and radio groups.
+   * Uploads candidate resume (CV) and optional cover letter.
+   */
+  async uploadResume(page: Page, resumePath: string): Promise<void> {
+    console.log(`📄 [RecruiteeAdapter]: Uploading resume: ${resumePath}`);
+    await this.ensureApplicationFormOpen(page);
+
+    const cvInput = page.locator("input[name='candidate.cv'], input[type='file'][name*='cv' i], input[type='file']").first();
+    if (await cvInput.count() > 0 && fs.existsSync(resumePath)) {
+      await cvInput.setInputFiles(resumePath).catch(err => {
+        console.warn("⚠️ Failed setting candidate.cv input file:", err);
+      });
+      console.log("✅ [RecruiteeAdapter]: Resume attached successfully.");
+      await page.waitForTimeout(1000);
+    }
+
+    // Cover letter if available
+    const coverLetterPath = path.resolve(path.dirname(resumePath), "Hrutin_Nammi_Cover_Letter.pdf");
+    const clInput = page.locator("input[name='candidate.coverLetterFile'], input[type='file'][name*='cover' i]").first();
+    if (await clInput.count() > 0 && fs.existsSync(coverLetterPath)) {
+      console.log(`📄 [RecruiteeAdapter]: Uploading cover letter: ${coverLetterPath}`);
+      await clInput.setInputFiles(coverLetterPath).catch(err => {
+        console.warn("⚠️ Failed setting cover letter input file:", err);
+      });
+      console.log("✅ [RecruiteeAdapter]: Cover letter attached successfully.");
+      await page.waitForTimeout(1000);
+    }
+  }
+
+  /**
+   * Automatically fills out all form fields using candidate's details.
    */
   async fillForm(
     page: Page,
@@ -237,6 +264,11 @@ export class RecruiteeAdapter implements ATSAdapter {
     // Ensure form is open and visible
     await this.ensureApplicationFormOpen(page);
     await dismissCommonPopups(page);
+
+    // Upload files if resume provided
+    if (profile.resumePath && fs.existsSync(profile.resumePath)) {
+      await this.uploadResume(page, profile.resumePath);
+    }
 
     // Fetch user saved answers from database
     let userSavedAnswers: Record<string, string> = {};
