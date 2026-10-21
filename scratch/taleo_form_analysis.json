@@ -1,0 +1,1680 @@
+{
+  "steps": [
+    {
+      "id": "",
+      "className": "oracletaleocwsv2-current-step",
+      "text": "1"
+    },
+    {
+      "id": "",
+      "className": "oracletaleocwsv2-total-steps",
+      "text": "4"
+    },
+    {
+      "id": "step-01",
+      "className": "oracletaleocwsv2-step oracletaleocwsv2-active",
+      "text": "1. \n\n Get Started \n\n\n\nFields marked with a red asterisk (*) are required.\n\nChoose how you want to ap"
+    },
+    {
+      "id": "",
+      "className": "oracletaleocwsv2-step-title",
+      "text": "1. \n\n Get Started"
+    },
+    {
+      "id": "",
+      "className": "stepId",
+      "text": "1."
+    },
+    {
+      "id": "navsteptitle",
+      "className": "title",
+      "text": "Get Started"
+    },
+    {
+      "id": "step-02",
+      "className": "oracletaleocwsv2-step",
+      "text": "Your Information \n\n\n\nFields marked with a red asterisk (*) are required.\n\nResume Upload\n\nUpload your"
+    },
+    {
+      "id": "",
+      "className": "oracletaleocwsv2-step-title",
+      "text": "Your Information"
+    },
+    {
+      "id": "navsteptitle",
+      "className": "title",
+      "text": "Your Information"
+    },
+    {
+      "id": "step-03",
+      "className": "oracletaleocwsv2-step",
+      "text": "Resume and Questions \n\n\nUpload Your Resume\n\nUpload your resume if you have not already done so. Alte"
+    },
+    {
+      "id": "",
+      "className": "oracletaleocwsv2-step-title",
+      "text": "Resume and Questions"
+    },
+    {
+      "id": "navsteptitle",
+      "className": "title",
+      "text": "Resume and Questions"
+    },
+    {
+      "id": "step-04",
+      "className": "oracletaleocwsv2-step",
+      "text": "Review and Submit \n\n\nCandidate Certification\n\nI certify that the information provided in this applic"
+    },
+    {
+      "id": "",
+      "className": "oracletaleocwsv2-step-title",
+      "text": "Review and Submit"
+    },
+    {
+      "id": "navsteptitle",
+      "className": "title",
+      "text": "Review and Submit"
+    },
+    {
+      "id": "oracletaleocwsv2-step-01-review",
+      "className": "",
+      "text": "1\n. Get Started\nFields marked with a red asterisk (*) are required.\n\n\nChoose how you want to apply\n1"
+    },
+    {
+      "id": "",
+      "className": "oracletaleocwsv2-step-title",
+      "text": "1\n. Get Started"
+    },
+    {
+      "id": "oracletaleocwsv2-step-02-review",
+      "className": "",
+      "text": "2\n. Your Information\nFields marked with a red asterisk (*) are required.\n\n\nContact Information\n\n\n\nFi"
+    },
+    {
+      "id": "",
+      "className": "oracletaleocwsv2-step-title",
+      "text": "2\n. Your Information"
+    },
+    {
+      "id": "oracletaleocwsv2-step-03-review",
+      "className": "",
+      "text": "3\n. Resume and Questions\n\n\nUpload Your Resume\nUpload your resume if you have not already done so. Al"
+    },
+    {
+      "id": "",
+      "className": "oracletaleocwsv2-step-title",
+      "text": "3\n. Resume and Questions"
+    },
+    {
+      "id": "oracletaleocwsv2-step-04-review",
+      "className": "",
+      "text": "4\n. Review and Submit\n\n\nCandidate Certification\nI certify that the information provided in this appl"
+    },
+    {
+      "id": "",
+      "className": "oracletaleocwsv2-step-title",
+      "text": "4\n. Review and Submit"
+    }
+  ],
+  "headings": [
+    {
+      "tag": "DIV",
+      "text": "1. \n\n Get Started"
+    },
+    {
+      "tag": "LABEL",
+      "text": "Get Started"
+    },
+    {
+      "tag": "H2",
+      "text": "Choose how you want to apply"
+    },
+    {
+      "tag": "DIV",
+      "text": "Your Information"
+    },
+    {
+      "tag": "LABEL",
+      "text": "Your Information"
+    },
+    {
+      "tag": "H2",
+      "text": "Resume Upload"
+    },
+    {
+      "tag": "H2",
+      "text": "Contact Information"
+    },
+    {
+      "tag": "H2",
+      "text": "How did you hear about us?"
+    },
+    {
+      "tag": "H2",
+      "text": "Candidate Information"
+    },
+    {
+      "tag": "H3",
+      "text": "Security Clearance"
+    },
+    {
+      "tag": "DIV",
+      "text": "Resume and Questions"
+    },
+    {
+      "tag": "LABEL",
+      "text": "Resume and Questions"
+    },
+    {
+      "tag": "H2",
+      "text": "Upload Your Resume"
+    },
+    {
+      "tag": "H2",
+      "text": "Resume Text"
+    },
+    {
+      "tag": "H2",
+      "text": "Attachments"
+    },
+    {
+      "tag": "DIV",
+      "text": "Review and Submit"
+    },
+    {
+      "tag": "LABEL",
+      "text": "Review and Submit"
+    },
+    {
+      "tag": "H2",
+      "text": "Candidate Certification"
+    },
+    {
+      "tag": "H2",
+      "text": "Application Review"
+    },
+    {
+      "tag": "DIV",
+      "text": "1\n. Get Started"
+    },
+    {
+      "tag": "H2",
+      "text": "Choose how you want to apply"
+    },
+    {
+      "tag": "DIV",
+      "text": "2\n. Your Information"
+    },
+    {
+      "tag": "H2",
+      "text": "Contact Information"
+    },
+    {
+      "tag": "H2",
+      "text": "How did you hear about us?"
+    },
+    {
+      "tag": "H2",
+      "text": "Candidate Information"
+    },
+    {
+      "tag": "DIV",
+      "text": "3\n. Resume and Questions"
+    },
+    {
+      "tag": "H2",
+      "text": "Upload Your Resume"
+    },
+    {
+      "tag": "H2",
+      "text": "Resume Text"
+    },
+    {
+      "tag": "H2",
+      "text": "Attachments"
+    },
+    {
+      "tag": "DIV",
+      "text": "4\n. Review and Submit"
+    },
+    {
+      "tag": "H2",
+      "text": "Candidate Certification"
+    }
+  ],
+  "elements": [
+    {
+      "tag": "INPUT",
+      "type": "hidden",
+      "id": null,
+      "name": "org",
+      "placeholder": null,
+      "labelText": "Get Started",
+      "required": false,
+      "isVisible": false,
+      "value": "BASESOLU"
+    },
+    {
+      "tag": "INPUT",
+      "type": "hidden",
+      "id": null,
+      "name": "act",
+      "placeholder": null,
+      "labelText": "Get Started",
+      "required": false,
+      "isVisible": false,
+      "value": "add"
+    },
+    {
+      "tag": "INPUT",
+      "type": "hidden",
+      "id": null,
+      "name": "removeOldRequisitions",
+      "placeholder": null,
+      "labelText": "Get Started",
+      "required": false,
+      "isVisible": false,
+      "value": "false"
+    },
+    {
+      "tag": "INPUT",
+      "type": "hidden",
+      "id": null,
+      "name": "WebPage",
+      "placeholder": null,
+      "labelText": "Get Started",
+      "required": false,
+      "isVisible": false,
+      "value": "APPLY_V2"
+    },
+    {
+      "tag": "INPUT",
+      "type": "hidden",
+      "id": null,
+      "name": "WebVersion",
+      "placeholder": null,
+      "labelText": "Get Started",
+      "required": false,
+      "isVisible": false,
+      "value": "0"
+    },
+    {
+      "tag": "INPUT",
+      "type": "hidden",
+      "id": null,
+      "name": "attNo",
+      "placeholder": null,
+      "labelText": "Get Started",
+      "required": false,
+      "isVisible": false,
+      "value": ""
+    },
+    {
+      "tag": "INPUT",
+      "type": "hidden",
+      "id": null,
+      "name": "attDocType",
+      "placeholder": null,
+      "labelText": "Get Started",
+      "required": false,
+      "isVisible": false,
+      "value": ""
+    },
+    {
+      "tag": "INPUT",
+      "type": "hidden",
+      "id": null,
+      "name": "attDocId",
+      "placeholder": null,
+      "labelText": "Get Started",
+      "required": false,
+      "isVisible": false,
+      "value": ""
+    },
+    {
+      "tag": "INPUT",
+      "type": "hidden",
+      "id": null,
+      "name": "cws",
+      "placeholder": null,
+      "labelText": "Get Started",
+      "required": false,
+      "isVisible": false,
+      "value": "37"
+    },
+    {
+      "tag": "INPUT",
+      "type": "hidden",
+      "id": "snapshotContent",
+      "name": "snapshotContent",
+      "placeholder": null,
+      "labelText": "Get Started",
+      "required": false,
+      "isVisible": false,
+      "value": ""
+    },
+    {
+      "tag": "INPUT",
+      "type": "hidden",
+      "id": "hideLgn",
+      "name": null,
+      "placeholder": null,
+      "labelText": "Get Started",
+      "required": false,
+      "isVisible": false,
+      "value": "false"
+    },
+    {
+      "tag": "INPUT",
+      "type": "hidden",
+      "id": "preCandidate",
+      "name": null,
+      "placeholder": null,
+      "labelText": "Get Started",
+      "required": false,
+      "isVisible": false,
+      "value": "false"
+    },
+    {
+      "tag": "INPUT",
+      "type": "hidden",
+      "id": null,
+      "name": "requisitions",
+      "placeholder": null,
+      "labelText": "Get Started",
+      "required": false,
+      "isVisible": false,
+      "value": "4742"
+    },
+    {
+      "tag": "INPUT",
+      "type": "hidden",
+      "id": null,
+      "name": "rid",
+      "placeholder": null,
+      "labelText": "Get Started",
+      "required": false,
+      "isVisible": false,
+      "value": "4742"
+    },
+    {
+      "tag": "INPUT",
+      "type": "hidden",
+      "id": null,
+      "name": "et",
+      "placeholder": null,
+      "labelText": "Get Started",
+      "required": false,
+      "isVisible": false,
+      "value": "CAND"
+    },
+    {
+      "tag": "INPUT",
+      "type": "hidden",
+      "id": null,
+      "name": "extraParameter",
+      "placeholder": null,
+      "labelText": "Get Started",
+      "required": false,
+      "isVisible": false,
+      "value": "08a125251f77f1ff4e3070299d30a2468a4474b1"
+    },
+    {
+      "tag": "INPUT",
+      "type": "hidden",
+      "id": null,
+      "name": "embeddedPageStepTitle",
+      "placeholder": null,
+      "labelText": "Get Started",
+      "required": false,
+      "isVisible": false,
+      "value": "Get Started"
+    },
+    {
+      "tag": "INPUT",
+      "type": "checkbox",
+      "id": "cwsLoginAsGuest",
+      "name": "cwsLoginAsGuest",
+      "placeholder": null,
+      "labelText": "",
+      "required": false,
+      "isVisible": false,
+      "value": "on"
+    },
+    {
+      "tag": "INPUT",
+      "type": "email",
+      "id": "email",
+      "name": "email",
+      "placeholder": null,
+      "labelText": "Email",
+      "required": true,
+      "isVisible": true,
+      "value": ""
+    },
+    {
+      "tag": "INPUT",
+      "type": "hidden",
+      "id": null,
+      "name": "cwsPassword_3",
+      "placeholder": null,
+      "labelText": "Email",
+      "required": false,
+      "isVisible": false,
+      "value": "**********"
+    },
+    {
+      "tag": "INPUT",
+      "type": "hidden",
+      "id": null,
+      "name": "cwsPassword_4",
+      "placeholder": null,
+      "labelText": "Email",
+      "required": false,
+      "isVisible": false,
+      "value": "**********"
+    },
+    {
+      "tag": "INPUT",
+      "type": "hidden",
+      "id": null,
+      "name": "minPasswordLength",
+      "placeholder": null,
+      "labelText": "Email",
+      "required": false,
+      "isVisible": false,
+      "value": "8"
+    },
+    {
+      "tag": "INPUT",
+      "type": "hidden",
+      "id": null,
+      "name": "nonAbcCharsInPassword",
+      "placeholder": null,
+      "labelText": "Email",
+      "required": false,
+      "isVisible": false,
+      "value": "true"
+    },
+    {
+      "tag": "INPUT",
+      "type": "hidden",
+      "id": null,
+      "name": "minPasswordLengthError",
+      "placeholder": null,
+      "labelText": "Email",
+      "required": false,
+      "isVisible": false,
+      "value": "Minimum Password Length: 8"
+    },
+    {
+      "tag": "INPUT",
+      "type": "hidden",
+      "id": null,
+      "name": "nonAbcCharsInPasswordError",
+      "placeholder": null,
+      "labelText": "Email",
+      "required": false,
+      "isVisible": false,
+      "value": "Password must contain a non-alphabetical character"
+    },
+    {
+      "tag": "INPUT",
+      "type": "password",
+      "id": "cwsPassword",
+      "name": "cwsPassword",
+      "placeholder": null,
+      "labelText": "Password",
+      "required": true,
+      "isVisible": true,
+      "value": ""
+    },
+    {
+      "tag": "INPUT",
+      "type": "password",
+      "id": "cwsPassword_2",
+      "name": "cwsPassword_2",
+      "placeholder": null,
+      "labelText": "Re-type new password:",
+      "required": true,
+      "isVisible": true,
+      "value": ""
+    },
+    {
+      "tag": "INPUT",
+      "type": "hidden",
+      "id": null,
+      "name": "embeddedPageStepTitle",
+      "placeholder": null,
+      "labelText": "Your Information",
+      "required": false,
+      "isVisible": false,
+      "value": "Your Information"
+    },
+    {
+      "tag": "BUTTON",
+      "type": "button",
+      "id": "uploadButtonProfile",
+      "name": null,
+      "placeholder": null,
+      "labelText": "",
+      "required": false,
+      "isVisible": false,
+      "value": ""
+    },
+    {
+      "tag": "INPUT",
+      "type": "text",
+      "id": "firstName",
+      "name": "firstName",
+      "placeholder": null,
+      "labelText": "First Name",
+      "required": true,
+      "isVisible": false,
+      "value": ""
+    },
+    {
+      "tag": "INPUT",
+      "type": "text",
+      "id": "lastName",
+      "name": "lastName",
+      "placeholder": null,
+      "labelText": "Last Name",
+      "required": true,
+      "isVisible": false,
+      "value": ""
+    },
+    {
+      "tag": "INPUT",
+      "type": "text",
+      "id": "phone",
+      "name": "phone",
+      "placeholder": null,
+      "labelText": "Phone Number",
+      "required": true,
+      "isVisible": false,
+      "value": ""
+    },
+    {
+      "tag": "INPUT",
+      "type": "text",
+      "id": "address",
+      "name": "address",
+      "placeholder": null,
+      "labelText": "Street Address",
+      "required": false,
+      "isVisible": false,
+      "value": ""
+    },
+    {
+      "tag": "INPUT",
+      "type": "text",
+      "id": "city",
+      "name": "city",
+      "placeholder": null,
+      "labelText": "City",
+      "required": true,
+      "isVisible": false,
+      "value": ""
+    },
+    {
+      "tag": "SELECT",
+      "type": "select-one",
+      "id": "state",
+      "name": "state",
+      "placeholder": null,
+      "labelText": "State",
+      "required": true,
+      "options": [
+        {
+          "text": "Please select",
+          "value": ""
+        },
+        {
+          "text": "Alabama",
+          "value": "Alabama"
+        },
+        {
+          "text": "Alaska",
+          "value": "Alaska"
+        },
+        {
+          "text": "Arizona",
+          "value": "Arizona"
+        },
+        {
+          "text": "Arkansas",
+          "value": "Arkansas"
+        },
+        {
+          "text": "California",
+          "value": "California"
+        },
+        {
+          "text": "Colorado",
+          "value": "Colorado"
+        },
+        {
+          "text": "Connecticut",
+          "value": "Connecticut"
+        },
+        {
+          "text": "Delaware",
+          "value": "Delaware"
+        },
+        {
+          "text": "District of Columbia",
+          "value": "District of Columbia"
+        },
+        {
+          "text": "Florida",
+          "value": "Florida"
+        },
+        {
+          "text": "Georgia",
+          "value": "Georgia"
+        },
+        {
+          "text": "Hawaii",
+          "value": "Hawaii"
+        },
+        {
+          "text": "Idaho",
+          "value": "Idaho"
+        },
+        {
+          "text": "Illinois",
+          "value": "Illinois"
+        },
+        {
+          "text": "Indiana",
+          "value": "Indiana"
+        },
+        {
+          "text": "Iowa",
+          "value": "Iowa"
+        },
+        {
+          "text": "Kansas",
+          "value": "Kansas"
+        },
+        {
+          "text": "Kentucky",
+          "value": "Kentucky"
+        },
+        {
+          "text": "Louisiana",
+          "value": "Louisiana"
+        }
+      ],
+      "isVisible": false,
+      "value": ""
+    },
+    {
+      "tag": "INPUT",
+      "type": "text",
+      "id": "zipCode",
+      "name": "zipCode",
+      "placeholder": null,
+      "labelText": "ZIP/Postal Code",
+      "required": false,
+      "isVisible": false,
+      "value": ""
+    },
+    {
+      "tag": "SELECT",
+      "type": "select-one",
+      "id": "country",
+      "name": "country",
+      "placeholder": null,
+      "labelText": "Country",
+      "required": true,
+      "options": [
+        {
+          "text": "Please select",
+          "value": "-1"
+        },
+        {
+          "text": "United States",
+          "value": "364"
+        },
+        {
+          "text": "Afghanistan",
+          "value": "189"
+        },
+        {
+          "text": "Albania",
+          "value": "190"
+        },
+        {
+          "text": "Algeria",
+          "value": "191"
+        },
+        {
+          "text": "American Samoa",
+          "value": "192"
+        },
+        {
+          "text": "Andorra",
+          "value": "193"
+        },
+        {
+          "text": "Angola",
+          "value": "194"
+        },
+        {
+          "text": "Anguilla",
+          "value": "195"
+        },
+        {
+          "text": "Antarctica",
+          "value": "196"
+        },
+        {
+          "text": "Antigua",
+          "value": "197"
+        },
+        {
+          "text": "Argentina",
+          "value": "198"
+        },
+        {
+          "text": "Armenia",
+          "value": "199"
+        },
+        {
+          "text": "Aruba",
+          "value": "200"
+        },
+        {
+          "text": "Australia",
+          "value": "201"
+        },
+        {
+          "text": "Austria",
+          "value": "202"
+        },
+        {
+          "text": "Azerbaijan",
+          "value": "203"
+        },
+        {
+          "text": "Bahamas",
+          "value": "204"
+        },
+        {
+          "text": "Bahrain",
+          "value": "205"
+        },
+        {
+          "text": "Bangladesh",
+          "value": "206"
+        }
+      ],
+      "isVisible": false,
+      "value": "364"
+    },
+    {
+      "tag": "SELECT",
+      "type": "select-one",
+      "id": "source",
+      "name": "source",
+      "placeholder": null,
+      "labelText": "Source",
+      "required": false,
+      "options": [
+        {
+          "text": "--None--",
+          "value": "-1"
+        },
+        {
+          "text": "CareerBuilder",
+          "value": "47"
+        },
+        {
+          "text": "Careers Website",
+          "value": "1"
+        },
+        {
+          "text": "ClearanceJobs",
+          "value": "46"
+        },
+        {
+          "text": "ClearedJobs.Net",
+          "value": "54"
+        },
+        {
+          "text": "Employee Referral",
+          "value": "2"
+        },
+        {
+          "text": "External Referral",
+          "value": "45"
+        },
+        {
+          "text": "Facebook",
+          "value": "52"
+        },
+        {
+          "text": "Glassdoor",
+          "value": "43"
+        },
+        {
+          "text": "Google Search",
+          "value": "51"
+        },
+        {
+          "text": "Indeed",
+          "value": "7"
+        },
+        {
+          "text": "LinkedIn",
+          "value": "44"
+        },
+        {
+          "text": "Monster",
+          "value": "42"
+        },
+        {
+          "text": "Other",
+          "value": "5"
+        },
+        {
+          "text": "Simply Hired",
+          "value": "3"
+        },
+        {
+          "text": "ZipRecruiter",
+          "value": "53"
+        }
+      ],
+      "isVisible": false,
+      "value": "1"
+    },
+    {
+      "tag": "INPUT",
+      "type": "text",
+      "id": "referredBy",
+      "name": "referredBy",
+      "placeholder": null,
+      "labelText": "Referred By",
+      "required": false,
+      "isVisible": false,
+      "value": ""
+    },
+    {
+      "tag": "SELECT",
+      "type": "select-one",
+      "id": "legalStatus",
+      "name": "legalStatus",
+      "placeholder": null,
+      "labelText": "Work Authorization",
+      "required": true,
+      "options": [
+        {
+          "text": "Please select",
+          "value": "-1"
+        },
+        {
+          "text": "I am authorized to work in this country for any employer",
+          "value": "441"
+        },
+        {
+          "text": "I am authorized to work in this country for my present employer only",
+          "value": "442"
+        },
+        {
+          "text": "I require sponsorship to work in this country",
+          "value": "443"
+        },
+        {
+          "text": "My status to work in this country is unknown",
+          "value": "444"
+        }
+      ],
+      "isVisible": false,
+      "value": "-1"
+    },
+    {
+      "tag": "SELECT",
+      "type": "select-one",
+      "id": "CUSTOM_1237",
+      "name": "CUSTOM_1237",
+      "placeholder": null,
+      "labelText": "Are you a United States citizen?",
+      "required": true,
+      "options": [
+        {
+          "text": "Please select",
+          "value": "-1"
+        },
+        {
+          "text": "Yes",
+          "value": "1387"
+        },
+        {
+          "text": "No",
+          "value": "1388"
+        }
+      ],
+      "isVisible": false,
+      "value": "-1"
+    },
+    {
+      "tag": "INPUT",
+      "type": "checkbox",
+      "id": null,
+      "name": "CUSTOM_1136",
+      "placeholder": null,
+      "labelText": "None",
+      "required": false,
+      "isVisible": false,
+      "value": "853"
+    },
+    {
+      "tag": "INPUT",
+      "type": "checkbox",
+      "id": null,
+      "name": "CUSTOM_1136",
+      "placeholder": null,
+      "labelText": "Public Trust",
+      "required": false,
+      "isVisible": false,
+      "value": "855"
+    },
+    {
+      "tag": "INPUT",
+      "type": "checkbox",
+      "id": null,
+      "name": "CUSTOM_1136",
+      "placeholder": null,
+      "labelText": "Confidential",
+      "required": false,
+      "isVisible": false,
+      "value": "859"
+    },
+    {
+      "tag": "INPUT",
+      "type": "checkbox",
+      "id": null,
+      "name": "CUSTOM_1136",
+      "placeholder": null,
+      "labelText": "Secret",
+      "required": false,
+      "isVisible": false,
+      "value": "862"
+    },
+    {
+      "tag": "INPUT",
+      "type": "checkbox",
+      "id": null,
+      "name": "CUSTOM_1136",
+      "placeholder": null,
+      "labelText": "Top Secret",
+      "required": false,
+      "isVisible": false,
+      "value": "863"
+    },
+    {
+      "tag": "INPUT",
+      "type": "checkbox",
+      "id": null,
+      "name": "CUSTOM_1136",
+      "placeholder": null,
+      "labelText": "Top Secret/SCI",
+      "required": false,
+      "isVisible": false,
+      "value": "864"
+    },
+    {
+      "tag": "INPUT",
+      "type": "checkbox",
+      "id": null,
+      "name": "CUSTOM_1136",
+      "placeholder": null,
+      "labelText": "Top Secret/SCI with CI Polygraph",
+      "required": false,
+      "isVisible": false,
+      "value": "866"
+    },
+    {
+      "tag": "INPUT",
+      "type": "checkbox",
+      "id": null,
+      "name": "CUSTOM_1136",
+      "placeholder": null,
+      "labelText": "Top Secret/SCI with Full Scope Polygraph",
+      "required": false,
+      "isVisible": false,
+      "value": "867"
+    },
+    {
+      "tag": "BUTTON",
+      "type": "submit",
+      "id": null,
+      "name": null,
+      "placeholder": null,
+      "labelText": "",
+      "required": false,
+      "isVisible": false,
+      "value": ""
+    },
+    {
+      "tag": "INPUT",
+      "type": "text",
+      "id": "CUSTOM_1136",
+      "name": "CUSTOM_1136_total",
+      "placeholder": "Select All That Apply...",
+      "labelText": "Security Clearance",
+      "required": true,
+      "isVisible": false,
+      "value": ""
+    },
+    {
+      "tag": "BUTTON",
+      "type": "button",
+      "id": null,
+      "name": null,
+      "placeholder": null,
+      "labelText": "",
+      "required": false,
+      "isVisible": false,
+      "value": ""
+    },
+    {
+      "tag": "SELECT",
+      "type": "select-one",
+      "id": "CUSTOM_1138",
+      "name": "CUSTOM_1138",
+      "placeholder": null,
+      "labelText": "Security Clearance Status",
+      "required": true,
+      "options": [
+        {
+          "text": "Please select",
+          "value": "-1"
+        },
+        {
+          "text": "Not Applicable",
+          "value": "1386"
+        },
+        {
+          "text": "Active",
+          "value": "868"
+        },
+        {
+          "text": "Inactive",
+          "value": "869"
+        },
+        {
+          "text": "Unknown",
+          "value": "1622"
+        }
+      ],
+      "isVisible": false,
+      "value": "1386"
+    },
+    {
+      "tag": "TEXTAREA",
+      "type": "textarea",
+      "id": "CUSTOM_1140__id_txt_",
+      "name": "CUSTOM_1140",
+      "placeholder": null,
+      "labelText": "Security Clearance Notes",
+      "required": false,
+      "isVisible": false,
+      "value": ""
+    },
+    {
+      "tag": "SELECT",
+      "type": "select-one",
+      "id": "CUSTOM_288",
+      "name": "CUSTOM_288",
+      "placeholder": null,
+      "labelText": "Highest Education Level",
+      "required": false,
+      "options": [
+        {
+          "text": "Please select",
+          "value": "-1"
+        },
+        {
+          "text": "High School Diploma / GED",
+          "value": "479"
+        },
+        {
+          "text": "Associates Degree",
+          "value": "477"
+        },
+        {
+          "text": "Bachelor's Degree",
+          "value": "478"
+        },
+        {
+          "text": "Master's Degree",
+          "value": "480"
+        },
+        {
+          "text": "PhD",
+          "value": "482"
+        },
+        {
+          "text": "Trade or Technical School Diploma",
+          "value": "483"
+        },
+        {
+          "text": "Other",
+          "value": "481"
+        }
+      ],
+      "isVisible": false,
+      "value": "-1"
+    },
+    {
+      "tag": "INPUT",
+      "type": "text",
+      "id": "CUSTOM_1238",
+      "name": "CUSTOM_1238",
+      "placeholder": null,
+      "labelText": "Current Salary",
+      "required": false,
+      "isVisible": false,
+      "value": ""
+    },
+    {
+      "tag": "INPUT",
+      "type": "text",
+      "id": "CUSTOM_1239",
+      "name": "CUSTOM_1239",
+      "placeholder": null,
+      "labelText": "Desired Salary",
+      "required": false,
+      "isVisible": false,
+      "value": ""
+    },
+    {
+      "tag": "INPUT",
+      "type": "hidden",
+      "id": null,
+      "name": "embeddedPageType",
+      "placeholder": null,
+      "labelText": "Resume and Questions",
+      "required": false,
+      "isVisible": false,
+      "value": "APRCE_V2"
+    },
+    {
+      "tag": "INPUT",
+      "type": "hidden",
+      "id": null,
+      "name": "embeddedPageVersion",
+      "placeholder": null,
+      "labelText": "Resume and Questions",
+      "required": false,
+      "isVisible": false,
+      "value": "0"
+    },
+    {
+      "tag": "INPUT",
+      "type": "hidden",
+      "id": null,
+      "name": "embeddedPageStepTitle",
+      "placeholder": null,
+      "labelText": "Resume and Questions",
+      "required": false,
+      "isVisible": false,
+      "value": "Resume and Questions"
+    },
+    {
+      "tag": "INPUT",
+      "type": "hidden",
+      "id": null,
+      "name": "resume.delete",
+      "placeholder": null,
+      "labelText": "Attach Resume",
+      "required": false,
+      "isVisible": false,
+      "value": ""
+    },
+    {
+      "tag": "INPUT",
+      "type": "file",
+      "id": null,
+      "name": "resume_template",
+      "placeholder": null,
+      "labelText": "",
+      "required": false,
+      "isVisible": false,
+      "value": ""
+    },
+    {
+      "tag": "INPUT",
+      "type": "text",
+      "id": "uploaded_resume",
+      "name": "uploaded_resume",
+      "placeholder": "No File Chosen...",
+      "labelText": "Attach Resume",
+      "required": false,
+      "isVisible": false,
+      "value": ""
+    },
+    {
+      "tag": "BUTTON",
+      "type": "button",
+      "id": null,
+      "name": "uploadButtonResume",
+      "placeholder": null,
+      "labelText": "",
+      "required": false,
+      "isVisible": false,
+      "value": ""
+    },
+    {
+      "tag": "INPUT",
+      "type": "file",
+      "id": "resumeLocalFile",
+      "name": "resume",
+      "placeholder": null,
+      "labelText": "",
+      "required": false,
+      "isVisible": false,
+      "value": ""
+    },
+    {
+      "tag": "INPUT",
+      "type": "hidden",
+      "id": "uploadedResumeLocalFile",
+      "name": "uploaded_resume",
+      "placeholder": null,
+      "labelText": "",
+      "required": false,
+      "isVisible": false,
+      "value": ""
+    },
+    {
+      "tag": "TEXTAREA",
+      "type": "textarea",
+      "id": "resumeText__id_txt_",
+      "name": "resumeText",
+      "placeholder": null,
+      "labelText": "",
+      "required": false,
+      "isVisible": false,
+      "value": ""
+    },
+    {
+      "tag": "INPUT",
+      "type": "hidden",
+      "id": null,
+      "name": "cwsMaxAttachmentCount",
+      "placeholder": null,
+      "labelText": "Resume and Questions",
+      "required": false,
+      "isVisible": false,
+      "value": "6"
+    },
+    {
+      "tag": "INPUT",
+      "type": "hidden",
+      "id": null,
+      "name": "deleteAttachmentId",
+      "placeholder": null,
+      "labelText": "Resume and Questions",
+      "required": false,
+      "isVisible": false,
+      "value": ""
+    },
+    {
+      "tag": "INPUT",
+      "type": "hidden",
+      "id": null,
+      "name": "deleteDraftAttachmentId",
+      "placeholder": null,
+      "labelText": "Resume and Questions",
+      "required": false,
+      "isVisible": false,
+      "value": ""
+    },
+    {
+      "tag": "INPUT",
+      "type": "hidden",
+      "id": null,
+      "name": "currentAttachmentIndex",
+      "placeholder": null,
+      "labelText": "Resume and Questions",
+      "required": false,
+      "isVisible": false,
+      "value": "0"
+    },
+    {
+      "tag": "INPUT",
+      "type": "file",
+      "id": null,
+      "name": "attachment_template",
+      "placeholder": null,
+      "labelText": "",
+      "required": false,
+      "isVisible": false,
+      "value": ""
+    },
+    {
+      "tag": "INPUT",
+      "type": "text",
+      "id": "attachment",
+      "name": "uploaded_attachment",
+      "placeholder": "No File Chosen...",
+      "labelText": "",
+      "required": false,
+      "isVisible": false,
+      "value": ""
+    },
+    {
+      "tag": "BUTTON",
+      "type": "button",
+      "id": null,
+      "name": "uploadButtonAttachment",
+      "placeholder": null,
+      "labelText": "",
+      "required": false,
+      "isVisible": false,
+      "value": ""
+    },
+    {
+      "tag": "INPUT",
+      "type": "text",
+      "id": "description",
+      "name": "description",
+      "placeholder": null,
+      "labelText": "Description",
+      "required": false,
+      "isVisible": false,
+      "value": ""
+    },
+    {
+      "tag": "INPUT",
+      "type": "hidden",
+      "id": "showSaveBtnStp1",
+      "name": null,
+      "placeholder": null,
+      "labelText": "Review and Submit",
+      "required": false,
+      "isVisible": false,
+      "value": "false"
+    },
+    {
+      "tag": "INPUT",
+      "type": "hidden",
+      "id": null,
+      "name": "esignaturePageType",
+      "placeholder": null,
+      "labelText": "Review and Submit",
+      "required": false,
+      "isVisible": false,
+      "value": "ESIGE_V2"
+    },
+    {
+      "tag": "INPUT",
+      "type": "hidden",
+      "id": null,
+      "name": "esignaturePageVersion",
+      "placeholder": null,
+      "labelText": "Review and Submit",
+      "required": false,
+      "isVisible": false,
+      "value": "0"
+    },
+    {
+      "tag": "INPUT",
+      "type": "hidden",
+      "id": null,
+      "name": "embeddedPageStepTitle",
+      "placeholder": null,
+      "labelText": "Review and Submit",
+      "required": false,
+      "isVisible": false,
+      "value": "Review and Submit"
+    },
+    {
+      "tag": "INPUT",
+      "type": "hidden",
+      "id": null,
+      "name": "esignatureEmbeddedFromIncluded",
+      "placeholder": null,
+      "labelText": "Review and Submit",
+      "required": false,
+      "isVisible": false,
+      "value": "true"
+    },
+    {
+      "tag": "INPUT",
+      "type": "text",
+      "id": "candESignature",
+      "name": "candESignature",
+      "placeholder": null,
+      "labelText": "Candidate eSignature",
+      "required": true,
+      "isVisible": false,
+      "value": ""
+    },
+    {
+      "tag": "INPUT",
+      "type": "text",
+      "id": "candEsignatureDate",
+      "name": "candEsignatureDate",
+      "placeholder": "M/D/YY",
+      "labelText": "Candidate eSignature Date",
+      "required": true,
+      "isVisible": false,
+      "value": ""
+    },
+    {
+      "tag": "BUTTON",
+      "type": "button",
+      "id": null,
+      "name": null,
+      "placeholder": null,
+      "labelText": "",
+      "required": false,
+      "isVisible": false,
+      "value": ""
+    },
+    {
+      "tag": "SELECT",
+      "type": "select-one",
+      "id": null,
+      "name": null,
+      "placeholder": null,
+      "labelText": "",
+      "required": false,
+      "options": [
+        {
+          "text": "Jan",
+          "value": "0"
+        },
+        {
+          "text": "Feb",
+          "value": "1"
+        },
+        {
+          "text": "Mar",
+          "value": "2"
+        },
+        {
+          "text": "Apr",
+          "value": "3"
+        },
+        {
+          "text": "May",
+          "value": "4"
+        },
+        {
+          "text": "Jun",
+          "value": "5"
+        },
+        {
+          "text": "Jul",
+          "value": "6"
+        },
+        {
+          "text": "Aug",
+          "value": "7"
+        },
+        {
+          "text": "Sep",
+          "value": "8"
+        },
+        {
+          "text": "Oct",
+          "value": "9"
+        },
+        {
+          "text": "Nov",
+          "value": "10"
+        },
+        {
+          "text": "Dec",
+          "value": "11"
+        }
+      ],
+      "isVisible": false,
+      "value": "8"
+    },
+    {
+      "tag": "SELECT",
+      "type": "select-one",
+      "id": null,
+      "name": null,
+      "placeholder": null,
+      "labelText": "",
+      "required": false,
+      "options": [
+        {
+          "text": "1931",
+          "value": "1931"
+        },
+        {
+          "text": "1932",
+          "value": "1932"
+        },
+        {
+          "text": "1933",
+          "value": "1933"
+        },
+        {
+          "text": "1934",
+          "value": "1934"
+        },
+        {
+          "text": "1935",
+          "value": "1935"
+        },
+        {
+          "text": "1936",
+          "value": "1936"
+        },
+        {
+          "text": "1937",
+          "value": "1937"
+        },
+        {
+          "text": "1938",
+          "value": "1938"
+        },
+        {
+          "text": "1939",
+          "value": "1939"
+        },
+        {
+          "text": "1940",
+          "value": "1940"
+        },
+        {
+          "text": "1941",
+          "value": "1941"
+        },
+        {
+          "text": "1942",
+          "value": "1942"
+        },
+        {
+          "text": "1943",
+          "value": "1943"
+        },
+        {
+          "text": "1944",
+          "value": "1944"
+        },
+        {
+          "text": "1945",
+          "value": "1945"
+        },
+        {
+          "text": "1946",
+          "value": "1946"
+        },
+        {
+          "text": "1947",
+          "value": "1947"
+        },
+        {
+          "text": "1948",
+          "value": "1948"
+        },
+        {
+          "text": "1949",
+          "value": "1949"
+        },
+        {
+          "text": "1950",
+          "value": "1950"
+        }
+      ],
+      "isVisible": false,
+      "value": "2026"
+    },
+    {
+      "tag": "BUTTON",
+      "type": "button",
+      "id": null,
+      "name": null,
+      "placeholder": null,
+      "labelText": "",
+      "required": false,
+      "isVisible": false,
+      "value": ""
+    },
+    {
+      "tag": "BUTTON",
+      "type": "button",
+      "id": null,
+      "name": null,
+      "placeholder": null,
+      "labelText": "",
+      "required": false,
+      "isVisible": false,
+      "value": ""
+    },
+    {
+      "tag": "BUTTON",
+      "type": "submit",
+      "id": null,
+      "name": null,
+      "placeholder": null,
+      "labelText": "",
+      "required": false,
+      "isVisible": false,
+      "value": ""
+    },
+    {
+      "tag": "INPUT",
+      "type": "hidden",
+      "id": null,
+      "name": "_csrf",
+      "placeholder": null,
+      "labelText": "Get Started",
+      "required": false,
+      "isVisible": false,
+      "value": "v1:;1790256310912:;93Lls0IvkDVZknn1jI0bwqQWQP9sFhd3H+xkPcFfbHo="
+    }
+  ]
+}

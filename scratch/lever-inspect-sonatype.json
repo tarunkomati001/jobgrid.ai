@@ -1,0 +1,839 @@
+{
+  "forms": [],
+  "inputs": [
+    {
+      "tagName": "input",
+      "type": "file",
+      "name": "resume",
+      "id": "resume-upload-input",
+      "placeholder": "",
+      "required": false,
+      "label": "Resume/CV ✱ATTACH RESUME/CVCouldn't auto-read resume.Analyzing resume...Success!",
+      "className": "application-file-input invisible-resume-upload"
+    },
+    {
+      "tagName": "input",
+      "type": "text",
+      "name": "name",
+      "id": "",
+      "placeholder": "",
+      "required": true,
+      "label": "Full name✱",
+      "className": ""
+    },
+    {
+      "tagName": "input",
+      "type": "checkbox",
+      "name": "pronouns",
+      "id": "",
+      "placeholder": "",
+      "required": false,
+      "label": "He/him",
+      "className": "standardPronounsOption"
+    },
+    {
+      "tagName": "input",
+      "type": "checkbox",
+      "name": "pronouns",
+      "id": "",
+      "placeholder": "",
+      "required": false,
+      "label": "She/her",
+      "className": "standardPronounsOption"
+    },
+    {
+      "tagName": "input",
+      "type": "checkbox",
+      "name": "pronouns",
+      "id": "",
+      "placeholder": "",
+      "required": false,
+      "label": "They/them",
+      "className": "standardPronounsOption"
+    },
+    {
+      "tagName": "input",
+      "type": "checkbox",
+      "name": "pronouns",
+      "id": "",
+      "placeholder": "",
+      "required": false,
+      "label": "Xe/xem",
+      "className": "standardPronounsOption"
+    },
+    {
+      "tagName": "input",
+      "type": "checkbox",
+      "name": "pronouns",
+      "id": "",
+      "placeholder": "",
+      "required": false,
+      "label": "Ze/hir",
+      "className": "standardPronounsOption"
+    },
+    {
+      "tagName": "input",
+      "type": "checkbox",
+      "name": "pronouns",
+      "id": "",
+      "placeholder": "",
+      "required": false,
+      "label": "Ey/em",
+      "className": "standardPronounsOption"
+    },
+    {
+      "tagName": "input",
+      "type": "checkbox",
+      "name": "pronouns",
+      "id": "",
+      "placeholder": "",
+      "required": false,
+      "label": "Hir/hir",
+      "className": "standardPronounsOption"
+    },
+    {
+      "tagName": "input",
+      "type": "checkbox",
+      "name": "pronouns",
+      "id": "",
+      "placeholder": "",
+      "required": false,
+      "label": "Fae/faer",
+      "className": "standardPronounsOption"
+    },
+    {
+      "tagName": "input",
+      "type": "checkbox",
+      "name": "pronouns",
+      "id": "",
+      "placeholder": "",
+      "required": false,
+      "label": "Hu/hu",
+      "className": "standardPronounsOption"
+    },
+    {
+      "tagName": "input",
+      "type": "checkbox",
+      "name": "pronouns",
+      "id": "useNameOnlyPronounsOption",
+      "placeholder": "",
+      "required": false,
+      "label": "Use name only",
+      "className": ""
+    },
+    {
+      "tagName": "input",
+      "type": "checkbox",
+      "name": "",
+      "id": "customPronounsOption",
+      "placeholder": "",
+      "required": false,
+      "label": "Custom",
+      "className": ""
+    },
+    {
+      "tagName": "input",
+      "type": "text",
+      "name": "pronouns",
+      "id": "customPronounsTextField",
+      "placeholder": "Write here...",
+      "required": false,
+      "label": "",
+      "className": "card-field-input"
+    },
+    {
+      "tagName": "input",
+      "type": "email",
+      "name": "email",
+      "id": "",
+      "placeholder": "",
+      "required": true,
+      "label": "Email✱",
+      "className": ""
+    },
+    {
+      "tagName": "input",
+      "type": "text",
+      "name": "phone",
+      "id": "",
+      "placeholder": "",
+      "required": true,
+      "label": "Phone ✱",
+      "className": ""
+    },
+    {
+      "tagName": "input",
+      "type": "text",
+      "name": "location",
+      "id": "location-input",
+      "placeholder": "",
+      "required": true,
+      "label": "Current location ✱No location found. Try entering a different locationLoading",
+      "className": "location-input"
+    },
+    {
+      "tagName": "input",
+      "type": "hidden",
+      "name": "selectedLocation",
+      "id": "selected-location",
+      "placeholder": "",
+      "required": false,
+      "label": "Current location ✱No location found. Try entering a different locationLoading",
+      "className": ""
+    },
+    {
+      "tagName": "input",
+      "type": "text",
+      "name": "org",
+      "id": "",
+      "placeholder": "",
+      "required": true,
+      "label": "Current company ✱",
+      "className": ""
+    },
+    {
+      "tagName": "input",
+      "type": "text",
+      "name": "urls[LinkedIn]",
+      "id": "",
+      "placeholder": "",
+      "required": false,
+      "label": "LinkedIn URL",
+      "className": ""
+    },
+    {
+      "tagName": "input",
+      "type": "text",
+      "name": "urls[GitHub]",
+      "id": "",
+      "placeholder": "",
+      "required": false,
+      "label": "GitHub URL",
+      "className": ""
+    },
+    {
+      "tagName": "input",
+      "type": "text",
+      "name": "urls[Stack Overflow]",
+      "id": "",
+      "placeholder": "",
+      "required": false,
+      "label": "Other website",
+      "className": ""
+    },
+    {
+      "tagName": "input",
+      "type": "text",
+      "name": "urls[Portfolio]",
+      "id": "",
+      "placeholder": "",
+      "required": false,
+      "label": "Portfolio URL",
+      "className": ""
+    },
+    {
+      "tagName": "input",
+      "type": "text",
+      "name": "urls[Twitter]",
+      "id": "",
+      "placeholder": "",
+      "required": false,
+      "label": "Twitter URL",
+      "className": ""
+    },
+    {
+      "tagName": "input",
+      "type": "hidden",
+      "name": "cards[08fa6189-2207-4efc-a794-b68c11eca82c][baseTemplate]",
+      "id": "",
+      "placeholder": "",
+      "required": false,
+      "label": "",
+      "className": ""
+    },
+    {
+      "tagName": "input",
+      "type": "text",
+      "name": "cards[08fa6189-2207-4efc-a794-b68c11eca82c][field0]",
+      "id": "",
+      "placeholder": "Type your response",
+      "required": false,
+      "label": "",
+      "className": "card-field-input"
+    },
+    {
+      "tagName": "input",
+      "type": "hidden",
+      "name": "cards[f7ed098d-8691-4b39-a34c-75adec66c0a2][baseTemplate]",
+      "id": "",
+      "placeholder": "",
+      "required": false,
+      "label": "",
+      "className": ""
+    },
+    {
+      "tagName": "input",
+      "type": "radio",
+      "name": "cards[f7ed098d-8691-4b39-a34c-75adec66c0a2][field0]",
+      "id": "",
+      "placeholder": "",
+      "required": true,
+      "label": "Yes",
+      "className": ""
+    },
+    {
+      "tagName": "input",
+      "type": "radio",
+      "name": "cards[f7ed098d-8691-4b39-a34c-75adec66c0a2][field0]",
+      "id": "",
+      "placeholder": "",
+      "required": true,
+      "label": "No",
+      "className": ""
+    },
+    {
+      "tagName": "input",
+      "type": "hidden",
+      "name": "cards[c2368925-a869-4fa2-ab92-bad10ebc459c][baseTemplate]",
+      "id": "",
+      "placeholder": "",
+      "required": false,
+      "label": "",
+      "className": ""
+    },
+    {
+      "tagName": "textarea",
+      "type": "textarea",
+      "name": "cards[c2368925-a869-4fa2-ab92-bad10ebc459c][field0]",
+      "id": "",
+      "placeholder": "",
+      "required": true,
+      "label": "",
+      "className": "card-field-input"
+    },
+    {
+      "tagName": "input",
+      "type": "hidden",
+      "name": "cards[73a999d0-4b50-4a33-bc21-5ea29afa5bb5][baseTemplate]",
+      "id": "",
+      "placeholder": "",
+      "required": false,
+      "label": "",
+      "className": ""
+    },
+    {
+      "tagName": "textarea",
+      "type": "textarea",
+      "name": "cards[73a999d0-4b50-4a33-bc21-5ea29afa5bb5][field0]",
+      "id": "",
+      "placeholder": "",
+      "required": true,
+      "label": "",
+      "className": "card-field-input"
+    },
+    {
+      "tagName": "input",
+      "type": "hidden",
+      "name": "cards[936cc66f-6ba3-408c-873e-ad61621ffcf8][baseTemplate]",
+      "id": "",
+      "placeholder": "",
+      "required": false,
+      "label": "",
+      "className": ""
+    },
+    {
+      "tagName": "textarea",
+      "type": "textarea",
+      "name": "cards[936cc66f-6ba3-408c-873e-ad61621ffcf8][field0]",
+      "id": "",
+      "placeholder": "",
+      "required": true,
+      "label": "",
+      "className": "card-field-input"
+    },
+    {
+      "tagName": "input",
+      "type": "hidden",
+      "name": "accountId",
+      "id": "",
+      "placeholder": "",
+      "required": false,
+      "label": "",
+      "className": ""
+    },
+    {
+      "tagName": "input",
+      "type": "hidden",
+      "name": "linkedInData",
+      "id": "",
+      "placeholder": "",
+      "required": false,
+      "label": "",
+      "className": ""
+    },
+    {
+      "tagName": "input",
+      "type": "hidden",
+      "name": "origin",
+      "id": "",
+      "placeholder": "",
+      "required": false,
+      "label": "",
+      "className": ""
+    },
+    {
+      "tagName": "input",
+      "type": "hidden",
+      "name": "referer",
+      "id": "",
+      "placeholder": "",
+      "required": false,
+      "label": "",
+      "className": ""
+    },
+    {
+      "tagName": "input",
+      "type": "hidden",
+      "name": "timezone",
+      "id": "applicant-timezone",
+      "placeholder": "",
+      "required": false,
+      "label": "",
+      "className": ""
+    },
+    {
+      "tagName": "input",
+      "type": "hidden",
+      "name": "socialReferralKey",
+      "id": "",
+      "placeholder": "",
+      "required": false,
+      "label": "",
+      "className": ""
+    },
+    {
+      "tagName": "input",
+      "type": "hidden",
+      "name": "socialSource",
+      "id": "",
+      "placeholder": "",
+      "required": false,
+      "label": "",
+      "className": ""
+    },
+    {
+      "tagName": "input",
+      "type": "hidden",
+      "name": "resumeStorageId",
+      "id": "",
+      "placeholder": "",
+      "required": false,
+      "label": "",
+      "className": ""
+    },
+    {
+      "tagName": "input",
+      "type": "hidden",
+      "name": "h-captcha-response",
+      "id": "hcaptchaResponseInput",
+      "placeholder": "",
+      "required": false,
+      "label": "",
+      "className": ""
+    },
+    {
+      "tagName": "input",
+      "type": "hidden",
+      "name": "source",
+      "id": "",
+      "placeholder": "",
+      "required": false,
+      "label": "",
+      "className": ""
+    }
+  ],
+  "customQuestions": [
+    {
+      "label": "LinkedIn profile",
+      "required": false,
+      "inputs": [],
+      "customDropdowns": [],
+      "htmlSnippet": "<li class=\"application-question awli-application-row\"><div class=\"application-label\">LinkedIn profile</div><div class=\"application-field\"><div class=\"awli-button-container\"><button type=\"button\" class=\"template-btn-utility awli-button awli-v3 state-ready button-masked\"><div class=\"loading\"><svg clas"
+    },
+    {
+      "label": "Resume/CV ✱ATTACH RESUME/CVCouldn't auto-read resume.Analyzing resume...Success!",
+      "required": true,
+      "inputs": [
+        {
+          "type": "file",
+          "name": "resume",
+          "id": "resume-upload-input",
+          "value": "",
+          "options": []
+        }
+      ],
+      "customDropdowns": [],
+      "htmlSnippet": "<li class=\"application-question resume\"><label><div class=\"application-label\">Resume/CV <span class=\"required\">✱</span></div><div class=\"application-field\"><a href=\"#\" class=\"postings-btn template-btn-utility visible-resume-upload\"><svg class=\" icon icon-paperclip\" width=\"16\" height=\"16\" viewBox=\"0 "
+    },
+    {
+      "label": "Full name✱",
+      "required": true,
+      "inputs": [
+        {
+          "type": "text",
+          "name": "name",
+          "id": "",
+          "value": "",
+          "options": []
+        }
+      ],
+      "customDropdowns": [],
+      "htmlSnippet": "<li class=\"application-question\"><label><div class=\"application-label\">Full name<span class=\"required\">✱</span></div><div class=\"application-field\"><input type=\"text\" data-qa=\"name-input\" name=\"name\" required=\"\"></div></label></li>"
+    },
+    {
+      "label": "Pronouns",
+      "required": false,
+      "inputs": [
+        {
+          "type": "checkbox",
+          "name": "pronouns",
+          "id": "",
+          "value": "He/him",
+          "options": []
+        },
+        {
+          "type": "checkbox",
+          "name": "pronouns",
+          "id": "",
+          "value": "She/her",
+          "options": []
+        },
+        {
+          "type": "checkbox",
+          "name": "pronouns",
+          "id": "",
+          "value": "They/them",
+          "options": []
+        },
+        {
+          "type": "checkbox",
+          "name": "pronouns",
+          "id": "",
+          "value": "Xe/xem",
+          "options": []
+        },
+        {
+          "type": "checkbox",
+          "name": "pronouns",
+          "id": "",
+          "value": "Ze/hir",
+          "options": []
+        },
+        {
+          "type": "checkbox",
+          "name": "pronouns",
+          "id": "",
+          "value": "Ey/em",
+          "options": []
+        },
+        {
+          "type": "checkbox",
+          "name": "pronouns",
+          "id": "",
+          "value": "Hir/hir",
+          "options": []
+        },
+        {
+          "type": "checkbox",
+          "name": "pronouns",
+          "id": "",
+          "value": "Fae/faer",
+          "options": []
+        },
+        {
+          "type": "checkbox",
+          "name": "pronouns",
+          "id": "",
+          "value": "Hu/hu",
+          "options": []
+        },
+        {
+          "type": "checkbox",
+          "name": "pronouns",
+          "id": "useNameOnlyPronounsOption",
+          "value": "Use name only",
+          "options": []
+        },
+        {
+          "type": "checkbox",
+          "name": "",
+          "id": "customPronounsOption",
+          "value": "Custom",
+          "options": []
+        },
+        {
+          "type": "text",
+          "name": "pronouns",
+          "id": "customPronounsTextField",
+          "value": "",
+          "options": []
+        }
+      ],
+      "customDropdowns": [
+        {
+          "tag": "DIV",
+          "class": "application-label multiple-select",
+          "role": null
+        }
+      ],
+      "htmlSnippet": "<li class=\"application-question\"><div class=\"application-label multiple-select\">Pronouns</div><div class=\"application-field\"><ul data-qa=\"candidatePronounsCheckboxes\" id=\"candidatePronounsCheckboxes\"><div class=\"column-wrapper\"><div class=\"table-row\"><li class=\"column\"><label><input type=\"checkbox\" "
+    },
+    {
+      "label": "Email✱",
+      "required": true,
+      "inputs": [
+        {
+          "type": "email",
+          "name": "email",
+          "id": "",
+          "value": "",
+          "options": []
+        }
+      ],
+      "customDropdowns": [],
+      "htmlSnippet": "<li class=\"application-question\"><label><div class=\"application-label\">Email<span class=\"required\">✱</span></div><div class=\"application-field\"><input name=\"email\" data-qa=\"email-input\" type=\"email\" pattern=\"[a-zA-Z0-9.#$%&amp;'*+\\/=?^_`{|}~][a-zA-Z0-9.!#$%&amp;'*+\\/=?^_`{|}~-]*@[a-zA-Z0-9](?:[a-zA-"
+    },
+    {
+      "label": "Phone ✱",
+      "required": true,
+      "inputs": [
+        {
+          "type": "text",
+          "name": "phone",
+          "id": "",
+          "value": "",
+          "options": []
+        }
+      ],
+      "customDropdowns": [],
+      "htmlSnippet": "<li class=\"application-question\"><label><div class=\"application-label\">Phone <span class=\"required\">✱</span></div><div class=\"application-field\"><input type=\"text\" data-qa=\"phone-input\" name=\"phone\" required=\"\"></div></label></li>"
+    },
+    {
+      "label": "Current location ✱No location found. Try entering a different locationLoading",
+      "required": true,
+      "inputs": [
+        {
+          "type": "text",
+          "name": "location",
+          "id": "location-input",
+          "value": "",
+          "options": []
+        },
+        {
+          "type": "hidden",
+          "name": "selectedLocation",
+          "id": "selected-location",
+          "value": "",
+          "options": []
+        }
+      ],
+      "customDropdowns": [
+        {
+          "tag": "DIV",
+          "class": "momentum-body flex flex-column items-start width-full height-auto bg-gray-800 text-gray-200 rounded dropdown-container",
+          "role": null
+        },
+        {
+          "tag": "DIV",
+          "class": "dropdown-results width-full cursor-pointer",
+          "role": null
+        },
+        {
+          "tag": "DIV",
+          "class": "dropdown-no-results width-full break-word py1 px2 pointer-events-none",
+          "role": null
+        },
+        {
+          "tag": "DIV",
+          "class": "dropdown-loading-results width-full break-word height-full py1 px2 pointer-events-none",
+          "role": null
+        }
+      ],
+      "htmlSnippet": "<li class=\"application-question\" data-qa=\"structured-contact-location-question\"><label><div class=\"application-label\">Current location <span class=\"required\" data-qa=\"SCL-question-required-asterisk\">✱</span></div><div class=\"application-field\"><input class=\"location-input\" data-qa=\"location-input\" i"
+    },
+    {
+      "label": "Current company ✱",
+      "required": true,
+      "inputs": [
+        {
+          "type": "text",
+          "name": "org",
+          "id": "",
+          "value": "",
+          "options": []
+        }
+      ],
+      "customDropdowns": [],
+      "htmlSnippet": "<li class=\"application-question\"><label><div class=\"application-label\">Current company <span class=\"required\">✱</span></div><div class=\"application-field\"><input type=\"text\" data-qa=\"org-input\" name=\"org\" required=\"\"></div></label></li>"
+    },
+    {
+      "label": "LinkedIn URL",
+      "required": false,
+      "inputs": [
+        {
+          "type": "text",
+          "name": "urls[LinkedIn]",
+          "id": "",
+          "value": "",
+          "options": []
+        }
+      ],
+      "customDropdowns": [],
+      "htmlSnippet": "<li class=\"application-question\"><label><div class=\"application-label\">LinkedIn URL</div><div class=\"application-field\"><input type=\"text\" name=\"urls[LinkedIn]\"></div></label></li>"
+    },
+    {
+      "label": "GitHub URL",
+      "required": false,
+      "inputs": [
+        {
+          "type": "text",
+          "name": "urls[GitHub]",
+          "id": "",
+          "value": "",
+          "options": []
+        }
+      ],
+      "customDropdowns": [],
+      "htmlSnippet": "<li class=\"application-question\"><label><div class=\"application-label\">GitHub URL</div><div class=\"application-field\"><input type=\"text\" name=\"urls[GitHub]\"></div></label></li>"
+    },
+    {
+      "label": "Other website",
+      "required": false,
+      "inputs": [
+        {
+          "type": "text",
+          "name": "urls[Stack Overflow]",
+          "id": "",
+          "value": "",
+          "options": []
+        }
+      ],
+      "customDropdowns": [],
+      "htmlSnippet": "<li class=\"application-question\"><label><div class=\"application-label\">Other website</div><div class=\"application-field\"><input type=\"text\" name=\"urls[Stack Overflow]\"></div></label></li>"
+    },
+    {
+      "label": "Portfolio URL",
+      "required": false,
+      "inputs": [
+        {
+          "type": "text",
+          "name": "urls[Portfolio]",
+          "id": "",
+          "value": "",
+          "options": []
+        }
+      ],
+      "customDropdowns": [],
+      "htmlSnippet": "<li class=\"application-question\"><label><div class=\"application-label\">Portfolio URL</div><div class=\"application-field\"><input type=\"text\" name=\"urls[Portfolio]\"></div></label></li>"
+    },
+    {
+      "label": "Twitter URL",
+      "required": false,
+      "inputs": [
+        {
+          "type": "text",
+          "name": "urls[Twitter]",
+          "id": "",
+          "value": "",
+          "options": []
+        }
+      ],
+      "customDropdowns": [],
+      "htmlSnippet": "<li class=\"application-question\"><label><div class=\"application-label\">Twitter URL</div><div class=\"application-field\"><input type=\"text\" name=\"urls[Twitter]\"></div></label></li>"
+    },
+    {
+      "label": "If you were referred by a current employee, please provide their full name.",
+      "required": false,
+      "inputs": [
+        {
+          "type": "text",
+          "name": "cards[08fa6189-2207-4efc-a794-b68c11eca82c][field0]",
+          "id": "",
+          "value": "",
+          "options": []
+        }
+      ],
+      "customDropdowns": [],
+      "htmlSnippet": "<li class=\"application-question custom-question\"><div><div class=\"application-label full-width text\"><div class=\"text\">If you were referred by a current employee, please provide their full name.</div></div><div class=\"application-field full-width\"><input class=\"card-field-input\" type=\"text\" placehol"
+    },
+    {
+      "label": "Are you currently residing in Canada AND are legally authorized to work for any employer without sponsorship?✱",
+      "required": true,
+      "inputs": [
+        {
+          "type": "radio",
+          "name": "cards[f7ed098d-8691-4b39-a34c-75adec66c0a2][field0]",
+          "id": "",
+          "value": "Yes",
+          "options": []
+        },
+        {
+          "type": "radio",
+          "name": "cards[f7ed098d-8691-4b39-a34c-75adec66c0a2][field0]",
+          "id": "",
+          "value": "No",
+          "options": []
+        }
+      ],
+      "customDropdowns": [],
+      "htmlSnippet": "<li class=\"application-question custom-question\"><div><div class=\"application-label full-width multiple-choice\"><div class=\"text\">Are you currently residing in Canada AND are legally authorized to work for any employer without sponsorship?<span class=\"required\">✱</span></div></div><div class=\"applic"
+    },
+    {
+      "label": "What is the salary range you are targeting for this role?✱",
+      "required": true,
+      "inputs": [
+        {
+          "type": "textarea",
+          "name": "cards[c2368925-a869-4fa2-ab92-bad10ebc459c][field0]",
+          "id": "",
+          "value": "",
+          "options": []
+        }
+      ],
+      "customDropdowns": [],
+      "htmlSnippet": "<li class=\"application-question custom-question\"><div><div class=\"application-label full-width textarea\"><div class=\"text\">What is the salary range you are targeting for this role?<span class=\"required\">✱</span></div></div><div class=\"application-field full-width required-field\"><textarea class=\"car"
+    },
+    {
+      "label": "Please briefly describe your experience with AWS and services✱",
+      "required": true,
+      "inputs": [
+        {
+          "type": "textarea",
+          "name": "cards[73a999d0-4b50-4a33-bc21-5ea29afa5bb5][field0]",
+          "id": "",
+          "value": "",
+          "options": []
+        }
+      ],
+      "customDropdowns": [],
+      "htmlSnippet": "<li class=\"application-question custom-question\"><div><div class=\"application-label full-width textarea\"><div class=\"text\">Please briefly describe your experience with AWS and services<span class=\"required\">✱</span></div></div><div class=\"application-field full-width required-field\"><textarea class="
+    },
+    {
+      "label": "Please describe why you consider yourself at staff level✱",
+      "required": true,
+      "inputs": [
+        {
+          "type": "textarea",
+          "name": "cards[936cc66f-6ba3-408c-873e-ad61621ffcf8][field0]",
+          "id": "",
+          "value": "",
+          "options": []
+        }
+      ],
+      "customDropdowns": [],
+      "htmlSnippet": "<li class=\"application-question custom-question\"><div><div class=\"application-label full-width textarea\"><div class=\"text\">Please describe why you consider yourself at staff level<span class=\"required\">✱</span></div></div><div class=\"application-field full-width required-field\"><textarea class=\"card"
+    }
+  ],
+  "dropdowns": [],
+  "cards": []
+}
