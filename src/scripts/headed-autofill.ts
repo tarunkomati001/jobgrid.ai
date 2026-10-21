@@ -415,6 +415,8 @@ async function main() {
         ? "LEVER"
         : url.includes("workable.com")
         ? "WORKABLE"
+        : (url.includes("careers.oracle.com") || url.includes("oraclecloud.com") || url.includes("oracle.com"))
+        ? "ORACLE"
         : "GENERIC";
 
       if (jobCheck.rowCount > 0) {
@@ -424,7 +426,7 @@ async function main() {
         await db.query(
           `INSERT INTO jobs (id, url, company, title, description, ats, status)
            VALUES ($1, $2, $3, $4, $5, $6, $7)`,
-          [jobId, url, detectedAtsFallback === "RIPPLING" ? "Rippling" : "Company", "Position", "Queued application", detectedAtsFallback, "EXTRACTED"]
+          [jobId, url, detectedAtsFallback === "RIPPLING" ? "Rippling" : (detectedAtsFallback === "ORACLE" ? "Oracle" : "Company"), "Position", "Queued application", detectedAtsFallback, "EXTRACTED"]
         );
         console.log(`➕ [Database]: Registered new Job record in database (${jobId}): ${url}`);
       }
@@ -451,6 +453,13 @@ async function main() {
       // If Recruitee URL without /c/new, append /c/new to go directly to the application form
       if ((targetUrl.includes("recruitee.com") || targetUrl.includes("/o/")) && !targetUrl.includes("/c/new")) {
         targetUrl = targetUrl.replace(/\/?$/, "/c/new");
+      }
+      // If Oracle careers URL without /apply, convert directly to /apply/email for instant direct loading
+      if (targetUrl.includes("careers.oracle.com")) {
+        const oracleJobMatch = targetUrl.match(/\/job[s]?(?:\/preview)?\/(\d+)/i);
+        if (oracleJobMatch && !targetUrl.includes("/apply")) {
+          targetUrl = `https://careers.oracle.com/en/sites/jobsearch/job/${oracleJobMatch[1]}/apply/email`;
+        }
       }
 
       console.log(`🌐 Navigating to application page: ${targetUrl}...`);

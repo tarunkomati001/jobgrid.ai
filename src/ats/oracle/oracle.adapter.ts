@@ -636,15 +636,20 @@ export class OracleAdapter implements ATSAdapter {
         console.warn(`[OracleAdapter] Phone country code note: ${e.message}`);
       }
 
-      // 2C. Phone Number: Strictly fill into input.phone-row__input
+      // 2C. Phone Number: Strictly fill into input.phone-row__input safely (removing readonly if present)
       try {
         const phoneInput = page.locator("input.phone-row__input, input[type='tel'], input[aria-label='Phone Number']:not([role='combobox']), input[id*='phoneNumber']:not([id*='country-codes']):not([role='combobox'])").first();
         if (await phoneInput.count() > 0 && await phoneInput.isVisible()) {
-          await phoneInput.click();
-          await phoneInput.fill(cleanPhone);
-          await phoneInput.dispatchEvent("input");
-          await phoneInput.dispatchEvent("change");
-          await phoneInput.blur();
+          await page.evaluate((val) => {
+            const el = document.querySelector("input.phone-row__input, input[type='tel']:not([role='combobox']), input[id*='phoneNumber']:not([id*='country-codes']):not([role='combobox'])") as HTMLInputElement;
+            if (el) {
+              el.removeAttribute("readonly");
+              el.value = val;
+              el.dispatchEvent(new Event("input", { bubbles: true }));
+              el.dispatchEvent(new Event("change", { bubbles: true }));
+              el.dispatchEvent(new Event("blur", { bubbles: true }));
+            }
+          }, cleanPhone);
           console.log(`[OracleAdapter] Filled US Phone Number: ${cleanPhone}`);
         } else {
           await fillIfVisible("input.phone-row__input, input[type='tel']:not([role='combobox'])", cleanPhone, "US Phone Number");
@@ -711,6 +716,153 @@ export class OracleAdapter implements ATSAdapter {
         "Results-driven Software Engineer with extensive experience in scalable software development, full-stack architectures, cloud platforms, and distributed systems.",
         "Work Summary"
       );
+
+      // 2F. Section 2 Interactive Creators: Skill, Education, and Experience
+      // 1. Skill
+      try {
+        const hasExistingSkill = await page.evaluate(() => {
+          const tiles = Array.from(document.querySelectorAll(".apply-flow-profile-item-tile, [class*='profile-item']"));
+          return tiles.some(t => (t.textContent || "").toLowerCase().includes("developer") || (t.textContent || "").toLowerCase().includes("skill") || t.closest("[class*='skill'], [id*='skill']"));
+        });
+        const addSkillBtn = page.locator("button:has-text('Add Skill')").first();
+        if (!hasExistingSkill && await addSkillBtn.count() > 0 && await addSkillBtn.isVisible()) {
+          console.log("[OracleAdapter] Adding required Skill item in Section 2...");
+          await addSkillBtn.click();
+          await page.waitForTimeout(800);
+
+          const skillInput = page.locator("input[name='skills'], input[id*='skills']").first();
+          if (await skillInput.count() > 0) {
+            await skillInput.fill("Full Stack AI Developer");
+          }
+          const expInput = page.locator("input[name='yearsOfExperience'], input[id*='yearsOfExperience']").first();
+          if (await expInput.count() > 0) {
+            await expInput.fill("3");
+          }
+          await page.evaluate(() => {
+            const formBlock = document.querySelector("input[name='skills']")?.closest(".form-block, form, div");
+            const btns = Array.from(formBlock ? formBlock.querySelectorAll("button") : document.querySelectorAll("button"));
+            const addBtn = btns.find(b => b.textContent?.trim().toLowerCase() === "add skill" && b.getBoundingClientRect().height > 0);
+            if (addBtn) addBtn.click();
+          });
+          await page.waitForTimeout(1200);
+          console.log("✅ [OracleAdapter] Added Skill item.");
+        }
+      } catch (e: any) {
+        console.warn(`[OracleAdapter] Skill handling note: ${e.message}`);
+      }
+
+      // 2. Education
+      try {
+        const hasExistingEdu = await page.evaluate(() => {
+          const tiles = Array.from(document.querySelectorAll(".apply-flow-profile-item-tile, [class*='profile-item']"));
+          return tiles.some(t => (t.textContent || "").toLowerCase().includes("parul") || (t.textContent || "").toLowerCase().includes("bachelor") || t.closest("[class*='education'], [id*='education']"));
+        });
+        const addEduBtn = page.locator("button:has-text('Add Education')").first();
+        if (!hasExistingEdu && await addEduBtn.count() > 0 && await addEduBtn.isVisible()) {
+          console.log("[OracleAdapter] Adding required Education item in Section 2...");
+          await addEduBtn.click();
+          await page.waitForTimeout(800);
+
+          const degInp = page.locator("input[name='contentItemId'], input[id*='contentItemId']").first();
+          if (await degInp.count() > 0) {
+            await degInp.fill("Bachelor of Technology");
+            await page.waitForTimeout(500);
+            await page.keyboard.press("ArrowDown");
+            await page.keyboard.press("Enter");
+          }
+          const majorInp = page.locator("input[name='major'], input[id*='major']").first();
+          if (await majorInp.count() > 0) {
+            await majorInp.fill("Computer Science");
+          }
+          const schoolInp = page.locator("input[name='educationalEstablishment'], input[id*='educationalEstablishment']").first();
+          if (await schoolInp.count() > 0) {
+            await schoolInp.fill("Parul University");
+            await page.waitForTimeout(500);
+            await page.keyboard.press("ArrowDown");
+            await page.keyboard.press("Enter");
+          }
+          const gpaInp = page.locator("input[name='gpa'], input[id*='gpa']").first();
+          if (await gpaInp.count() > 0) {
+            await gpaInp.fill("3.8");
+          }
+          await page.evaluate(() => {
+            const cb = document.querySelector("input[type='checkbox'][name*='graduated' i]") as HTMLInputElement;
+            if (cb && !cb.checked) {
+              const lbl = cb.id ? document.querySelector(`label[for='${cb.id}']`) : cb.closest("label");
+              if (lbl) (lbl as HTMLElement).click(); else cb.click();
+            }
+            const formBlock = document.querySelector("input[name='major']")?.closest(".form-block, form, div");
+            const btns = Array.from(formBlock ? formBlock.querySelectorAll("button") : document.querySelectorAll("button"));
+            const addBtn = btns.find(b => b.textContent?.trim().toLowerCase() === "add education" && b.getBoundingClientRect().height > 0);
+            if (addBtn) addBtn.click();
+          });
+          await page.waitForTimeout(1200);
+          console.log("✅ [OracleAdapter] Added Education item.");
+        }
+      } catch (e: any) {
+        console.warn(`[OracleAdapter] Education handling note: ${e.message}`);
+      }
+
+      // 3. Experience
+      try {
+        const hasExistingExp = await page.evaluate(() => {
+          const tiles = Array.from(document.querySelectorAll(".apply-flow-profile-item-tile, [class*='profile-item']"));
+          return tiles.some(t => (t.textContent || "").toLowerCase().includes("jobspring") || (t.textContent || "").toLowerCase().includes("nomadic") || t.closest("[class*='experience'], [id*='experience']"));
+        });
+        const addExpBtn = page.locator("button:has-text('Add Experience')").first();
+        if (!hasExistingExp && await addExpBtn.count() > 0 && await addExpBtn.isVisible()) {
+          console.log("[OracleAdapter] Adding required Experience item in Section 2...");
+          await addExpBtn.click();
+          await page.waitForTimeout(800);
+
+          const empInp = page.locator("input[name='employerName'], input[id*='employerName']").first();
+          if (await empInp.count() > 0) {
+            await empInp.fill("Jobspring");
+          }
+          const titleInp = page.locator("input[name='jobTitle'], input[id*='jobTitle']").first();
+          if (await titleInp.count() > 0) {
+            await titleInp.fill("Full Stack AI Developer");
+          }
+          const smInp = page.locator("input[id*='month-startDate']").first();
+          if (await smInp.count() > 0) {
+            await smInp.fill("January");
+            await page.waitForTimeout(300);
+            await page.keyboard.press("ArrowDown");
+            await page.keyboard.press("Enter");
+          }
+          const syInp = page.locator("input[id*='year-startDate']").first();
+          if (await syInp.count() > 0) {
+            await syInp.fill("2024");
+            await page.waitForTimeout(300);
+            await page.keyboard.press("ArrowDown");
+            await page.keyboard.press("Enter");
+          }
+          const emInp = page.locator("input[id*='month-endDate']").first();
+          if (await emInp.count() > 0) {
+            await emInp.fill("January");
+            await page.waitForTimeout(300);
+            await page.keyboard.press("ArrowDown");
+            await page.keyboard.press("Enter");
+          }
+          const eyInp = page.locator("input[id*='year-endDate']").first();
+          if (await eyInp.count() > 0) {
+            await eyInp.fill("2026");
+            await page.waitForTimeout(300);
+            await page.keyboard.press("ArrowDown");
+            await page.keyboard.press("Enter");
+          }
+          await page.evaluate(() => {
+            const formBlock = document.querySelector("input[name='employerName']")?.closest(".form-block, form, div");
+            const btns = Array.from(formBlock ? formBlock.querySelectorAll("button") : document.querySelectorAll("button"));
+            const addBtn = btns.find(b => b.textContent?.trim().toLowerCase() === "add experience" && b.getBoundingClientRect().height > 0);
+            if (addBtn) addBtn.click();
+          });
+          await page.waitForTimeout(1200);
+          console.log("✅ [OracleAdapter] Added Experience item.");
+        }
+      } catch (e: any) {
+        console.warn(`[OracleAdapter] Experience handling note: ${e.message}`);
+      }
 
       // 3. Earliest Available Date: Month, Day, Year
       try {
@@ -839,50 +991,66 @@ export class OracleAdapter implements ATSAdapter {
             }
           }
 
-          // Radio input fallback
+          // Radio input fallback (e.g. sponsorship, legal authorization)
           const inputRadios = Array.from(document.querySelectorAll("input[type='radio']")) as HTMLInputElement[];
           for (const inp of inputRadios) {
-            let p: Element | null = inp.closest(".input-row, .form-block, fieldset, [class*='question']");
-            if (!p) {
-              let curr = inp.parentElement;
-              while (curr && curr !== document.body) {
-                if (curr.textContent && curr.textContent.replace(/\s+/g, " ").trim().length > 15) {
-                  p = curr;
-                  break;
-                }
-                curr = curr.parentElement;
+            let qText = "";
+            let curr: Element | null = inp;
+            while (curr && curr !== document.body) {
+              const t = (curr.textContent || "").toLowerCase();
+              if (
+                t.includes("sponsorship") ||
+                t.includes("ex-oracle") ||
+                t.includes("government") ||
+                t.includes("authorized") ||
+                t.includes("relocate") ||
+                t.includes("18 years")
+              ) {
+                qText = t;
+                break;
               }
+              curr = curr.parentElement;
             }
-            if (!p) continue;
-            const text = (p.textContent || "").toLowerCase();
+
+            if (!qText) {
+              const p = inp.closest(".input-row, .form-block, fieldset, [class*='question'], div");
+              qText = (p?.textContent || "").toLowerCase();
+            }
+
             let wantYes = true;
             if (
-              text.includes("ex-oracle") ||
-              text.includes("former employee") ||
-              text.includes("left oracle") ||
-              text.includes("government") ||
-              text.includes("public official") ||
-              text.includes("sponsorship") ||
-              text.includes("require sponsorship") ||
-              text.includes("visa sponsorship") ||
-              text.includes("felony") ||
-              text.includes("convict") ||
-              text.includes("disciplinary") ||
-              text.includes("terminated")
+              qText.includes("sponsorship") ||
+              qText.includes("require sponsorship") ||
+              qText.includes("visa sponsorship") ||
+              qText.includes("ex-oracle") ||
+              qText.includes("former employee") ||
+              qText.includes("government") ||
+              qText.includes("felony") ||
+              qText.includes("convict")
             ) {
               wantYes = false;
             } else if (
-              text.includes("authorized") ||
-              text.includes("legally authorized") ||
-              text.includes("eligible")
+              qText.includes("authorized") ||
+              qText.includes("legally authorized") ||
+              qText.includes("eligible") ||
+              qText.includes("18 years")
             ) {
               wantYes = true;
             }
+
             const targetText = wantYes ? "yes" : "no";
-            const l = p.querySelector(`label[for='${inp.id}']`)?.textContent?.toLowerCase() || "";
-            if (l.includes(targetText) && !inp.checked) {
-              const lbl = p.querySelector(`label[for='${inp.id}']`) as HTMLElement;
-              if (lbl) lbl.click(); else inp.click();
+            const radioLabel = (inp.id ? document.querySelector(`label[for='${inp.id}']`)?.textContent : "") ||
+                               inp.closest("label")?.textContent ||
+                               inp.parentElement?.textContent || "";
+            const isMatch = radioLabel.trim().toLowerCase() === targetText || 
+                            radioLabel.trim().toLowerCase().startsWith(targetText) ||
+                            inp.value?.toLowerCase() === targetText;
+
+            if (isMatch && !inp.checked) {
+              const lbl = (inp.id ? document.querySelector(`label[for='${inp.id}']`) : null) as HTMLElement || inp;
+              lbl.click();
+              inp.checked = true;
+              inp.dispatchEvent(new Event("change", { bubbles: true }));
               count++;
             }
           }
