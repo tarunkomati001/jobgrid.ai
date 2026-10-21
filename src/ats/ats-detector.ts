@@ -1,6 +1,6 @@
 import { Page } from "playwright";
 
-export type ATSType = "ASHBY" | "GREENHOUSE" | "LEVER" | "WORKDAY" | "SMARTRECRUITERS" | "WORKABLE" | "TALEO" | "ORACLE" | "UNKNOWN";
+export type ATSType = "ASHBY" | "GREENHOUSE" | "LEVER" | "WORKDAY" | "SMARTRECRUITERS" | "WORKABLE" | "TALEO" | "ORACLE" | "RECRUITEE" | "RIPPLING" | "UNKNOWN";
 
 /**
  * Detects the ATS from a URL string (fast initial check).
@@ -9,6 +9,23 @@ export function detectATSByUrl(urlStr: string): ATSType {
   try {
     const hostname = new URL(urlStr).hostname.toLowerCase();
     
+    if (hostname.includes("rippling.com") || urlStr.includes("ats.rippling.com")) {
+      return "RIPPLING";
+    }
+    if (hostname.includes("recruitee.com")) {
+      return "RECRUITEE";
+    }
+    // Also detect Recruitee career portals with custom domains or /o/... structure
+    if (
+      urlStr.includes("/o/") &&
+      (urlStr.includes("/c/new") ||
+        hostname.includes("emergentsoftware.net") ||
+        hostname.includes("techwolf.ai") ||
+        hostname.startsWith("careers.") ||
+        hostname.startsWith("jobs."))
+    ) {
+      return "RECRUITEE";
+    }
     if (hostname.includes("ashbyhq.com")) {
       return "ASHBY";
     }
@@ -76,6 +93,20 @@ export async function detectATSByPage(page: Page): Promise<ATSType> {
   }
   if (lowerContent.includes("careers.oracle.com") || lowerContent.includes("oraclecloud.com") || (await page.$("[class*='oracle']")) !== null) {
     return "ORACLE";
+  }
+  if (
+    lowerContent.includes("recruitee.com") ||
+    lowerContent.includes("recruitee") ||
+    (await page.$("input[name^='candidate.'], button[id*='country-select-input-candidate.phone'], [data-cy='apply-button'], [data-testid='header-tab-apply-button'], [name='candidate.cv'], [name='candidate.coverLetterFile']")) !== null
+  ) {
+    return "RECRUITEE";
+  }
+  if (
+    lowerContent.includes("rippling.com") ||
+    lowerContent.includes("rippling") ||
+    (await page.$("input[data-testid='input-first_name'], div[data-testid='phone_number-code'], div[data-testid='sms_opt_in']")) !== null
+  ) {
+    return "RIPPLING";
   }
 
   return "UNKNOWN";

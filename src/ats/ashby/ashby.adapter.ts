@@ -319,7 +319,7 @@ export class AshbyAdapter implements ATSAdapter {
         if (normLabel === "name" || normLabel === "full name" || normLabel === "legal name" || normLabel.includes("legal name") || normLabel.includes("full name")) {
           valueToFill = `${profile.firstName} ${profile.lastName}`;
         } else if (normLabel.includes("plan on working from") || normLabel.includes("working from for payroll")) {
-          valueToFill = profile.location || "Vadodara, Gujarat, India";
+          valueToFill = profile.location || "San Francisco, CA, United States";
         } else {
           // 2. Try to map standard profile key
           const profileKey = mapLabelToProfileKey(field.label);

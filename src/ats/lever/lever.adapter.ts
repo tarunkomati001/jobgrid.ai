@@ -242,7 +242,7 @@ export class LeverAdapter implements ATSAdapter {
     console.log(`  ✅ Current Company: "${company}"`);
 
     // 6. Location Autocomplete Dropdown
-    const cityQuery = profile.location.split(",")[0]?.trim() || "Vadodara";
+    const cityQuery = profile.location.split(",")[0]?.trim() || "San Francisco";
     console.log(`  🔽 [Location Dropdown]: Resolving for query "${cityQuery}"...`);
     const locInput = page.locator("#location-input, input.location-input").first();
     if (await locInput.count() > 0) {

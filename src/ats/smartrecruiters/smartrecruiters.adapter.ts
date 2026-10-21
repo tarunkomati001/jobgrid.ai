@@ -174,7 +174,7 @@ export class SmartRecruitersAdapter implements ATSAdapter {
     if (await cityInput.count() > 0) {
       const curLoc = await cityInput.first().inputValue().catch(() => "");
       if (!curLoc) {
-        const cityTarget = profile.location ? profile.location.split(",")[0].trim() : "Vadodara";
+        const cityTarget = profile.location ? profile.location.split(",")[0].trim() : "San Francisco";
         console.log(`  Filling city autocomplete: ${cityTarget}...`);
         await cityInput.first().fill(cityTarget);
         await page.waitForTimeout(1200);

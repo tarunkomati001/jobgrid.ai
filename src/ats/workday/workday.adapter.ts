@@ -16,7 +16,7 @@ export const DEFAULT_HRUTIN_EXPERIENCES: WorkExperienceItem[] = [
   {
     jobTitle: "Full Stack AI Developer",
     company: "Jobspring",
-    location: "Vadodara, Gujarat, India",
+    location: "San Francisco, CA, United States",
     currentlyWorkHere: true,
     startDate: "01/2024",
     startMonth: "01",
@@ -301,27 +301,30 @@ export class WorkdayAdapter implements ATSAdapter {
       console.log("  Notice: Auth selector wait reached timeout, inspecting current DOM...");
     });
 
-    const defaultPassword = process.env.WORKDAY_PASSWORD || "Tarun@2006";
+    const defaultPassword = process.env.WORKDAY_PASSWORD || "Tarun@143";
+    const defaultEmail = process.env.WORKDAY_EMAIL || "tarunkomati2@gmail.com";
 
     // Candidate email pool in order of priority:
     // 1. Any saved/remembered credentials for this domain first
-    // 2. Candidate emails provided by the user: babu020106@gmail.com, chetanmidde@gmail.com, komatitarun@yahoo.com
+    // 2. Primary user configured email: tarunkomati2@gmail.com
     // 3. Profile email and fallback
     const allKnownCreds = await getAllWorkdayCredentials(domain);
     const candidateEmails = Array.from(new Set([
       ...allKnownCreds.map(c => c.email),
+      defaultEmail,
+      "tarunkomati2@gmail.com",
+      profile.email,
       "babu020106@gmail.com",
       "chetanmidde@gmail.com",
       "komatitarun@yahoo.com",
-      profile.email,
       "babufakemail@gmail.com"
     ].filter(Boolean))) as string[];
 
     const candidatePasswords = Array.from(new Set([
-      ...allKnownCreds.map(c => c.password),
       defaultPassword,
-      "Tarun@2006",
       "Tarun@143",
+      ...allKnownCreds.map(c => c.password),
+      "Tarun@2006",
       "Nithin@6677",
       "ClucoAi@2026!Secure",
       "BabuFake123!"
@@ -331,22 +334,15 @@ export class WorkdayAdapter implements ATSAdapter {
       console.log(`🔑 [WorkdayAdapter]: Found ${allKnownCreds.length} remembered credential(s) for ${domain} (${allKnownCreds.map(c => c.email).join(", ")}).`);
     }
 
-    // Determine if modal is currently on Create Account tab
-    const verifyPwLocator = page.locator("input[data-automation-id='verifyPassword']").first();
-    let isCreateAccountMode = (await verifyPwLocator.count() > 0) && (await verifyPwLocator.isVisible().catch(() => false));
-
-    // PHASE 1: Always check if existing accounts can Sign In first
-    if (isCreateAccountMode) {
-      console.log("  Modal is currently on 'Create Account'. Switching to 'Sign In' to check candidate accounts...");
-      const signInTab = page.locator(
-        "button[data-automation-id='signInLink'], a[data-automation-id='signInLink'], div[data-automation-id='click_filter'][aria-label='Sign In'], button:has-text('Sign In'), a:has-text('Sign In')"
-      ).first();
-      if (await signInTab.count() > 0 && await signInTab.isVisible().catch(() => false)) {
-        await this.clickWorkdayButton(page, signInTab);
-        await page.waitForTimeout(2000);
-        await page.waitForFunction(() => !document.querySelector("input[data-automation-id='verifyPassword']"), { timeout: 8000 }).catch(() => {});
-        await page.waitForSelector("input[data-automation-id='password']", { timeout: 10000 }).catch(() => {});
-      }
+    // PHASE 1: Always go directly to Sign In tab / link first (User instruction: "go directly to signin click login or sign in and then enter the signin credentials")
+    const signInTab = page.locator(
+      "button[data-automation-id='signInLink'], a[data-automation-id='signInLink'], div[data-automation-id='click_filter'][aria-label='Sign In'], button:has-text('Sign In'), a:has-text('Sign In')"
+    ).first();
+    if (await signInTab.count() > 0 && await signInTab.isVisible().catch(() => false)) {
+      console.log("  Switching directly to 'Sign In' to enter candidate credentials...");
+      await this.clickWorkdayButton(page, signInTab);
+      await page.waitForTimeout(2000);
+      await page.waitForSelector("input[data-automation-id='password']", { timeout: 10000 }).catch(() => {});
     }
 
     let authenticatedEmail: string | null = null;
@@ -589,8 +585,19 @@ export class WorkdayAdapter implements ATSAdapter {
 
     for (const pw of passwords) {
       console.log(`  Attempting sign in with password candidate (${pw.slice(0, 3)}***)...`);
-      await this.setReactInputValue(page, "input[data-automation-id='userName'], input[data-automation-id='email'], input[name='userName']", loginEmail);
-      await this.setReactInputValue(page, "input[data-automation-id='password'], input[name='password']", pw);
+      const emailInp = page.locator("div[role='dialog'] input[data-automation-id='email'], div[role='dialog'] input[data-automation-id='userName'], input[data-automation-id='userName'], input[data-automation-id='email'], input[name='userName']").last();
+      const pwInp = page.locator("div[role='dialog'] input[data-automation-id='password'], input[data-automation-id='password'], input[name='password']").last();
+
+      if (await emailInp.count() > 0) {
+        await emailInp.scrollIntoViewIfNeeded().catch(() => {});
+        await emailInp.focus().catch(() => {});
+        await emailInp.fill(loginEmail).catch(() => {});
+      }
+      if (await pwInp.count() > 0) {
+        await pwInp.scrollIntoViewIfNeeded().catch(() => {});
+        await pwInp.focus().catch(() => {});
+        await pwInp.fill(pw).catch(() => {});
+      }
 
       // Clear any prior error banner from DOM so we don't match stale errors from previous attempts
       await page.evaluate(() => {
@@ -598,14 +605,13 @@ export class WorkdayAdapter implements ATSAdapter {
         banners.forEach(b => (b as HTMLElement).remove());
       }).catch(() => {});
 
-      // Submit via button click and enter key
-      const submitBtn = page.locator("button[data-automation-id='signInSubmitButton'], [data-automation-id='click_filter'][aria-label*='Sign In']").first();
+      // Submit via button click and enter key on the active dialog / last button
+      const submitBtn = page.locator("div[role='dialog'] button[data-automation-id='signInSubmitButton'], div[role='dialog'] div[data-automation-id='click_filter'][aria-label*='Sign In'], button[data-automation-id='signInSubmitButton'], div[data-automation-id='click_filter'][aria-label*='Sign In'], button:has-text('Sign In')").last();
       if (await submitBtn.count() > 0) {
         await submitBtn.click({ force: true }).catch(() => {});
         await this.clickWorkdayButton(page, submitBtn);
       }
 
-      const pwInp = page.locator("input[data-automation-id='password'], input[name='password']").first();
       if (await pwInp.count() > 0) {
         await pwInp.press("Enter").catch(() => {});
       }
@@ -638,26 +644,22 @@ export class WorkdayAdapter implements ATSAdapter {
             text.includes("verification email") ||
             text.includes("account may need verification");
 
-          const passwordPresent = !!document.querySelector("input[data-automation-id='password']");
-          const signInBtnPresent = !!document.querySelector("button[data-automation-id='signInSubmitButton'], button[data-automation-id='createAccountSubmitButton']");
-          const authStillOnScreen = passwordPresent || signInBtnPresent;
+          const isDialogVisible = Array.from(document.querySelectorAll("[role='dialog'], [data-behavior-click-outside-close='topmost']")).some(
+            d => (d as HTMLElement).offsetParent !== null && d.querySelector("input[data-automation-id='password']")
+          );
 
           const stepText = (document.querySelector("[data-automation-id='progressBarActiveStep'], .activeStep, [aria-current='step']")?.textContent || "").toLowerCase();
           const isAuthStep = stepText.includes("sign in") || stepText.includes("create account");
 
           const hasContinueBtn = Array.from(document.querySelectorAll("button")).some(b => (b.textContent || "").trim() === "Continue");
+          const hasUserIndicator = text.includes("candidate home") || text.includes("settings") || text.includes("job alerts") || text.includes("tarunkomati2@gmail.com");
+          const hasFormStep = !!document.querySelector(
+            "input[type='file'], [data-automation-id='file-upload-drop-zone'], [data-automation-id='bottom-navigation-next-button'], button[data-automation-id='pageFooterNextButton'], input[id*='firstName']"
+          );
+
           const loggedIn =
             !isVerification &&
-            !authStillOnScreen &&
-            !isAuthStep && (
-              text.includes("candidate home") ||
-              text.includes("settings") ||
-              text.includes("job alerts") ||
-              hasContinueBtn ||
-              !!document.querySelector(
-                "input[type='file'], [data-automation-id='file-upload-drop-zone'], [data-automation-id='bottom-navigation-next-button'], button[data-automation-id='pageFooterNextButton'], input[id*='firstName']"
-              )
-            );
+            (hasUserIndicator || (!isDialogVisible && !isAuthStep && (hasContinueBtn || hasFormStep)));
 
           return { wrong, loggedIn, errText, isVerification };
         }).catch(() => ({ wrong: false, loggedIn: false, errText: "", isVerification: false }));
@@ -695,12 +697,13 @@ export class WorkdayAdapter implements ATSAdapter {
         continue;
       }
 
-      // Check if redirect / wizard mounted (ensuring auth password elements are gone)
+      // Check if redirect / wizard mounted
       const wizardMounted = await page.evaluate(() => {
-        const hasPw = !!document.querySelector("input[data-automation-id='password']");
+        const text = (document.body?.innerText || "").toLowerCase();
+        const hasUserIndicator = text.includes("candidate home") || text.includes("settings") || text.includes("job alerts") || text.includes("tarunkomati2@gmail.com");
         const hasContinueBtn = Array.from(document.querySelectorAll("button")).some(b => (b.textContent || "").trim() === "Continue");
-        const hasWizard = hasContinueBtn || !!document.querySelector("input[type='file'], [data-automation-id='file-upload-drop-zone'], [data-automation-id='bottom-navigation-next-button']");
-        return !hasPw && hasWizard;
+        const hasWizard = hasUserIndicator || hasContinueBtn || !!document.querySelector("input[type='file'], [data-automation-id='file-upload-drop-zone'], [data-automation-id='bottom-navigation-next-button']");
+        return hasWizard;
       }).catch(() => false);
 
       if (wizardMounted) {
@@ -878,8 +881,8 @@ export class WorkdayAdapter implements ATSAdapter {
       firstName: "Hrutin",
       lastName: "Nammi",
       email: "babufakemail@gmail.com",
-      phone: "8688423267",
-      location: "Vadodara, Gujarat, India",
+      phone: "2025550198",
+      location: "San Francisco, CA, United States",
       willingToRelocate: true,
       workAuthorization: "Yes",
       yearsOfExperience: 3
@@ -1737,10 +1740,10 @@ export class WorkdayAdapter implements ATSAdapter {
   }
 
   private async fillAddressAndContact(page: Page, profile: UserProfile): Promise<void> {
-    const isIndia = profile.location ? profile.location.toLowerCase().includes("india") : true;
+    const isIndia = profile.location ? profile.location.toLowerCase().includes("india") : false;
     const targetCountry = isIndia ? "India" : "United States of America";
     const targetState = isIndia ? "Gujarat" : "California";
-    const targetCity = profile.location ? profile.location.split(",")[0].trim() : "Vadodara";
+    const targetCity = profile.location ? (isIndia ? profile.location.split(",")[0].trim() : "San Francisco") : "San Francisco";
     const targetPostal = isIndia ? "390001" : "94105";
 
     // 1. Country Dropdown
@@ -1785,7 +1788,7 @@ export class WorkdayAdapter implements ATSAdapter {
     if (await locInp.count() > 0 && await locInp.isVisible().catch(() => false)) {
       const val = (await locInp.inputValue().catch(() => "")).trim();
       if (!val || val === "2" || val === "N/A" || /^\d+$/.test(val)) {
-        await this.setReactInputValue(page, "input[id*='location' i]:not([id*='search']):not([id*='code']):not([type='file']), input[data-automation-id*='location' i]:not([data-automation-id*='search']):not([type='file'])", profile.location || "Vadodara, Gujarat, India");
+        await this.setReactInputValue(page, "input[id*='location' i]:not([id*='search']):not([id*='code']):not([type='file']), input[data-automation-id*='location' i]:not([data-automation-id*='search']):not([type='file'])", profile.location || "San Francisco, CA, United States");
       }
     }
 
@@ -1845,8 +1848,8 @@ export class WorkdayAdapter implements ATSAdapter {
    * Helper to ensure location/city fields across the DOM are never filled with '2' or experience digits
    */
   private async sanitizeLocationFields(page: Page, profile: UserProfile): Promise<void> {
-    const locValue = profile.location || "Vadodara, Gujarat, India";
-    const cityValue = profile.location ? profile.location.split(",")[0].trim() : "Vadodara";
+    const locValue = profile.location || "San Francisco, CA, United States";
+    const cityValue = profile.location ? (profile.location.toLowerCase().includes("india") ? profile.location.split(",")[0].trim() : "San Francisco") : "San Francisco";
 
     await page.evaluate(({ fullLoc, city }) => {
       const inputs = Array.from(document.querySelectorAll("input:not([type='hidden']), textarea")) as (HTMLInputElement | HTMLTextAreaElement)[];
@@ -2027,7 +2030,7 @@ export class WorkdayAdapter implements ATSAdapter {
       if (await locInp.count() > 0 && await locInp.isVisible().catch(() => false)) {
         const curVal = await locInp.inputValue().catch(() => "");
         if (!curVal.trim() || curVal === "2") {
-          await this.fillSingleInput(page, locInp, exp.location || profile.location || "Vadodara, Gujarat, India");
+          await this.fillSingleInput(page, locInp, exp.location || profile.location || "San Francisco, CA, United States");
         }
       }
 
@@ -2830,12 +2833,12 @@ export class WorkdayAdapter implements ATSAdapter {
       else if (lower.includes("salary") || lower.includes("compensation") || lower.includes("gross")) answer = "Negotiable";
       else if (lower.includes("english") || lower.includes("language")) answer = "Fluent / Professional Working Proficiency";
       else if ((lower.includes("notice") || lower.includes("start")) && !lower.includes("date") && !lower.includes("from")) answer = "Immediate";
-      else if (lower.includes("city") && !lower.includes("ethnicity")) answer = profile.location ? profile.location.split(",")[0].trim() : "Vadodara";
+      else if (lower.includes("city") && !lower.includes("ethnicity")) answer = profile.location ? (profile.location.toLowerCase().includes("india") ? profile.location.split(",")[0].trim() : "San Francisco") : "San Francisco";
       else if (lower.includes("state") || lower.includes("province")) answer = profile.location?.toLowerCase().includes("india") ? "Gujarat" : "California";
       else if (lower.includes("postal") || lower.includes("zip")) answer = profile.location?.toLowerCase().includes("india") ? "390001" : "94105";
-      else if (lower.includes("address") && !lower.includes("email")) answer = "101 High Street";
+      else if (lower.includes("address") && !lower.includes("email")) answer = "123 Market St";
       else if (lower.includes("country") && !lower.includes("ethnicity")) answer = profile.location?.toLowerCase().includes("india") ? "India" : "United States";
-      else if (lower.includes("location") && !lower.includes("salary")) answer = profile.location || "Vadodara, Gujarat, India";
+      else if (lower.includes("location") && !lower.includes("salary")) answer = profile.location || "San Francisco, CA, United States";
       else if (
         (lower.includes("years of experience") ||
          lower.includes("total experience") ||

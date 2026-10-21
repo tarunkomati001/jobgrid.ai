@@ -304,7 +304,7 @@ app.post("/seed", async (req: Request, res: Response): Promise<void> => {
 
       // Location eligibility question
       { question: "are you living in the country where this role is based and eligible to work there", answer: "Yes" },
-      { question: "which city and country do you intend to work from", answer: "Vadodara, India" }
+      { question: "which city and country do you intend to work from", answer: "San Francisco, United States" }
     ];
 
     for (const ans of savedAnswers) {

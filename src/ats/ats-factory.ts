@@ -9,6 +9,8 @@ import { WorkdayAdapter } from "./workday/workday.adapter";
 import { WorkableAdapter } from "./workable/workable.adapter";
 import { TaleoAdapter } from "./taleo/taleo.adapter";
 import { OracleAdapter } from "./oracle/oracle.adapter";
+import { RecruiteeAdapter } from "./recruitee/recruitee.adapter";
+import { RipplingAdapter } from "./rippling/rippling.adapter";
 
 export function getAdapterForATS(atsType: ATSType): ATSAdapter {
   switch (atsType) {
@@ -26,6 +28,10 @@ export function getAdapterForATS(atsType: ATSType): ATSAdapter {
       return new TaleoAdapter();
     case "ORACLE":
       return new OracleAdapter();
+    case "RECRUITEE":
+      return new RecruiteeAdapter();
+    case "RIPPLING":
+      return new RipplingAdapter();
     case "ASHBY":
     default:
       return new AshbyAdapter();

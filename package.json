@@ -5,10 +5,13 @@
   "main": "index.js",
   "scripts": {
     "dev": "tsx watch src/server.ts",
+    "autofill": "tsx src/scripts/headed-autofill.ts",
+    "apply:rippling": "tsx src/scripts/headed-autofill.ts --rippling --keep-open",
     "apply:workday": "tsx src/scripts/headed-autofill.ts --workday --keep-open",
     "apply:lever": "tsx src/scripts/headed-autofill.ts --lever --keep-open",
     "apply:workable": "tsx src/scripts/headed-autofill.ts --workable --keep-open",
     "apply:oracle": "tsx src/scripts/headed-autofill.ts --oracle --keep-open",
+    "apply:recruitee": "tsx src/scripts/headed-autofill.ts --recruitee --keep-open",
     "apply:taleo": "tsx src/scripts/headed-taleo-autofill.ts",
     "seed:lever": "tsx src/scripts/seed-and-apply-lever.ts",
     "migrate": "tsx src/database/migrate.ts",

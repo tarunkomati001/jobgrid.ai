@@ -314,7 +314,7 @@ export class TaleoAdapter implements ATSAdapter {
         const resumeTextArea = page.locator("textarea[name='resumeText']").first();
         if (await resumeTextArea.count() > 0) {
           const resumeSummary = `${profile.firstName} ${profile.lastName}
-Full-Stack AI Developer | ${userEmail} | ${profile.phone || "+91 86884 23267"} | ${profile.location || "Vadodara, Gujarat"}
+Full-Stack AI Developer | ${userEmail} | ${profile.phone || "+1 202 555 0198"} | ${profile.location || "San Francisco, CA, United States"}
 LinkedIn: ${profile.linkedinUrl || "https://linkedin.com/in/hrutinnammi"} | GitHub: ${profile.githubUrl || "https://github.com/hrutinnammi"}`;
           await resumeTextArea.fill(resumeSummary);
         }

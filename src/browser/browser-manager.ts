@@ -1,5 +1,6 @@
 import { chromium, Browser, BrowserContext, Page } from "playwright";
 import path from "path";
+import { injectPopupSuppression } from "./popup-handler";
 
 // Ensure Windows System32 is present in PATH so taskkill and native utils can be invoked by Playwright
 if (process.platform === "win32") {
@@ -15,6 +16,9 @@ if (process.platform === "win32") {
 export const DEFAULT_USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36";
 
 export async function applyStealthScripts(context: BrowserContext): Promise<void> {
+  // Inject automatic popup and cookie banner suppression
+  await injectPopupSuppression(context);
+
   await context.addInitScript(() => {
     // 1. Cleanly delete and override webdriver from navigator prototype & instance
     try {

@@ -274,7 +274,7 @@ export class WorkableAdapter implements ATSAdapter {
     if (await addressInput.count() > 0 && await addressInput.isVisible()) {
       const curVal = await addressInput.inputValue().catch(() => "");
       if (!curVal) {
-        await fillWithHumanMouse(addressInput, profile.location || "Vadodara, Gujarat, India");
+        await fillWithHumanMouse(addressInput, profile.location || "San Francisco, CA, United States");
         await page.waitForTimeout(400);
         // If autocomplete dropdown appears, select the first option
         const autoOpt = page.locator("[role='listbox'] [role='option'], .styles--option, .pac-item").first();

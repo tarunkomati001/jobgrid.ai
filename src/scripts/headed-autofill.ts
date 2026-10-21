@@ -5,6 +5,8 @@ import { detectAndGetAdapter } from "../ats/ats-factory";
 import { UserProfile, WorkExperienceItem, EducationItem } from "../ats/ats.interface";
 import { resolveLocalResumePath } from "../utils/path-resolver";
 import { handleCloudflareTurnstile } from "../browser/turnstile-handler";
+import { dismissCommonPopups } from "../browser/popup-handler";
+import { v4 as uuidv4 } from "uuid";
 
 async function main() {
   console.log(`
@@ -69,8 +71,8 @@ async function main() {
     selectedUser = allProfiles.find(p => p.email.includes("hrutin") || p.first_name.toLowerCase().includes("hrutin")) || allProfiles[0];
   }
 
-  // Pre-fetch resumes map upfront to avoid querying DB during browser runs
-  const resumesRes = await db.query("SELECT user_id, file_path FROM resumes WHERE is_active = 1").catch(() => ({ rows: [] }));
+  // Pre-fetch resumes map upfront to avoid querying DB during browser runs (strictly select PDF resume)
+  const resumesRes = await db.query("SELECT user_id, file_path FROM resumes WHERE is_active = 1 AND (resume_type = 'PDF' OR resume_type IS NULL) ORDER BY created_at ASC").catch(() => ({ rows: [] }));
   const resumeMap = new Map<string, string>();
   for (const row of (resumesRes.rows || [])) {
     resumeMap.set(row.user_id, row.file_path);
@@ -101,10 +103,48 @@ async function main() {
     (args.includes("--ats") && args[args.indexOf("--ats") + 1]?.toLowerCase() === "oracle") ||
     process.env.ORACLE_ONLY === "true" ||
     process.env.ATS_FILTER?.toUpperCase() === "ORACLE";
+  const isRecruiteeOnly =
+    args.includes("--recruitee") ||
+    args.includes("--recruitee-only") ||
+    (args.includes("--ats") && args[args.indexOf("--ats") + 1]?.toLowerCase() === "recruitee") ||
+    process.env.RECRUITEE_ONLY === "true" ||
+    process.env.ATS_FILTER?.toUpperCase() === "RECRUITEE";
+  const isRipplingOnly =
+    args.includes("--rippling") ||
+    args.includes("--rippling-only") ||
+    (args.includes("--ats") && args[args.indexOf("--ats") + 1]?.toLowerCase() === "rippling") ||
+    process.env.RIPPLING_ONLY === "true" ||
+    process.env.ATS_FILTER?.toUpperCase() === "RIPPLING";
   const isAll = args.includes("--all");
   
   if (urlArgs.length > 0) {
     urls = urlArgs;
+  } else if (isRipplingOnly) {
+    console.log("🎯 Filtering queued jobs strictly for RIPPLING ATS only...");
+    const jobsRes = await db.query("SELECT DISTINCT url FROM jobs WHERE (ats = 'RIPPLING' OR url LIKE '%rippling.com%') ORDER BY url ASC").catch(() => ({ rows: [] }));
+    urls = Array.from(new Set(jobsRes.rows.map((row: any) => row.url)));
+      urls = [
+        "https://ats.rippling.com/en-GB/rippling/jobs/f255bf03-9173-4c0a-8a18-7cc43c27ded8",
+        "https://ats.rippling.com/en-GB/rippling/jobs/8ef65aa0-ede3-45cb-814f-3631c25597cf",
+        "https://ats.rippling.com/en-GB/rippling/jobs/98b559a6-c8b2-4ede-85d9-cbf4883da996",
+        "https://ats.rippling.com/en-GB/rippling/jobs/6a055998-1560-4e2b-b0eb-79913c5d49f1"
+      ];
+  } else if (isRecruiteeOnly) {
+    console.log("🎯 Filtering queued jobs strictly for RECRUITEE ATS only...");
+    const jobsRes = await db.query("SELECT DISTINCT url FROM jobs WHERE (ats = 'RECRUITEE' OR url LIKE '%recruitee.com%') ORDER BY url ASC");
+    urls = Array.from(new Set(jobsRes.rows.map((row: any) => row.url)));
+    if (urls.length === 0) {
+      urls = [
+        "https://jobs.emergentsoftware.net/o/account-manager-ecommerce",
+        "https://jobs.emergentsoftware.net/o/solutions-engineer-optical-metrology",
+        "https://jobs.emergentsoftware.net/o/accounts-receivable-specialist",
+        "https://jobs.emergentsoftware.net/o/technical-product-owner-data",
+        "https://jobs.emergentsoftware.net/o/embedded-software-engineer",
+        "https://jobs.emergentsoftware.net/o/ai-architect",
+        "https://careers.techwolf.ai/o/ai-engineering-lead/c/new",
+        "https://careers.techwolf.ai/o/internship-software-engineer/c/new"
+      ];
+    }
   } else if (isOracleOnly) {
     console.log("🎯 Filtering queued jobs strictly for ORACLE ATS (4 requested jobs)...");
     urls = [
@@ -222,8 +262,7 @@ async function main() {
     browser = await createBrowser(false);
     sharedContext = await browser.newContext({
       userAgent: DEFAULT_USER_AGENT,
-      viewport: { width: 1280, height: 850 },
-      deviceScaleFactor: 1,
+      viewport: null,
       locale: "en-US",
     });
     await applyStealthScripts(sharedContext);
@@ -244,20 +283,19 @@ async function main() {
 
     // Parse location parts into street, city, state, zipCode, country
     const isOracle = isOracleOnly || args.includes("--oracle") || process.env.ATS_FILTER?.toUpperCase() === "ORACLE";
-    const isHrutin = (dbProfile.first_name || "").toLowerCase().includes("hrutin") || (email || "").includes("hrutin") || (email || "").includes("babufakemail");
-    const street = isOracle ? "500 Oracle Parkway" : (isHrutin ? "1/908 aaradhya" : ((dbProfile.location || "").split(",")[0]?.trim() || "1/908 aaradhya"));
-    const addressLine2 = isOracle ? "Suite 100" : "limda , wagodhiya";
-    const city = isOracle ? "Redwood City" : "Vadodara";
-    const state = isOracle ? "California" : "Gujarat";
-    const zipCode = isOracle ? "94065" : "390144";
-    const country = isOracle ? "United States" : "India";
-    const phone = isOracle ? "4155552671" : (dbProfile.phone || "8688423267");
-    const location = isOracle ? "Redwood City, California, United States" : dbProfile.location;
+    const street = isOracle ? "500 Oracle Parkway" : "123 Market St";
+    const addressLine2 = isOracle ? "Suite 100" : "Suite 400";
+    const city = isOracle ? "Redwood City" : "San Francisco";
+    const state = isOracle ? "California" : "California";
+    const zipCode = isOracle ? "94065" : "94105";
+    const country = "United States";
+    const phone = isOracle ? "4155552671" : "2025550198";
+    const location = isOracle ? "Redwood City, California, United States" : "San Francisco, CA, United States";
     const experiences: WorkExperienceItem[] = [
       {
         jobTitle: "Full Stack AI Developer",
         company: "Jobspring",
-        location: isOracle ? "Redwood City, California, United States" : "Vadodara, Gujarat, India",
+        location: isOracle ? "Redwood City, California, United States" : "San Francisco, CA, United States",
         currentlyWorkHere: true,
         startDate: "01/2024",
         startMonth: "01",
@@ -364,10 +402,55 @@ async function main() {
     };
 
     try {
+      // Ensure Job and Application exist in DB so any new link automatically gets registered & tracked
+      let jobId: string;
+      const jobCheck = await db.query("SELECT id FROM jobs WHERE url = $1", [url]);
+      const detectedAtsFallback = url.includes("rippling.com")
+        ? "RIPPLING"
+        : (url.includes("recruitee.com") || url.includes("/o/"))
+        ? "RECRUITEE"
+        : url.includes("workday")
+        ? "WORKDAY"
+        : url.includes("lever.co")
+        ? "LEVER"
+        : url.includes("workable.com")
+        ? "WORKABLE"
+        : "GENERIC";
+
+      if (jobCheck.rowCount > 0) {
+        jobId = jobCheck.rows[0].id;
+      } else {
+        jobId = uuidv4();
+        await db.query(
+          `INSERT INTO jobs (id, url, company, title, description, ats, status)
+           VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+          [jobId, url, detectedAtsFallback === "RIPPLING" ? "Rippling" : "Company", "Position", "Queued application", detectedAtsFallback, "EXTRACTED"]
+        );
+        console.log(`➕ [Database]: Registered new Job record in database (${jobId}): ${url}`);
+      }
+
+      const appCheck = await db.query(
+        "SELECT id FROM applications WHERE user_id = $1 AND job_id = $2",
+        [profile.userId, jobId]
+      );
+      if (appCheck.rowCount === 0) {
+        const resumeId = resumeMap.get(profile.userId) || (resumesRes.rows[0]?.id || "res_usr_hrutin_nammi");
+        await db.query(
+          `INSERT INTO applications (id, user_id, job_id, resume_id, ats, status)
+           VALUES ($1, $2, $3, $4, $5, $6)`,
+          [uuidv4(), profile.userId, jobId, resumeId, detectedAtsFallback, "PENDING"]
+        );
+        console.log(`➕ [Database]: Registered new Application record for user ${profile.firstName} in database.`);
+      }
+
       // If Lever URL without /apply, append /apply to go directly to the application form
       let targetUrl = url;
       if (targetUrl.includes("lever.co") && !targetUrl.includes("/apply")) {
         targetUrl = targetUrl.replace(/\/?$/, "/apply");
+      }
+      // If Recruitee URL without /c/new, append /c/new to go directly to the application form
+      if ((targetUrl.includes("recruitee.com") || targetUrl.includes("/o/")) && !targetUrl.includes("/c/new")) {
+        targetUrl = targetUrl.replace(/\/?$/, "/c/new");
       }
 
       console.log(`🌐 Navigating to application page: ${targetUrl}...`);
@@ -376,13 +459,37 @@ async function main() {
       // Auto-detect & resolve Cloudflare Turnstile if intercepted
       await handleCloudflareTurnstile(page);
 
+      // Auto-dismiss cookie agreements and popups
+      await dismissCommonPopups(page);
+
       await page.waitForSelector(
         "input:not([type='hidden']), textarea, select, [data-field-path], button:has-text('Apply')",
         { timeout: 12000 }
       ).catch(() => console.warn(`⚠️ Form selector initial wait timed out. Proceeding.`));
+
+      // Dismiss any popups that appeared after form load
+      await dismissCommonPopups(page);
       
       const { ats, adapter } = await detectAndGetAdapter(page, targetUrl);
       console.log(`🎯 Detected ATS Platform: ${ats}`);
+
+      // Extract and update job details in database
+      try {
+        const jobDetails = await adapter.extractJob(page);
+        if (jobDetails && (jobDetails.company || jobDetails.title)) {
+          await db.query(
+            `UPDATE jobs 
+             SET company = COALESCE(NULLIF($1, ''), company), 
+                 title = COALESCE(NULLIF($2, ''), title), 
+                 ats = $3,
+                 status = 'EXTRACTED'
+             WHERE id = $4`,
+            [jobDetails.company, jobDetails.title, ats, jobId]
+          );
+        }
+      } catch (e: any) {
+        console.warn("⚠️ Notice updating job details in DB:", e.message);
+      }
 
       // Auto-submit policy: Auto-submit for LEVER and WORKABLE jobs (unless manual only)
       const isLeverJob = ats === "LEVER" || targetUrl.toLowerCase().includes("lever.co");

@@ -22,7 +22,7 @@ export async function seedHrutinUser() {
   const resumeFilePath = path.join(userResumeDir, resumeFileName);
 
   const hrutinResumeText = `HRUTIN NAMMI
-Vadodara, Gujarat, India | babufakemail@gmail.com | +91 86884 23267 | linkedin: https://linkedin.com/in/hrutinnammi | github: https://github.com/hrutinnammi
+San Francisco, CA, United States | babufakemail@gmail.com | +1 202 555 0198 | linkedin: https://linkedin.com/in/hrutinnammi | github: https://github.com/hrutinnammi
 
 SUMMARY
 Full-Stack Developer and AI Engineer with hands-on experience building scalable AI-powered applications using Python, Java, FastAPI, React, REST APIs, and modern cloud infrastructure. Strong expertise in RAG systems, NLP, OpenAI APIs, local LLMs, backend architecture, and full-stack development. Experienced in deploying production-ready applications using Docker, Azure App Service, Azure Blob Storage, and modern DevOps workflows. Passionate about building intelligent software products that solve real-world problems.
@@ -74,13 +74,41 @@ ACHIEVEMENTS & LEADERSHIP
 EDUCATION
 B.Tech, Computer Science Engineering (AI & ML) | Parul University – CGPA: 7.1 / 10 (Expected 2027)`;
 
-  // 1. Generate PDF Resume
+  // 1. Generate PDF Resume & Cover Letter
   console.log("📄 Generating PDF resume for Hrutin Nammi...");
   try {
     await generateResumePdf(resumeFilePath, hrutinResumeText);
     console.log(`✅ Resume PDF created at: ${resumeFilePath}`);
   } catch (e: any) {
     console.warn("⚠️ PDF generation warning:", e.message);
+  }
+
+  const coverLetterFileName = "Hrutin_Nammi_Cover_Letter.pdf";
+  const coverLetterFilePath = path.join(userResumeDir, coverLetterFileName);
+  const relativeCoverLetterPath = `resumes/user_${userId}/${coverLetterFileName}`;
+
+  const hrutinCoverLetterText = `HRUTIN NAMMI
+San Francisco, CA, United States | babufakemail@gmail.com | +1 202 555 0198 | linkedin: https://linkedin.com/in/hrutinnammi | github: https://github.com/hrutinnammi
+
+Dear Hiring Manager,
+
+I am writing to express my enthusiastic interest in joining your engineering team. As a Full-Stack AI Developer with comprehensive experience architecting scalable applications, RAG pipelines, FastAPI backends, and responsive React interfaces, I have a proven track record of delivering reliable, high-performance production systems.
+
+At Jobspring, I developed an AI-powered resume and career platform serving multi-user workloads using OpenAI APIs, optimizing database query flows and reducing API response latency by 30%. I designed and containerized scalable backend services using Docker and Azure App Service, cutting deployment cycles by 60%. In addition, my flagship project LocalMind OS demonstrates my depth in local LLM retrieval architectures, FAISS semantic search indexing, and resilient full-stack engineering.
+
+I am particularly excited about your mission and would welcome the opportunity to bring my technical expertise in Python, Node.js, FastAPI, React, and modern AI architectures to your team.
+
+Thank you very much for your time and consideration.
+
+Sincerely,
+Hrutin Nammi`;
+
+  console.log("📄 Generating PDF Cover Letter for Hrutin Nammi...");
+  try {
+    await generateResumePdf(coverLetterFilePath, hrutinCoverLetterText);
+    console.log(`✅ Cover Letter PDF created at: ${coverLetterFilePath}`);
+  } catch (e: any) {
+    console.warn("⚠️ Cover Letter generation warning:", e.message);
   }
 
   // Ensure column gender exists on user_profiles if needed
@@ -96,7 +124,7 @@ B.Tech, Computer Science Engineering (AI & ML) | Parul University – CGPA: 7.1 
     [userId, userEmail, "hrutin_secure_password_hash_123"]
   );
 
-  // 3. Insert/Update `user_profiles` table
+  // 3. Insert/Update `user_profiles` table (US phone & location details)
   console.log("📝 Creating profile record in `public.user_profiles`...");
   const profileId = `prof_${userId}`;
   await db.query(
@@ -122,8 +150,8 @@ B.Tech, Computer Science Engineering (AI & ML) | Parul University – CGPA: 7.1 
       userId,
       "Hrutin",
       "Nammi",
-      "8688423267",
-      "Vadodara, Gujarat, India",
+      "+1 202 555 0198",
+      "San Francisco, CA, United States",
       "https://linkedin.com/in/hrutinnammi",
       "https://github.com/hrutinnammi",
       "https://github.com/hrutinnammi",
@@ -134,7 +162,7 @@ B.Tech, Computer Science Engineering (AI & ML) | Parul University – CGPA: 7.1 
     ]
   );
 
-  // 4. Insert/Update `resumes` table
+  // 4. Insert/Update `resumes` table for Resume & Cover Letter
   console.log("📄 Registering resume in `public.resumes`...");
   const resumeId = `res_${userId}`;
   const relativeResumePath = `resumes/user_${userId}/${resumeFileName}`;
@@ -143,6 +171,14 @@ B.Tech, Computer Science Engineering (AI & ML) | Parul University – CGPA: 7.1 
      VALUES ($1, $2, $3, $4, 'PDF', 1)
      ON CONFLICT (id) DO UPDATE SET file_name = EXCLUDED.file_name, file_path = EXCLUDED.file_path, is_active = 1`,
     [resumeId, userId, resumeFileName, relativeResumePath]
+  );
+
+  const coverLetterDocId = `cov_${userId}`;
+  await db.query(
+    `INSERT INTO public.resumes (id, user_id, file_name, file_path, resume_type, is_active)
+     VALUES ($1, $2, $3, $4, 'COVER_LETTER', 1)
+     ON CONFLICT (id) DO UPDATE SET file_name = EXCLUDED.file_name, file_path = EXCLUDED.file_path, is_active = 1`,
+    [coverLetterDocId, userId, coverLetterFileName, relativeCoverLetterPath]
   );
 
   // 5. Insert screening & saved answers in `public.user_saved_answers` table
@@ -155,15 +191,34 @@ B.Tech, Computer Science Engineering (AI & ML) | Parul University – CGPA: 7.1 
     legal_name: "Hrutin Nammi",
     legal_last_name: "Nammi",
     email: userEmail,
-    phone: "8688423267",
-    mobile: "8688423267",
-    location: "Vadodara, Gujarat, India",
-    city: "Vadodara",
-    state: "Gujarat",
-    country: "India",
+    phone: "+1 202 555 0198",
+    mobile: "+1 202 555 0198",
+    country_code: "+1",
+    country: "United States",
+    location: "San Francisco, CA, United States",
+    city: "San Francisco",
+    address: "123 Market St",
+    street: "123 Market St",
+    street_address: "123 Market St",
+    address_line_1: "123 Market St",
+    address_line_2: "Suite 400",
+    city: "San Francisco",
+    state: "California",
+    state_of_residence: "California",
+    primary_residence_state: "California",
+    primary_residence_city: "San Francisco",
+    city_of_primary_residence: "San Francisco",
+    please_provide_the_city_of_your_primary_residence: "San Francisco",
+    zip: "94105",
+    zip_code: "94105",
+    postal_code: "94105",
+    country: "United States",
+    location: "San Francisco, CA, United States",
     gender: "Male",
     gender_identity: "Male",
     what_is_your_gender: "Male",
+    race: "Indian / Asian",
+    ethnicity: "Indian / Asian",
     pronouns: "He/Him",
     age: "Under 30",
     age_group: "Under 30",
@@ -190,13 +245,22 @@ B.Tech, Computer Science Engineering (AI & ML) | Parul University – CGPA: 7.1 
     cgpa: "7.1",
     work_authorization: "Yes",
     are_you_legally_authorized_to_work: "Yes",
+    are_you_legally_authorized_to_work_in_the_united_states: "Yes",
     sponsorship: "No",
     will_you_now_or_in_the_future_require_sponsorship: "No",
+    will_you_now_or_in_the_future_require_visa_sponsorship: "No",
     notice_period: "Immediate",
     start_date: "Immediate",
-    salary_expectation: "Negotiable",
-    expected_salary: "Negotiable",
-    compensation: "Negotiable",
+    salary_expectation: "95000",
+    expected_salary: "95000",
+    preferred_annual_salary: "95000",
+    preferred_annual_base_salary: "95000",
+    annual_salary: "95000",
+    annual_base_salary: "95000",
+    salary: "95000",
+    compensation: "95000",
+    additional_compensation_expectations: "Standard benefits package and performance bonuses; flexible and negotiable based on role requirements.",
+    if_applicable_please_describe_any_additional_compensation_expectations: "Standard benefits package and performance bonuses; flexible and negotiable based on role requirements.",
     working_hours: "Flexible / Full-time",
     work_week: "Available full-time Monday through Friday during standard business hours.",
     working_through_the_week: "Available full-time Monday through Friday during standard business hours.",
@@ -210,8 +274,19 @@ B.Tech, Computer Science Engineering (AI & ML) | Parul University – CGPA: 7.1 
     skills: "Python, Java, JavaScript, FastAPI, Flask, React, Tailwind CSS, REST APIs, MySQL, MongoDB, Supabase, Docker, Azure App Service, Azure Blob Storage, NLP, RAG, FAISS, OpenAI APIs, Local LLMs, OpenCV",
     summary: "Full-Stack Developer and AI Engineer with hands-on experience building scalable AI-powered applications using Python, Java, FastAPI, React, REST APIs, and modern cloud infrastructure.",
     experience: "Full Stack AI Developer at Jobspring (Jan 2024 - Jan 2026), Full Stack Developer Freelance at Nomadic Trails (Sept 2025)",
-    cover_letter: "Dear Hiring Manager,\n\nI am a Full-Stack AI Developer experienced in building scalable AI applications, RAG pipelines, FastAPI backends, and React interfaces. At Jobspring, I developed an AI resume platform serving 50+ users and reduced API latency by 30%. I am excited to bring my expertise in Python, React, LLMs, and cloud deployments to your team.\n\nBest regards,\nHrutin Nammi",
-    "cover letter": "Dear Hiring Manager,\n\nI am a Full-Stack AI Developer experienced in building scalable AI applications, RAG pipelines, FastAPI backends, and React interfaces. At Jobspring, I developed an AI resume platform serving 50+ users and reduced API latency by 30%. I am excited to bring my expertise in Python, React, LLMs, and cloud deployments to your team.\n\nBest regards,\nHrutin Nammi",
+    cover_letter: hrutinCoverLetterText,
+    "cover letter": hrutinCoverLetterText,
+    cover_letter_file: relativeCoverLetterPath,
+    texting_consent: "Yes",
+    consent_to_text_messages: "Yes",
+    english: "Fluent / Professional Working Proficiency",
+    english_level: "Fluent / Professional Working Proficiency",
+    level_of_english: "Fluent / Professional Working Proficiency",
+    what_is_your_level_of_english: "Fluent / Professional Working Proficiency",
+    "backend system": "At Jobspring and on LocalMind OS, I designed and maintained high-throughput distributed backend services using FastAPI, Node.js, and Redis. The architecture solved heavy data payload processing bottlenecks by implementing asynchronous worker queues, FAISS vector index caching, and optimized database connection pooling. To handle traffic spikes, the services were containerized with Docker and orchestrated to scale horizontally with load balancers, cutting response latency by 30% under peak concurrency.",
+    "please briefly describe a backend system or multiplayer service you designed or maintained what problem did it solve and how did it scale": "At Jobspring and on LocalMind OS, I designed and maintained high-throughput distributed backend services using FastAPI, Node.js, and Redis. The architecture solved heavy data payload processing bottlenecks by implementing asynchronous worker queues, FAISS vector index caching, and optimized database connection pooling. To handle traffic spikes, the services were containerized with Docker and orchestrated to scale horizontally with load balancers, cutting response latency by 30% under peak concurrency.",
+    "azure openai": "Yes, I have extensive production experience building AI solutions with OpenAI and Azure OpenAI APIs, along with agentic frameworks. I built end-to-end RAG pipelines using vector indexing (FAISS), chunking workflows, prompt orchestration, and FastAPI services deployed to Azure App Service and Azure Blob Storage. In addition, I have implemented agentic workflows with autonomous tool calling, structured outputs, and fallback mechanisms for enterprise use cases.",
+    "do you have hands on production experience building ai solutions using azure openai or similar agentic ai frameworks": "Yes, I have extensive production experience building AI solutions with OpenAI and Azure OpenAI APIs, along with agentic frameworks. I built end-to-end RAG pipelines using vector indexing (FAISS), chunking workflows, prompt orchestration, and FastAPI services deployed to Azure App Service and Azure Blob Storage. In addition, I have implemented agentic workflows with autonomous tool calling, structured outputs, and fallback mechanisms for enterprise use cases.",
     "tell us more": "One of my flagship projects is LocalMind OS—an offline AI workspace for querying PDFs, code repositories, and notes using local LLMs. I developed a RAG pipeline utilizing FAISS vector search, document chunking, and FastAPI backend services to enable intelligent semantic retrieval and conversational AI capabilities.",
     "tell us about something you built": "One of my flagship projects is LocalMind OS—an offline AI workspace for querying PDFs, code repositories, and notes using local LLMs. I developed a RAG pipeline utilizing FAISS vector search, document chunking, and FastAPI backend services to enable intelligent semantic retrieval and conversational AI capabilities.",
     project: "One of my flagship projects is LocalMind OS—an offline AI workspace for querying PDFs, code repositories, and notes using local LLMs. I developed a RAG pipeline utilizing FAISS vector search, document chunking, and FastAPI backend services to enable intelligent semantic retrieval and conversational AI capabilities.",
@@ -247,6 +322,7 @@ B.Tech, Computer Science Engineering (AI & ML) | Parul University – CGPA: 7.1 
   console.log(`   - ID: ${userId}`);
   console.log(`   - Email: ${userEmail}`);
   console.log(`   - Resume: ${relativeResumePath}`);
+  console.log(`   - Cover Letter: ${relativeCoverLetterPath}`);
 }
 
 if (require.main === module) {

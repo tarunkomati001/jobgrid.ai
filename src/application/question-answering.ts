@@ -120,8 +120,26 @@ export function suggestAnswerForQuestion(label: string, optionsLabels?: string[]
   if (norm.includes("managed a team") || norm.includes("team of 5+")) {
     return "Yes";
   }
-  if (norm.includes("based in") || norm.includes("united states or canada")) {
-    return "No";
+  if (norm.includes("based in the united states") || norm.includes("united states or canada") || norm.includes("located in the us") || norm.includes("based in the us") || norm.includes("us resident")) {
+    return "Yes";
+  }
+  if (norm.includes("street") || (norm.includes("address") && !norm.includes("email") && !norm.includes("ip") && !norm.includes("city"))) {
+    return "123 Market St";
+  }
+  if (norm.includes("city") || norm.includes("residence city") || norm.includes("primary residence")) {
+    return "San Francisco";
+  }
+  if (norm.includes("state") || norm.includes("province") || norm.includes("region") || norm.includes("territory")) {
+    return "California";
+  }
+  if (norm.includes("postal") || norm.includes("zip")) {
+    return "94105";
+  }
+  if (norm.includes("country")) {
+    return "United States";
+  }
+  if (norm.includes("location") && !norm.includes("salary")) {
+    return "San Francisco, CA, United States";
   }
   if (norm.includes("i agree") || norm.includes("agree") || norm.includes("consent") || norm.includes("terms")) {
     return "Yes";

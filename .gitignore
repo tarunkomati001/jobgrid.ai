@@ -6,6 +6,10 @@ node_modules/
 .env*.local
 .env.production
 .env.staging
+data/workday_credentials.json
+
+# Scratch & debug artifacts
+scratch/
 
 # Browser profiles and cache
 .chrome-profile/
