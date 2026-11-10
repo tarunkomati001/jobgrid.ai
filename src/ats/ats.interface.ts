@@ -57,8 +57,10 @@ export interface EducationItem {
   fieldOfStudy?: string;
   gpa?: string;
   startDate?: string;
+  startMonth?: string;
   startYear?: string;
   endDate?: string;
+  endMonth?: string;
   endYear?: string;
 }
 
@@ -83,11 +85,16 @@ export interface UserProfile {
   willingToRelocate: boolean;
   yearsOfExperience: number;
   gender?: string;
+  ethnicity?: string;
+  headline?: string;
+  summary?: string;
   experiences?: WorkExperienceItem[];
   educations?: EducationItem[];
   skills?: string[];
   websites?: string[];
   resumePath?: string;
+  coverLetterPath?: string;
+  savedAnswers?: Map<string, string>;
 }
 
 export interface ATSAdapter {

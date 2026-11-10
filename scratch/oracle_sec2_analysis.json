@@ -1,0 +1,1240 @@
+{
+  "buttons": [
+    {
+      "tag": "A",
+      "id": "",
+      "className": "skip-navigation-link",
+      "text": "Skip to main content.",
+      "ariaLabel": "Skip to main content."
+    },
+    {
+      "tag": "BUTTON",
+      "id": "",
+      "className": "app-dialog__close focused-tooltip",
+      "text": "",
+      "ariaLabel": "Cancel"
+    },
+    {
+      "tag": "BUTTON",
+      "id": "",
+      "className": "button app-dialog__footer-button",
+      "text": "Discard",
+      "ariaLabel": null
+    },
+    {
+      "tag": "BUTTON",
+      "id": "",
+      "className": "button app-dialog__footer-button",
+      "text": "Add Summary",
+      "ariaLabel": null
+    },
+    {
+      "tag": "A",
+      "id": "",
+      "className": "sitemap-link",
+      "text": "sitemap",
+      "ariaLabel": null
+    },
+    {
+      "tag": "BUTTON",
+      "id": "",
+      "className": "app-header-icon-button app-header__close",
+      "text": "",
+      "ariaLabel": "Back to Job Details"
+    },
+    {
+      "tag": "BUTTON",
+      "id": "",
+      "className": "button apply-with-indeed-button__profile-import-block",
+      "text": "Apply with",
+      "ariaLabel": "Apply with Indeed"
+    },
+    {
+      "tag": "INPUT",
+      "id": "",
+      "className": "apply-flow-profile-import-awli__file-upload",
+      "text": "",
+      "ariaLabel": "Import your profile from resume"
+    },
+    {
+      "tag": "BUTTON",
+      "id": "",
+      "className": "apply-flow-profile-import-awli__button",
+      "text": "CV/Resume",
+      "ariaLabel": null
+    },
+    {
+      "tag": "INPUT",
+      "id": "lastName-22",
+      "className": "input-row__control",
+      "text": "",
+      "ariaLabel": null
+    },
+    {
+      "tag": "INPUT",
+      "id": "firstName-23",
+      "className": "input-row__control",
+      "text": "",
+      "ariaLabel": null
+    },
+    {
+      "tag": "INPUT",
+      "id": "title-24",
+      "className": "cx-select-input \n                                \n                                \n                                \n                            ",
+      "text": "",
+      "ariaLabel": null
+    },
+    {
+      "tag": "BUTTON",
+      "id": "title-24-toggle-button",
+      "className": "icon-dropdown-arrow ",
+      "text": "",
+      "ariaLabel": "Open the drop-down list for Title."
+    },
+    {
+      "tag": "INPUT",
+      "id": "middleNames-25",
+      "className": "input-row__control",
+      "text": "",
+      "ariaLabel": null
+    },
+    {
+      "tag": "INPUT",
+      "id": "namInformation29-26",
+      "className": "input-row__control",
+      "text": "",
+      "ariaLabel": null
+    },
+    {
+      "tag": "INPUT",
+      "id": "email-27",
+      "className": "input-row__control communication-channel__email-control",
+      "text": "",
+      "ariaLabel": null
+    },
+    {
+      "tag": "BUTTON",
+      "id": "",
+      "className": "communication-channel__value-edit communication-channel__value-email-edit theme-color-1 focused-tooltip",
+      "text": "",
+      "ariaLabel": "Edit email address"
+    },
+    {
+      "tag": "INPUT",
+      "id": "af-checkbox-emailPreferredFlag-28",
+      "className": "input-row__hidden-control",
+      "text": "",
+      "ariaLabel": "Use email address for communication"
+    },
+    {
+      "tag": "INPUT",
+      "id": "country-codes-dropdownphoneNumber",
+      "className": "cx-select-input \n                                \n                                \n                                \n                            ",
+      "text": "",
+      "ariaLabel": null
+    },
+    {
+      "tag": "BUTTON",
+      "id": "country-codes-dropdownphoneNumber-reset-button",
+      "className": "icon-clear focused-tooltip-left ",
+      "text": "",
+      "ariaLabel": "Remove value for the Country code field."
+    },
+    {
+      "tag": "BUTTON",
+      "id": "country-codes-dropdownphoneNumber-toggle-button",
+      "className": "icon-dropdown-arrow ",
+      "text": "",
+      "ariaLabel": "Open the drop-down list for Country code."
+    },
+    {
+      "tag": "INPUT",
+      "id": "",
+      "className": "input-row__control phone-row__input",
+      "text": "",
+      "ariaLabel": "Phone Number"
+    },
+    {
+      "tag": "INPUT",
+      "id": "af-checkbox-phonePreferredFlag-30",
+      "className": "input-row__hidden-control",
+      "text": "",
+      "ariaLabel": "Use SMS for communication"
+    },
+    {
+      "tag": "INPUT",
+      "id": "country-20",
+      "className": "cx-select-input \n                                \n                                \n                                \n                            ",
+      "text": "",
+      "ariaLabel": null
+    },
+    {
+      "tag": "BUTTON",
+      "id": "country-20-reset-button",
+      "className": "icon-clear focused-tooltip ",
+      "text": "",
+      "ariaLabel": "Remove value for the Country field."
+    },
+    {
+      "tag": "BUTTON",
+      "id": "country-20-toggle-button",
+      "className": "icon-dropdown-arrow ",
+      "text": "",
+      "ariaLabel": "Open the drop-down list for Country."
+    },
+    {
+      "tag": "INPUT",
+      "id": "addressLine1-32",
+      "className": "input-row__control",
+      "text": "",
+      "ariaLabel": null
+    },
+    {
+      "tag": "INPUT",
+      "id": "addressLine2-33",
+      "className": "input-row__control",
+      "text": "",
+      "ariaLabel": null
+    },
+    {
+      "tag": "INPUT",
+      "id": "addressLine3-34",
+      "className": "input-row__control",
+      "text": "",
+      "ariaLabel": null
+    },
+    {
+      "tag": "INPUT",
+      "id": "city-35",
+      "className": "cx-select-input \n                                cx-select-input--invalid\n                                \n                                \n                            ",
+      "text": "",
+      "ariaLabel": null
+    },
+    {
+      "tag": "BUTTON",
+      "id": "city-35-toggle-button",
+      "className": "icon-dropdown-arrow ",
+      "text": "",
+      "ariaLabel": "Open the drop-down list for City."
+    },
+    {
+      "tag": "INPUT",
+      "id": "region2-36",
+      "className": "cx-select-input \n                                cx-select-input--invalid\n                                \n                                \n                            ",
+      "text": "",
+      "ariaLabel": null
+    },
+    {
+      "tag": "BUTTON",
+      "id": "region2-36-toggle-button",
+      "className": "icon-dropdown-arrow ",
+      "text": "",
+      "ariaLabel": "Open the drop-down list for State."
+    },
+    {
+      "tag": "INPUT",
+      "id": "postalCode-37",
+      "className": "cx-select-input \n                                cx-select-input--invalid\n                                \n                                \n                            ",
+      "text": "",
+      "ariaLabel": null
+    },
+    {
+      "tag": "BUTTON",
+      "id": "postalCode-37-toggle-button",
+      "className": "icon-dropdown-arrow ",
+      "text": "",
+      "ariaLabel": "Open the drop-down list for Postal Code."
+    },
+    {
+      "tag": "INPUT",
+      "id": "region1-38",
+      "className": "cx-select-input \n                                cx-select-input--invalid\n                                \n                                \n                            ",
+      "text": "",
+      "ariaLabel": null
+    },
+    {
+      "tag": "BUTTON",
+      "id": "region1-38-toggle-button",
+      "className": "icon-dropdown-arrow ",
+      "text": "",
+      "ariaLabel": "Open the drop-down list for County."
+    },
+    {
+      "tag": "BUTTON",
+      "id": "profileItemsAddButton-1792588905255",
+      "className": "button apply-flow-profile-item-tile__new-tile",
+      "text": "Add Education",
+      "ariaLabel": null
+    },
+    {
+      "tag": "BUTTON",
+      "id": "profileItemsAddButton-1792588905261",
+      "className": "button apply-flow-profile-item-tile__new-tile",
+      "text": "Add Experience",
+      "ariaLabel": null
+    },
+    {
+      "tag": "BUTTON",
+      "id": "profileItemsAddButton-1792588905265",
+      "className": "button apply-flow-profile-item-tile__new-tile",
+      "text": "Add License",
+      "ariaLabel": null
+    },
+    {
+      "tag": "BUTTON",
+      "id": "profileItemsAddButton-1792588905268",
+      "className": "button apply-flow-profile-item-tile__new-tile",
+      "text": "Add Skill",
+      "ariaLabel": null
+    },
+    {
+      "tag": "INPUT",
+      "id": "attachment-upload-2",
+      "className": "file-form-element__input upload-button",
+      "text": "",
+      "ariaLabel": null
+    },
+    {
+      "tag": "INPUT",
+      "id": "attachment-upload-3",
+      "className": "file-form-element__input upload-button",
+      "text": "",
+      "ariaLabel": null
+    },
+    {
+      "tag": "INPUT",
+      "id": "siteLink-1-7",
+      "className": "input-row__control",
+      "text": "",
+      "ariaLabel": "Education Link 1"
+    },
+    {
+      "tag": "BUTTON",
+      "id": "",
+      "className": "candidate-links__add-link theme-color-1",
+      "text": "Add Another Link",
+      "ariaLabel": null
+    },
+    {
+      "tag": "INPUT",
+      "id": "attachment-upload-4",
+      "className": "file-form-element__input upload-button",
+      "text": "",
+      "ariaLabel": null
+    },
+    {
+      "tag": "INPUT",
+      "id": "day-earliestAvailableDate-21",
+      "className": "cx-select-input \n                                \n                                \n                                \n                            ",
+      "text": "",
+      "ariaLabel": null
+    },
+    {
+      "tag": "BUTTON",
+      "id": "day-earliestAvailableDate-21-toggle-button",
+      "className": "icon-dropdown-arrow ",
+      "text": "",
+      "ariaLabel": "Open the drop-down list for Day."
+    },
+    {
+      "tag": "INPUT",
+      "id": "month-earliestAvailableDate-21",
+      "className": "cx-select-input \n                                \n                                \n                                \n                            ",
+      "text": "",
+      "ariaLabel": null
+    },
+    {
+      "tag": "BUTTON",
+      "id": "month-earliestAvailableDate-21-toggle-button",
+      "className": "icon-dropdown-arrow ",
+      "text": "",
+      "ariaLabel": "Open the drop-down list for Month."
+    },
+    {
+      "tag": "INPUT",
+      "id": "year-earliestAvailableDate-21",
+      "className": "cx-select-input \n                                \n                                \n                                \n                            ",
+      "text": "",
+      "ariaLabel": null
+    },
+    {
+      "tag": "BUTTON",
+      "id": "year-earliestAvailableDate-21-toggle-button",
+      "className": "icon-dropdown-arrow ",
+      "text": "",
+      "ariaLabel": "Open the drop-down list for Year."
+    },
+    {
+      "tag": "BUTTON",
+      "id": "",
+      "className": "cx-select-pill-section \n                                        ",
+      "text": "Yes",
+      "ariaLabel": null
+    },
+    {
+      "tag": "BUTTON",
+      "id": "",
+      "className": "cx-select-pill-section cx-select-pill-section--selected\n                                        ",
+      "text": "No",
+      "ariaLabel": null
+    },
+    {
+      "tag": "BUTTON",
+      "id": "",
+      "className": "cx-select-pill-section \n                                        ",
+      "text": "Yes",
+      "ariaLabel": null
+    },
+    {
+      "tag": "BUTTON",
+      "id": "",
+      "className": "cx-select-pill-section cx-select-pill-section--selected\n                                        ",
+      "text": "No",
+      "ariaLabel": null
+    },
+    {
+      "tag": "BUTTON",
+      "id": "",
+      "className": "cx-select-pill-section cx-select-pill-section--selected\n                                        ",
+      "text": "Yes",
+      "ariaLabel": null
+    },
+    {
+      "tag": "BUTTON",
+      "id": "",
+      "className": "cx-select-pill-section \n                                        ",
+      "text": "No",
+      "ariaLabel": null
+    },
+    {
+      "tag": "BUTTON",
+      "id": "",
+      "className": "cx-select-pill-section cx-select-pill-section--selected\n                                        ",
+      "text": "Yes",
+      "ariaLabel": null
+    },
+    {
+      "tag": "BUTTON",
+      "id": "",
+      "className": "cx-select-pill-section \n                                        ",
+      "text": "No",
+      "ariaLabel": null
+    },
+    {
+      "tag": "BUTTON",
+      "id": "",
+      "className": "cx-select-pill-section cx-select-pill-section--selected\n                                        ",
+      "text": "Yes",
+      "ariaLabel": null
+    },
+    {
+      "tag": "BUTTON",
+      "id": "",
+      "className": "cx-select-pill-section \n                                        ",
+      "text": "No",
+      "ariaLabel": null
+    },
+    {
+      "tag": "BUTTON",
+      "id": "",
+      "className": "cx-select-pill-section cx-select-pill-section--selected\n                                        ",
+      "text": "Yes",
+      "ariaLabel": null
+    },
+    {
+      "tag": "BUTTON",
+      "id": "",
+      "className": "cx-select-pill-section \n                                        ",
+      "text": "No",
+      "ariaLabel": null
+    },
+    {
+      "tag": "BUTTON",
+      "id": "",
+      "className": "cx-select-pill-section cx-select-pill-section--selected\n                                        ",
+      "text": "Yes",
+      "ariaLabel": null
+    },
+    {
+      "tag": "BUTTON",
+      "id": "",
+      "className": "cx-select-pill-section \n                                        ",
+      "text": "No",
+      "ariaLabel": null
+    },
+    {
+      "tag": "INPUT",
+      "id": "302046984487002-19-302943210390348",
+      "className": "input-row__hidden-control apply-flow-input-radio-control",
+      "text": "",
+      "ariaLabel": null
+    },
+    {
+      "tag": "INPUT",
+      "id": "302046984487002-19-302943210390349",
+      "className": "input-row__hidden-control apply-flow-input-radio-control",
+      "text": "",
+      "ariaLabel": null
+    },
+    {
+      "tag": "INPUT",
+      "id": "dq-option-4",
+      "className": "input-row__hidden-control",
+      "text": "",
+      "ariaLabel": null
+    },
+    {
+      "tag": "INPUT",
+      "id": "dq-option-7",
+      "className": "input-row__hidden-control",
+      "text": "",
+      "ariaLabel": null
+    },
+    {
+      "tag": "INPUT",
+      "id": "dq-option-5",
+      "className": "input-row__hidden-control",
+      "text": "",
+      "ariaLabel": null
+    },
+    {
+      "tag": "INPUT",
+      "id": "dq-option-3",
+      "className": "input-row__hidden-control",
+      "text": "",
+      "ariaLabel": null
+    },
+    {
+      "tag": "INPUT",
+      "id": "dq-option-6",
+      "className": "input-row__hidden-control",
+      "text": "",
+      "ariaLabel": null
+    },
+    {
+      "tag": "INPUT",
+      "id": "dq-option-1",
+      "className": "input-row__hidden-control",
+      "text": "",
+      "ariaLabel": null
+    },
+    {
+      "tag": "INPUT",
+      "id": "US-STANDARD-ORA_GENDER-STANDARD-10",
+      "className": "cx-select-input \n                                \n                                \n                                \n                            ",
+      "text": "",
+      "ariaLabel": null
+    },
+    {
+      "tag": "BUTTON",
+      "id": "US-STANDARD-ORA_GENDER-STANDARD-10-toggle-button",
+      "className": "icon-dropdown-arrow ",
+      "text": "",
+      "ariaLabel": "Open the drop-down list for Gender."
+    },
+    {
+      "tag": "A",
+      "id": "",
+      "className": "",
+      "text": "Read more",
+      "ariaLabel": null
+    },
+    {
+      "tag": "A",
+      "id": "",
+      "className": "",
+      "text": "send an email",
+      "ariaLabel": null
+    },
+    {
+      "tag": "INPUT",
+      "id": "US-STANDARD-ORA_VETERAN_STATUS-STANDARD-11",
+      "className": "cx-select-input \n                                \n                                \n                                \n                            ",
+      "text": "",
+      "ariaLabel": null
+    },
+    {
+      "tag": "BUTTON",
+      "id": "US-STANDARD-ORA_VETERAN_STATUS-STANDARD-11-toggle-button",
+      "className": "icon-dropdown-arrow ",
+      "text": "",
+      "ariaLabel": "Open the drop-down list for Veteran Status."
+    },
+    {
+      "tag": "INPUT",
+      "id": "job-alerts-checkbox",
+      "className": "input-row__hidden-control",
+      "text": "",
+      "ariaLabel": null
+    },
+    {
+      "tag": "INPUT",
+      "id": "",
+      "className": "input-row__hidden-control",
+      "text": "",
+      "ariaLabel": null
+    },
+    {
+      "tag": "A",
+      "id": "opt-in-link",
+      "className": "agreements-label-text-link",
+      "text": "careers emails with news and events",
+      "ariaLabel": null
+    },
+    {
+      "tag": "BUTTON",
+      "id": "",
+      "className": "app-dialog__close focused-tooltip",
+      "text": "",
+      "ariaLabel": "Close"
+    },
+    {
+      "tag": "A",
+      "id": "",
+      "className": "",
+      "text": "Oracle.com Terms of Use",
+      "ariaLabel": null
+    },
+    {
+      "tag": "A",
+      "id": "",
+      "className": "",
+      "text": "Oracle Recruiting Privacy Policy (\"Policy\")",
+      "ariaLabel": null
+    },
+    {
+      "tag": "A",
+      "id": "",
+      "className": "",
+      "text": "Policy",
+      "ariaLabel": null
+    },
+    {
+      "tag": "A",
+      "id": "",
+      "className": "",
+      "text": "Policy",
+      "ariaLabel": null
+    },
+    {
+      "tag": "A",
+      "id": "",
+      "className": "",
+      "text": "Policy",
+      "ariaLabel": null
+    },
+    {
+      "tag": "A",
+      "id": "",
+      "className": "",
+      "text": "Policy",
+      "ariaLabel": null
+    },
+    {
+      "tag": "A",
+      "id": "",
+      "className": "",
+      "text": "Policy",
+      "ariaLabel": null
+    },
+    {
+      "tag": "A",
+      "id": "",
+      "className": "",
+      "text": "Appendix I",
+      "ariaLabel": null
+    },
+    {
+      "tag": "A",
+      "id": "",
+      "className": "",
+      "text": "Policy",
+      "ariaLabel": null
+    },
+    {
+      "tag": "A",
+      "id": "",
+      "className": "",
+      "text": "Policy",
+      "ariaLabel": null
+    },
+    {
+      "tag": "A",
+      "id": "",
+      "className": "",
+      "text": "Appendix I",
+      "ariaLabel": null
+    },
+    {
+      "tag": "A",
+      "id": "",
+      "className": "",
+      "text": "Policy",
+      "ariaLabel": null
+    },
+    {
+      "tag": "A",
+      "id": "",
+      "className": "",
+      "text": "recruiting-events-opt-out_ww@oracle.com",
+      "ariaLabel": null
+    },
+    {
+      "tag": "A",
+      "id": "",
+      "className": "",
+      "text": "Policy",
+      "ariaLabel": null
+    },
+    {
+      "tag": "BUTTON",
+      "id": "",
+      "className": "button app-dialog__footer-button",
+      "text": "Agree",
+      "ariaLabel": null
+    },
+    {
+      "tag": "A",
+      "id": "",
+      "className": "",
+      "text": "Oracle Recruiting Privacy Policy",
+      "ariaLabel": null
+    },
+    {
+      "tag": "A",
+      "id": "",
+      "className": "",
+      "text": "Oracle’s Recruiting Privacy Policy",
+      "ariaLabel": null
+    },
+    {
+      "tag": "A",
+      "id": "",
+      "className": "",
+      "text": "Policy and Appendix I",
+      "ariaLabel": null
+    },
+    {
+      "tag": "A",
+      "id": "",
+      "className": "",
+      "text": "Appendix I",
+      "ariaLabel": null
+    },
+    {
+      "tag": "BUTTON",
+      "id": "",
+      "className": "text-truncate__toggle",
+      "text": "Show More",
+      "ariaLabel": null
+    },
+    {
+      "tag": "INPUT",
+      "id": "fullName-5",
+      "className": "input-row__control",
+      "text": "",
+      "ariaLabel": null
+    },
+    {
+      "tag": "BUTTON",
+      "id": "",
+      "className": "button apply-flow-pagination__button text-color-secondary",
+      "text": "Back",
+      "ariaLabel": "Back"
+    },
+    {
+      "tag": "A",
+      "id": "",
+      "className": "apply-flow-navigation-pages__link apply-flow-navigation-pages__link--active focused-tooltip",
+      "text": "1",
+      "ariaLabel": "1 Personal Info"
+    },
+    {
+      "tag": "A",
+      "id": "",
+      "className": "apply-flow-navigation-pages__link apply-flow-navigation-pages__link--active focused-tooltip apply-flow-navigation-pages__link--current",
+      "text": "2",
+      "ariaLabel": "2 Experience"
+    },
+    {
+      "tag": "A",
+      "id": "",
+      "className": "apply-flow-navigation-pages__link apply-flow-navigation-pages__link--active focused-tooltip",
+      "text": "3",
+      "ariaLabel": "3 More About You"
+    },
+    {
+      "tag": "BUTTON",
+      "id": "",
+      "className": "button apply-flow-pagination__button theme-color-1 focused-tooltip",
+      "text": "Next",
+      "ariaLabel": "Next"
+    },
+    {
+      "tag": "BUTTON",
+      "id": "",
+      "className": "button app-dialog__footer-button end-session-button",
+      "text": "End Session",
+      "ariaLabel": null
+    },
+    {
+      "tag": "BUTTON",
+      "id": "",
+      "className": "button app-dialog__footer-button theme-color-1",
+      "text": "Continue Working",
+      "ariaLabel": null
+    },
+    {
+      "tag": "BUTTON",
+      "id": "",
+      "className": "app-dialog__close focused-tooltip",
+      "text": "",
+      "ariaLabel": "Close"
+    },
+    {
+      "tag": "BUTTON",
+      "id": "",
+      "className": "button app-dialog__footer-button",
+      "text": "Use My Profile",
+      "ariaLabel": null
+    },
+    {
+      "tag": "BUTTON",
+      "id": "",
+      "className": "button app-dialog__footer-button theme-color-1 import-indeed-button",
+      "text": "Import Profile from Indeed",
+      "ariaLabel": null
+    },
+    {
+      "tag": "BUTTON",
+      "id": "oda-chat-tts",
+      "className": "oda-chat-flex oda-chat-widget-button oda-chat-icon oda-chat-header-button",
+      "text": "",
+      "ariaLabel": null
+    },
+    {
+      "tag": "BUTTON",
+      "id": "oda-chat-collapse",
+      "className": "oda-chat-flex oda-chat-widget-button oda-chat-icon oda-chat-header-button",
+      "text": "",
+      "ariaLabel": null
+    },
+    {
+      "tag": "BUTTON",
+      "id": "",
+      "className": "oda-chat-flex oda-chat-widget-button oda-chat-icon oda-chat-footer-button oda-chat-button-send oda-chat-none",
+      "text": "",
+      "ariaLabel": null
+    },
+    {
+      "tag": "BUTTON",
+      "id": "oda-chat-share-button",
+      "className": "oda-chat-flex oda-chat-widget-button oda-chat-icon oda-chat-footer-button oda-chat-button-upload",
+      "text": "",
+      "ariaLabel": null
+    },
+    {
+      "tag": "INPUT",
+      "id": "",
+      "className": "oda-chat-none",
+      "text": "",
+      "ariaLabel": null
+    },
+    {
+      "tag": "BUTTON",
+      "id": "oda-chat-webview-button-close",
+      "className": "oda-chat-flex oda-chat-widget-button oda-chat-icon oda-chat-header-button oda-chat-webview-button-close",
+      "text": "",
+      "ariaLabel": null
+    },
+    {
+      "tag": "BUTTON",
+      "id": "",
+      "className": "oda-chat-flex oda-chat-widget-button oda-chat-button focused-tooltip-top",
+      "text": "",
+      "ariaLabel": null
+    }
+  ],
+  "headings": [
+    {
+      "tag": "DIV",
+      "className": "oj-dialog-header oj-dialog-header-decoration",
+      "text": ""
+    },
+    {
+      "tag": "DIV",
+      "className": "oj-dialog-header app-dialog__hide-header",
+      "text": ""
+    },
+    {
+      "tag": "DIV",
+      "className": "app-dialog__header",
+      "text": "Work Summary"
+    },
+    {
+      "tag": "H1",
+      "className": "heading",
+      "text": "Work Summary"
+    },
+    {
+      "tag": "HEADER",
+      "className": "app-header apply-flow-header",
+      "text": "sitemap Principal Software Engineer(Hybrid) ... Location: Nashville, TN, United "
+    },
+    {
+      "tag": "DIV",
+      "className": "apply-flow-header__content",
+      "text": "sitemap Principal Software Engineer(Hybrid) ... Location: Nashville, TN, United "
+    },
+    {
+      "tag": "DIV",
+      "className": "app-header__current-page text-color-secondary",
+      "text": "sitemap Principal Software Engineer(Hybrid) ... Location: Nashville, TN, United "
+    },
+    {
+      "tag": "BUTTON",
+      "className": "app-header-icon-button app-header__close",
+      "text": ""
+    },
+    {
+      "tag": "SPAN",
+      "className": "app-header-icon-button__icon app-header__close-icon",
+      "text": ""
+    },
+    {
+      "tag": "SPAN",
+      "className": "app-header__spacer app-header__close-spacer",
+      "text": ""
+    },
+    {
+      "tag": "DIV",
+      "className": "app-header__current-page-title",
+      "text": "Principal Software Engineer(Hybrid) ... Location: Nashville, TN, United States J"
+    },
+    {
+      "tag": "DIV",
+      "className": "app-header__current-page-title-container",
+      "text": "Principal Software Engineer(Hybrid) ..."
+    },
+    {
+      "tag": "DIV",
+      "className": "page-title-ellipse",
+      "text": "..."
+    },
+    {
+      "tag": "DIV",
+      "className": "context-menu apply-flow-header__job-context-menu background-color-dropdown",
+      "text": "Location: Nashville, TN, United States Job Identification: 344708 Job Category: "
+    },
+    {
+      "tag": "SPAN",
+      "className": "apply-flow-header__location-label",
+      "text": "Location"
+    },
+    {
+      "tag": "H1",
+      "className": "ui-helper-hidden-accessible",
+      "text": "Principal Software Engineer(Hybrid) application, step 2 of 3"
+    },
+    {
+      "tag": "DIV",
+      "className": "apply-flow-header__background",
+      "text": ""
+    },
+    {
+      "tag": "H1",
+      "className": "oj-helper-hidden-accessible",
+      "text": "Job application form"
+    },
+    {
+      "tag": "DIV",
+      "className": "apply-flow-block__header",
+      "text": "Import your profile from LinkedIn, Indeed, or your resume. This may update or ov"
+    },
+    {
+      "tag": "H2",
+      "className": "apply-flow-block__title",
+      "text": "Import your profile from LinkedIn, Indeed, or your resume. This may update or ov"
+    },
+    {
+      "tag": "DIV",
+      "className": "apply-flow-block__header",
+      "text": "Contact Information Please enter your name using the English alphabet and with n"
+    },
+    {
+      "tag": "H2",
+      "className": "apply-flow-block__title",
+      "text": "Contact Information"
+    },
+    {
+      "tag": "LEGEND",
+      "className": "apply-flow-block__header",
+      "text": "Address Please enter your home address."
+    },
+    {
+      "tag": "H2",
+      "className": "apply-flow-block__title",
+      "text": "Address"
+    },
+    {
+      "tag": "DIV",
+      "className": "apply-flow-block__header",
+      "text": "Education Please ensure that your application and resume contain accurate, ident"
+    },
+    {
+      "tag": "H2",
+      "className": "apply-flow-block__title apply-flow-block__title--required",
+      "text": "Education"
+    },
+    {
+      "tag": "SPAN",
+      "className": "apply-flow-block__title--required-star",
+      "text": ""
+    },
+    {
+      "tag": "DIV",
+      "className": "apply-flow-block__header",
+      "text": "Experience Please ensure that your application and resume contain accurate, iden"
+    },
+    {
+      "tag": "H2",
+      "className": "apply-flow-block__title apply-flow-block__title--required",
+      "text": "Experience"
+    },
+    {
+      "tag": "SPAN",
+      "className": "apply-flow-block__title--required-star",
+      "text": ""
+    },
+    {
+      "tag": "DIV",
+      "className": "apply-flow-block__header",
+      "text": "Licenses and Certificates Please ensure that your application and resume contain"
+    },
+    {
+      "tag": "H2",
+      "className": "apply-flow-block__title",
+      "text": "Licenses and Certificates"
+    },
+    {
+      "tag": "DIV",
+      "className": "apply-flow-block__header",
+      "text": "Skills Add your skills."
+    },
+    {
+      "tag": "H2",
+      "className": "apply-flow-block__title apply-flow-block__title--required",
+      "text": "Skills"
+    },
+    {
+      "tag": "SPAN",
+      "className": "apply-flow-block__title--required-star",
+      "text": ""
+    },
+    {
+      "tag": "DIV",
+      "className": "apply-flow-block__header",
+      "text": "Supporting Documents and URLs Please add any additional documents or URLs.Please"
+    },
+    {
+      "tag": "H2",
+      "className": "apply-flow-block__title",
+      "text": "Supporting Documents and URLs"
+    },
+    {
+      "tag": "DIV",
+      "className": "apply-flow-block__header",
+      "text": "Miscellaneous Documents Add any additional documents."
+    },
+    {
+      "tag": "H2",
+      "className": "apply-flow-block__title",
+      "text": "Miscellaneous Documents"
+    },
+    {
+      "tag": "DIV",
+      "className": "apply-flow-block__header",
+      "text": "Extra Information Provide additional details."
+    },
+    {
+      "tag": "H2",
+      "className": "apply-flow-block__title",
+      "text": "Extra Information"
+    },
+    {
+      "tag": "DIV",
+      "className": "apply-flow-block__header",
+      "text": "Application Questions Please answer the following questions."
+    },
+    {
+      "tag": "H2",
+      "className": "apply-flow-block__title",
+      "text": "Application Questions"
+    },
+    {
+      "tag": "DIV",
+      "className": "apply-flow-block__header",
+      "text": "Diversity Information Submission of this information is voluntary and refusal to"
+    },
+    {
+      "tag": "H2",
+      "className": "apply-flow-block__title",
+      "text": "Diversity Information"
+    },
+    {
+      "tag": "DIV",
+      "className": "apply-flow-block__header",
+      "text": "Veteran Information - United States Oracle is a Government contractor subject to"
+    },
+    {
+      "tag": "H2",
+      "className": "apply-flow-block__title",
+      "text": "Veteran Information - United States"
+    },
+    {
+      "tag": "DIV",
+      "className": "apply-flow-block__header",
+      "text": ""
+    },
+    {
+      "tag": "DIV",
+      "className": "oj-dialog-header oj-dialog-header-decoration",
+      "text": ""
+    },
+    {
+      "tag": "DIV",
+      "className": "oj-dialog-header app-dialog__hide-header",
+      "text": ""
+    },
+    {
+      "tag": "DIV",
+      "className": "app-dialog__header",
+      "text": "Careers News"
+    },
+    {
+      "tag": "H1",
+      "className": "heading",
+      "text": "Careers News"
+    },
+    {
+      "tag": "DIV",
+      "className": "apply-flow-block__header",
+      "text": "E-Signature"
+    },
+    {
+      "tag": "H2",
+      "className": "apply-flow-block__title",
+      "text": "E-Signature"
+    },
+    {
+      "tag": "DIV",
+      "className": "oj-dialog-header oj-dialog-header-decoration",
+      "text": ""
+    },
+    {
+      "tag": "DIV",
+      "className": "oj-dialog-header app-dialog__hide-header",
+      "text": ""
+    },
+    {
+      "tag": "H1",
+      "className": "standard-apply-flow-dialog__header",
+      "text": "You're all set, Hrutin!"
+    },
+    {
+      "tag": "DIV",
+      "className": "oj-dialog-header oj-dialog-header-decoration",
+      "text": ""
+    },
+    {
+      "tag": "DIV",
+      "className": "oj-dialog-header app-dialog__hide-header",
+      "text": ""
+    },
+    {
+      "tag": "DIV",
+      "className": "app-dialog__header",
+      "text": "Are You Still With Us?"
+    },
+    {
+      "tag": "H1",
+      "className": "heading",
+      "text": "Are You Still With Us?"
+    },
+    {
+      "tag": "DIV",
+      "className": "oj-dialog-header oj-dialog-header-decoration",
+      "text": ""
+    },
+    {
+      "tag": "DIV",
+      "className": "oj-dialog-header app-dialog__hide-header",
+      "text": ""
+    },
+    {
+      "tag": "DIV",
+      "className": "app-dialog__header",
+      "text": "Welcome Back"
+    },
+    {
+      "tag": "H1",
+      "className": "heading",
+      "text": "Welcome Back"
+    },
+    {
+      "tag": "DIV",
+      "className": "oda-chat-header oda-chat-flex",
+      "text": "Oracle Assistant"
+    },
+    {
+      "tag": "DIV",
+      "className": "oda-chat-header-info-wrapper",
+      "text": "Oracle Assistant"
+    },
+    {
+      "tag": "DIV",
+      "className": "oda-chat-title",
+      "text": "Oracle Assistant"
+    },
+    {
+      "tag": "DIV",
+      "className": "oda-chat-subtitle oda-chat-none",
+      "text": ""
+    },
+    {
+      "tag": "DIV",
+      "className": "oda-chat-header-gap",
+      "text": ""
+    },
+    {
+      "tag": "DIV",
+      "className": "oda-chat-header-actions oda-chat-flex",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "className": "oda-chat-flex oda-chat-widget-button oda-chat-icon oda-chat-header-button",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "className": "oda-chat-flex oda-chat-widget-button oda-chat-icon oda-chat-header-button",
+      "text": ""
+    },
+    {
+      "tag": "DIV",
+      "className": "oda-chat-header oda-chat-webview-header oda-chat-flex",
+      "text": ""
+    },
+    {
+      "tag": "DIV",
+      "className": "oda-chat-title oda-chat-webview-title oda-chat-ellipsis",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "className": "oda-chat-flex oda-chat-widget-button oda-chat-icon oda-chat-header-button oda-chat-webview-button-close",
+      "text": ""
+    }
+  ]
+}

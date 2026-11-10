@@ -125,8 +125,17 @@ async function main() {
   const shouldClose = args.includes("--close");
 
   const jobFilterIdx = args.indexOf("--jobs");
+  const urlIdx = args.indexOf("--url");
   let targetJobs = TALEO_JOBS;
-  if (jobFilterIdx !== -1 && args[jobFilterIdx + 1]) {
+  if (urlIdx !== -1 && args[urlIdx + 1]) {
+    const customUrl = args[urlIdx + 1];
+    let rid = "custom";
+    try {
+      const u = new URL(customUrl);
+      rid = u.searchParams.get("rid") || "custom";
+    } catch (e) {}
+    targetJobs = [{ rid, url: customUrl }];
+  } else if (jobFilterIdx !== -1 && args[jobFilterIdx + 1]) {
     const rids = args[jobFilterIdx + 1].split(",").map(r => r.trim());
     targetJobs = TALEO_JOBS.filter(j => rids.includes(j.rid));
   } else if (args.includes("--new-only")) {
@@ -163,22 +172,23 @@ async function main() {
   const profile: UserProfile = {
     userId: user.user_id || "usr_hrutin_nammi",
     firstName: user.first_name || "Hrutin",
-    middleName: user.middle_name || "Goud",
+    middleName: user.middle_name || "",
     lastName: user.last_name || "Nammi",
-    email: user.email || "babufakemail@gmail.com",
-    phone: user.phone || "8688423267",
-    location: "ava street, vadodar, Gujarat, 390144, India",
-    street: "ava street",
-    city: "vadodar",
-    state: "Gujarat",
-    zipCode: "390144",
-    country: "India",
+    email: "babufakemail@gmail.com",
+    phone: "4155552671",
+    location: "500 Oracle Parkway, Suite 100, Los Angeles, CA 90001, United States",
+    street: "500 Oracle Parkway",
+    addressLine2: "Suite 100",
+    city: "Los Angeles",
+    state: "CA",
+    zipCode: "90001",
+    country: "United States",
     linkedinUrl: user.linkedin_url || "https://linkedin.com/in/hrutinnammi",
     githubUrl: user.github_url || "https://github.com/hrutinnammi",
     portfolioUrl: user.portfolio_url || "https://github.com/hrutinnammi",
     workAuthorization: "Authorized to Work",
     willingToRelocate: true,
-    yearsOfExperience: 2
+    yearsOfExperience: 3
   };
 
   console.log(`🚀 Launching ${isHeadless ? "Headless" : "Headed"} Browser...`);

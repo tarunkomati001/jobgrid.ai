@@ -6,6 +6,8 @@ import { normalizeLabel } from "../../application/field-mapper";
 import { injectVisualHUD, updateHUDStatus } from "../../browser/visual-hud";
 import { humanMouseMove, humanClick, simulateHumanMouse, simulateZigZagReview, injectCursorVisualizer, removeCursorVisualizer } from "../../browser/form-filler";
 import { db } from "../../database/db";
+import { generateAnswerForQuestion } from "../../application/question-answering";
+import { resolveLocalResumePath } from "../../utils/path-resolver";
 
 /**
  * Fuzzy matches question label against user saved answers and additional parameter answers.
@@ -65,15 +67,15 @@ export class LeverAdapter implements ATSAdapter {
   }
 
   async extractJob(page: Page): Promise<JobDetails> {
-    const pageTitle = await page.title();
+    const pageTitle = await page.title().catch(() => "");
     
     // Extract title
-    const titleText = await page.locator(".posting-headline h2, .main-header .posting-headline, h2").first().innerText().catch(() => "");
+    const titleText = await page.locator(".posting-headline h2, .main-header .posting-headline, h2").first().innerText({ timeout: 2500 }).catch(() => "");
     
     // Extract company
-    let companyText = await page.locator(".main-header-logo img, [class*='logo'] img").first().getAttribute("alt").catch(() => "");
+    let companyText = await page.locator(".main-header-logo img, [class*='logo'] img").first().getAttribute("alt", { timeout: 2000 }).catch(() => "");
     if (!companyText) {
-      companyText = await page.locator(".posting-headline .company-name, [class*='company']").first().innerText().catch(() => "");
+      companyText = await page.locator(".posting-headline .company-name, [class*='company']").first().innerText({ timeout: 2000 }).catch(() => "");
     }
     
     let company = companyText?.trim() || "";
@@ -94,7 +96,7 @@ export class LeverAdapter implements ATSAdapter {
     }
 
     // Extract description
-    const description = await page.locator(".section-wrapper, .posting-page, #content").first().innerText().catch(() => "No description extracted");
+    const description = await page.locator(".section-wrapper, .posting-page, #content").first().innerText({ timeout: 2500 }).catch(() => "No description extracted");
 
     return {
       company: company || "Lever Partner",
@@ -152,7 +154,8 @@ export class LeverAdapter implements ATSAdapter {
   }
 
   async uploadResume(page: Page, resumePath: string, _fields?: FormField[]): Promise<void> {
-    if (!fs.existsSync(resumePath)) {
+    const resolvedPath = resolveLocalResumePath(resumePath) || resumePath;
+    if (!resolvedPath || !fs.existsSync(resolvedPath)) {
       console.warn(`⚠️ [LeverAdapter]: Resume file not found at: ${resumePath}`);
       return;
     }
@@ -163,10 +166,21 @@ export class LeverAdapter implements ATSAdapter {
       return;
     }
 
-    console.log(`📄 [LeverAdapter]: Uploading resume from: ${path.basename(resumePath)}...`);
-    await fileInput.setInputFiles(resumePath).catch((err: any) => {
+    console.log(`📄 [LeverAdapter]: Uploading resume from: ${path.basename(resolvedPath)}...`);
+    await fileInput.setInputFiles(resolvedPath).catch((err: any) => {
       console.warn(`⚠️ [LeverAdapter]: Resume upload error: ${err.message}`);
     });
+
+    // Check for additional file input (e.g. cover letter or portfolio document)
+    const addFileInput = page.locator("input[type='file']:not([name='resume']):not(#resume-upload-input)").first();
+    if (await addFileInput.count() > 0) {
+      const coverPath = resolvedPath.replace(/resume/i, "cover_letter").replace(/Resume/i, "Cover_Letter");
+      const resolvedCover = resolveLocalResumePath(coverPath);
+      if (resolvedCover && fs.existsSync(resolvedCover)) {
+        await addFileInput.setInputFiles(resolvedCover).catch(() => {});
+        console.log(`✅ [LeverAdapter]: Attached additional file (cover letter): ${path.basename(resolvedCover)}`);
+      }
+    }
 
     // Wait for parseResume.js completion if present
     await page.waitForTimeout(2500);
@@ -219,13 +233,15 @@ export class LeverAdapter implements ATSAdapter {
     await fillTextInput("input[name='name']", fullName);
     console.log(`  ✅ Full Name: "${fullName}"`);
 
-    // 2. Pronouns (select He/him if present)
-    const pronounCheckbox = page.locator("input[value='He/him'], input[name='pronouns'][value='He/him']").first();
+    // 2. Pronouns (select dynamic pronoun based on candidate gender)
+    const isFemale = profile.gender?.toLowerCase() === "female";
+    const targetPronoun = isFemale ? "She/her" : "He/him";
+    const pronounCheckbox = page.locator(`input[value='${targetPronoun}'], input[name='pronouns'][value='${targetPronoun}'], input[value*='${targetPronoun}' i]`).first();
     if (await pronounCheckbox.count() > 0) {
       const pLabel = pronounCheckbox.locator("xpath=ancestor::label").first();
       if (await pLabel.count() > 0) await humanClick(page, pLabel).catch(() => pLabel.click({ force: true }));
       else await humanClick(page, pronounCheckbox).catch(() => pronounCheckbox.check({ force: true }));
-      console.log("  ✅ Pronouns: 'He/him' selected");
+      console.log(`  ✅ Pronouns: '${targetPronoun}' selected`);
     }
 
     // 3. Email
@@ -242,7 +258,7 @@ export class LeverAdapter implements ATSAdapter {
     console.log(`  ✅ Current Company: "${company}"`);
 
     // 6. Location Autocomplete Dropdown
-    const cityQuery = profile.location.split(",")[0]?.trim() || "San Francisco";
+    const cityQuery = (profile.location || profile.city || "San Francisco").split(",")[0]?.trim();
     console.log(`  🔽 [Location Dropdown]: Resolving for query "${cityQuery}"...`);
     const locInput = page.locator("#location-input, input.location-input").first();
     if (await locInput.count() > 0) {
@@ -302,9 +318,9 @@ export class LeverAdapter implements ATSAdapter {
       console.log(`  ✅ Portfolio: "${profile.portfolioUrl}"`);
     }
 
-    const twitterUrl = additionalAnswers["twitter"] || additionalAnswers["Twitter URL"] || "https://x.com/hrutin_dev";
+    const twitterUrl = additionalAnswers["twitter"] || additionalAnswers["Twitter URL"] || profile.websites?.[0] || "";
     const twitterInput = page.locator("input[name='urls[Twitter]']").first();
-    if (await twitterInput.count() > 0) {
+    if (await twitterInput.count() > 0 && twitterUrl) {
       await fillTextInput("input[name='urls[Twitter]']", twitterUrl);
       console.log(`  ✅ Twitter: "${twitterUrl}"`);
     }
@@ -370,6 +386,9 @@ export class LeverAdapter implements ATSAdapter {
       return false;
     };
 
+    // Extract job details for intelligent question answering
+    const jobDetails = await this.extractJob(page);
+
     // Iterate through all custom questions on the page
     const customQuestions = page.locator(".custom-question, .application-question:not(.awli-application-row):not(.resume)");
     const qCount = await customQuestions.count();
@@ -389,17 +408,9 @@ export class LeverAdapter implements ATSAdapter {
         await ta.scrollIntoViewIfNeeded().catch(() => {});
         let answer = matchedAnswer;
         if (norm.includes("referral") || norm.includes("referred") || norm.includes("reference") || norm.includes("referred by") || norm.includes("who referred") || norm.includes("current employee") || norm.includes("specify the employee")) {
-          answer = "Tarun Komati";
+          answer = profile.savedAnswers?.get("referral") || "Direct Application";
         } else if (!answer) {
-          if (norm.includes("salary") || norm.includes("compensation") || norm.includes("range")) {
-            answer = "$140,000 - $160,000 CAD";
-          } else if (norm.includes("aws") || norm.includes("cloud") || norm.includes("services")) {
-            answer = "Over 3+ years of building and deploying production cloud infrastructure using AWS services (EC2, S3, Lambda, API Gateway) and Azure App Service. Experienced in Docker containerization, cloud monitoring, microservices architecture, and automated CI/CD pipelines.";
-          } else if (norm.includes("staff") || norm.includes("senior") || norm.includes("lead")) {
-            answer = "Over several years of engineering end-to-end systems, I have led technical architectural decisions, designed resilient RAG and LLM ingestion pipelines, mentored engineering teams, and reduced production API response latencies by 30%. I focus on system reliability, scalable design, and high-impact business outcomes.";
-          } else {
-            answer = "Extensive experience delivering production full-stack software, AI agents, and scalable cloud architectures.";
-          }
+          answer = await generateAnswerForQuestion(labelText, jobDetails, profile);
         }
         await ta.fill(answer);
         await ta.dispatchEvent("input");
@@ -411,9 +422,18 @@ export class LeverAdapter implements ATSAdapter {
       // 2. Check for Native Select
       const selectEl = q.locator("select").first();
       if (await selectEl.count() > 0) {
-        let chosenVal = matchedAnswer || "USD";
-        if (norm.includes("currency")) chosenVal = "USD";
-        await fillSelect(`select[name='${await selectEl.getAttribute("name")}']`, chosenVal);
+        const selName = (await selectEl.getAttribute("name")) || "";
+        const opts = await page.evaluate((s) => {
+          const el = document.querySelector(`select[name='${s}']`) as HTMLSelectElement;
+          return el ? Array.from(el.options).map(o => ({ value: o.value, text: o.text.trim() })) : [];
+        }, selName);
+        const optTexts = opts.map(o => o.text);
+        let chosenVal = matchedAnswer;
+        if (!chosenVal) {
+          if (norm.includes("currency")) chosenVal = "USD";
+          else chosenVal = await generateAnswerForQuestion(labelText, jobDetails, profile, optTexts);
+        }
+        await fillSelect(`select[name='${selName}']`, chosenVal);
         console.log(`  ✅ Question Select ("${labelText.slice(0, 30)}..."): Selected "${chosenVal}"`);
         continue;
       }
@@ -422,6 +442,7 @@ export class LeverAdapter implements ATSAdapter {
       const radios = q.locator("input[type='radio']");
       const rCount = await radios.count();
       if (rCount > 0) {
+        const radioLabels = await q.locator("label").allInnerTexts().catch(() => []);
         let targetRadioVal = matchedAnswer;
         if (norm.includes("residing in canada") || norm.includes("sponsorship") || norm.includes("require visa") || norm.includes("need visa")) {
           targetRadioVal = "No";
@@ -434,7 +455,7 @@ export class LeverAdapter implements ATSAdapter {
         } else if (norm.includes("crypto") || norm.includes("production software") || norm.includes("authorized")) {
           targetRadioVal = "Yes";
         } else if (!targetRadioVal) {
-          targetRadioVal = "Yes";
+          targetRadioVal = await generateAnswerForQuestion(labelText, jobDetails, profile, radioLabels);
         }
 
         const matchingRadio = q.locator(`input[type='radio'][value*='${targetRadioVal}' i]`).first();
@@ -495,18 +516,39 @@ export class LeverAdapter implements ATSAdapter {
       if (await textInput.count() > 0 && (await textInput.isVisible().catch(() => false)) && !(await textInput.inputValue().catch(() => ""))) {
         let val = matchedAnswer;
         if (norm.includes("referral") || norm.includes("referred") || norm.includes("reference") || norm.includes("referred by") || norm.includes("who referred") || norm.includes("current employee") || norm.includes("specify the employee")) {
-          val = "Tarun Komati";
+          val = profile.savedAnswers?.get("referral") || "Direct Application";
         } else if (!val) {
-          if (norm.includes("salary") || norm.includes("expectation") || norm.includes("annual")) {
-            val = "120000";
-          } else {
-            val = "None";
-          }
+          val = await generateAnswerForQuestion(labelText, jobDetails, profile);
         }
         await textInput.fill(val, { timeout: 5000 }).catch(() => {});
         await textInput.dispatchEvent("input").catch(() => {});
         await textInput.dispatchEvent("change").catch(() => {});
         console.log(`  ✅ Question Input ("${labelText.slice(0, 30)}..."): Filled "${val}"`);
+      }
+    }
+
+    // Safety Sweep: Ensure EVERY visible field on the form is filled with no "None" or "N/A"
+    const sweepInputs = await page.locator("#application-form input[type='text']:not(.location-input), #application-form textarea").all().catch(() => []);
+    for (const inp of sweepInputs) {
+      if (!(await inp.isVisible().catch(() => false))) continue;
+      const currentVal = (await inp.inputValue().catch(() => "")).trim();
+      if (!currentVal || currentVal.toUpperCase() === "NONE" || currentVal.toUpperCase() === "N/A") {
+        let lbl = "";
+        const id = await inp.getAttribute("id").catch(() => "");
+        if (id) {
+          lbl = (await page.locator(`label[for="${id}"]`).innerText().catch(() => "")).trim();
+        }
+        if (!lbl) {
+          lbl = (await inp.locator("xpath=ancestor::label").innerText().catch(() => "")).trim();
+        }
+        if (!lbl) {
+          lbl = (await inp.getAttribute("placeholder").catch(() => "")) || (await inp.getAttribute("name").catch(() => "")) || "Application question";
+        }
+        const ans = await generateAnswerForQuestion(lbl, jobDetails, profile);
+        await inp.fill(ans).catch(() => {});
+        await inp.dispatchEvent("input").catch(() => {});
+        await inp.dispatchEvent("change").catch(() => {});
+        console.log(`  🛡️ [LeverAdapter]: Sweep populated empty field "${lbl}" -> "${ans.slice(0, 40)}..."`);
       }
     }
 

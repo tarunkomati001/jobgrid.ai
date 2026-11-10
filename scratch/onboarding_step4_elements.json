@@ -1,0 +1,28 @@
+[
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": null,
+    "type": null,
+    "text": "Upload Resume",
+    "for": "resume"
+  },
+  {
+    "tag": "INPUT",
+    "id": "resume",
+    "name": null,
+    "type": "file",
+    "value": "",
+    "text": "",
+    "for": null
+  },
+  {
+    "tag": "BUTTON",
+    "id": "",
+    "name": null,
+    "type": null,
+    "value": "",
+    "text": "Skip for now",
+    "for": null
+  }
+]

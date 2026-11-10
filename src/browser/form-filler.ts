@@ -31,21 +31,11 @@ export async function typeLikeHuman(page: Page | Frame, locator: any, text: stri
     await target.fill("");
     await pageObj.waitForTimeout(300 + Math.floor(Math.random() * 300));
 
-    // Type character by character with deliberate human rhythm (80ms - 160ms delay per key)
-    for (let i = 0; i < text.length; i++) {
-      const char = text[i];
-      await target.pressSequentially(char, { delay: 80 + Math.floor(Math.random() * 75) });
-
-      // Add realistic pauses at punctuation and spaces (human reading/thinking pause)
-      if (char === "." || char === "!" || char === "?") {
-        await pageObj.waitForTimeout(400 + Math.floor(Math.random() * 400));
-      } else if (char === "," || char === ";" || char === ":") {
-        await pageObj.waitForTimeout(250 + Math.floor(Math.random() * 250));
-      } else if (char === "\n") {
-        await pageObj.waitForTimeout(500 + Math.floor(Math.random() * 500));
-      } else if (char === " " && i % 6 === 0) {
-        await pageObj.waitForTimeout(180 + Math.floor(Math.random() * 180));
-      }
+    // Type with human-like sequential keystrokes
+    if (text.length > 80) {
+      await target.pressSequentially(text, { delay: 15 });
+    } else {
+      await target.pressSequentially(text, { delay: 30 });
     }
 
     // Ensure React value tracker and synthetic events commit the value natively

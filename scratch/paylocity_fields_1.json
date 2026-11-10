@@ -1,0 +1,97 @@
+{
+  "url": "https://recruiting.paylocity.com/Recruiting/jobs/Apply/3873766",
+  "title": "Etegent Technologies, LTD - Software Engineer Application",
+  "fieldsCount": 8,
+  "visibleFields": [],
+  "allFields": [
+    {
+      "tag": "input",
+      "id": "",
+      "name": "__RequestVerificationToken",
+      "type": "hidden",
+      "label": "Targeting Cookies",
+      "placeholder": "",
+      "required": false,
+      "options": [],
+      "visible": false
+    },
+    {
+      "tag": "input",
+      "id": "ot-group-id-C0004",
+      "name": "ot-group-id-C0004",
+      "type": "checkbox",
+      "label": "Targeting Cookies",
+      "placeholder": "",
+      "required": false,
+      "options": [],
+      "visible": false
+    },
+    {
+      "tag": "input",
+      "id": "ot-group-id-C0002",
+      "name": "ot-group-id-C0002",
+      "type": "checkbox",
+      "label": "Performance Cookies",
+      "placeholder": "",
+      "required": false,
+      "options": [],
+      "visible": false
+    },
+    {
+      "tag": "input",
+      "id": "vendor-search-handler",
+      "name": "vendor-search-handler",
+      "type": "text",
+      "label": "",
+      "placeholder": "",
+      "required": false,
+      "options": [],
+      "visible": false
+    },
+    {
+      "tag": "input",
+      "id": "chkbox-id",
+      "name": "",
+      "type": "checkbox",
+      "label": "checkbox label",
+      "placeholder": "",
+      "required": false,
+      "options": [],
+      "visible": false
+    },
+    {
+      "tag": "input",
+      "id": "select-all-hosts-groups-handler",
+      "name": "switch",
+      "type": "checkbox",
+      "label": "Switch Label",
+      "placeholder": "",
+      "required": false,
+      "options": [],
+      "visible": false
+    },
+    {
+      "tag": "input",
+      "id": "select-all-vendor-groups-handler",
+      "name": "switch",
+      "type": "checkbox",
+      "label": "Switch Label",
+      "placeholder": "",
+      "required": false,
+      "options": [],
+      "visible": false
+    },
+    {
+      "tag": "input",
+      "id": "select-all-vendor-leg-handler",
+      "name": "switch",
+      "type": "checkbox",
+      "label": "Switch Label",
+      "placeholder": "",
+      "required": false,
+      "options": [],
+      "visible": false
+    }
+  ],
+  "questionBlocks": []
+}

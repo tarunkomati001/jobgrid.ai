@@ -4,6 +4,7 @@ import { Page, Frame } from "playwright";
 import { ATSAdapter, FormField, JobDetails, SubmissionResult, UserProfile } from "../ats.interface";
 import { normalizeLabel } from "../../application/field-mapper";
 import { suggestAnswerForQuestion } from "../../application/question-answering";
+import { generateCoverLetterText } from "../../database/user-profile.service";
 import { injectVisualHUD, updateHUDStatus } from "../../browser/visual-hud";
 import { simulateHumanMouse, humanClick, typeLikeHuman } from "../../browser/form-filler";
 import { generateResumePdf } from "../../browser/browser-manager";
@@ -11,6 +12,7 @@ import { dismissCommonPopups } from "../../browser/popup-handler";
 import { db } from "../../database/db";
 
 export class RecruiteeAdapter implements ATSAdapter {
+  private candidateProfile?: UserProfile;
 
   /**
    * Detects whether the current page is powered by Recruitee ATS.
@@ -219,7 +221,7 @@ export class RecruiteeAdapter implements ATSAdapter {
   /**
    * Uploads candidate resume (CV) and optional cover letter.
    */
-  async uploadResume(page: Page, resumePath: string): Promise<void> {
+  private async uploadResumeLegacy(page: Page, resumePath: string): Promise<void> {
     console.log(`📄 [RecruiteeAdapter]: Uploading resume: ${resumePath}`);
     await this.ensureApplicationFormOpen(page);
 
@@ -233,7 +235,8 @@ export class RecruiteeAdapter implements ATSAdapter {
     }
 
     // Cover letter if available
-    const coverLetterPath = path.resolve(path.dirname(resumePath), "Hrutin_Nammi_Cover_Letter.pdf");
+    const prof = this.candidateProfile;
+    const coverLetterPath = prof?.coverLetterPath || (resumePath ? path.resolve(path.dirname(resumePath), `${prof?.firstName || 'Candidate'}_${prof?.lastName || 'User'}_Cover_Letter.pdf`) : "");
     const clInput = page.locator("input[name='candidate.coverLetterFile'], input[type='file'][name*='cover' i]").first();
     if (await clInput.count() > 0 && fs.existsSync(coverLetterPath)) {
       console.log(`📄 [RecruiteeAdapter]: Uploading cover letter: ${coverLetterPath}`);
@@ -254,6 +257,7 @@ export class RecruiteeAdapter implements ATSAdapter {
     additionalAnswers: Record<string, string> = {},
     preExtractedFields?: FormField[]
   ): Promise<void> {
+    this.candidateProfile = profile;
     console.log("🚀 [RecruiteeAdapter]: Starting Recruitee form filling flow...");
     await injectVisualHUD(page);
     await updateHUDStatus(page, "Preparing Recruitee application...", `Candidate: ${profile.firstName} ${profile.lastName}`, "info", 20);
@@ -500,11 +504,11 @@ export class RecruiteeAdapter implements ATSAdapter {
       } else if (normLabel.includes("location")) {
         targetVal = profile.location || "San Francisco, CA, United States";
       } else if (normLabel.includes("linkedin")) {
-        targetVal = profile.linkedinUrl || "https://linkedin.com/in/hrutinnammi";
+        targetVal = profile.linkedinUrl || "";
       } else if (normLabel.includes("github")) {
-        targetVal = profile.githubUrl || "https://github.com/hrutinnammi";
+        targetVal = profile.githubUrl || "";
       } else if (normLabel.includes("portfolio") || normLabel.includes("website") || normLabel.includes("personal site")) {
-        targetVal = profile.portfolioUrl || "https://github.com/hrutinnammi";
+        targetVal = profile.portfolioUrl || profile.githubUrl || "";
       } else if (normLabel.includes("english")) {
         targetVal = "Fluent / Professional Working Proficiency";
       } else if (normLabel.includes("compensation") || normLabel.includes("additional")) {
@@ -548,8 +552,7 @@ export class RecruiteeAdapter implements ATSAdapter {
         essayAnswer =
           "Yes, I have extensive production experience building AI solutions with OpenAI and Azure OpenAI APIs, along with agentic frameworks. I built end-to-end RAG pipelines using vector indexing (FAISS), chunking workflows, prompt orchestration, and FastAPI services deployed to Azure App Service and Azure Blob Storage. In addition, I have implemented agentic workflows with autonomous tool calling, structured outputs, and fallback mechanisms for enterprise use cases.";
       } else if (normLabel.includes("cover letter")) {
-        essayAnswer = userSavedAnswers["cover_letter"] ||
-          "Dear Hiring Manager,\n\nI am a Full-Stack AI Developer experienced in building scalable AI applications, RAG pipelines, FastAPI backends, and React interfaces. At Jobspring, I developed an AI resume platform serving 50+ users and reduced API latency by 30%. I am excited to bring my expertise in Python, React, LLMs, and cloud deployments to your team.\n\nBest regards,\nHrutin Nammi";
+        essayAnswer = userSavedAnswers["cover_letter"] || generateCoverLetterText(profile);
       }
 
       if (!essayAnswer && userSavedAnswers[normLabel]) {
@@ -890,6 +893,8 @@ export class RecruiteeAdapter implements ATSAdapter {
    * Uploads both the Candidate Resume PDF and Cover Letter PDF.
    */
   async uploadResume(page: Page, resumePath: string, fields?: FormField[], profile?: UserProfile): Promise<void> {
+    if (profile) this.candidateProfile = profile;
+    const prof = profile || this.candidateProfile;
     console.log(`📄 [RecruiteeAdapter]: Attaching Resume & Cover Letter files...`);
     await updateHUDStatus(page, "Attaching Documents", "Uploading Resume and Cover Letter PDFs", "info", 90);
 
@@ -916,26 +921,12 @@ export class RecruiteeAdapter implements ATSAdapter {
 
       // Determine cover letter path
       const resumeDir = path.dirname(resumePath);
-      let coverLetterPath = path.join(resumeDir, "Hrutin_Nammi_Cover_Letter.pdf");
+      let coverLetterPath = prof?.coverLetterPath || path.join(resumeDir, `${prof?.firstName || 'Candidate'}_${prof?.lastName || 'User'}_Cover_Letter.pdf`);
 
       // If Cover Letter PDF does not exist yet on disk, generate it dynamically!
-      if (!fs.existsSync(coverLetterPath)) {
+      if (!fs.existsSync(coverLetterPath) && prof) {
         console.log(`📄 [RecruiteeAdapter]: Generating Cover Letter PDF at: ${coverLetterPath}...`);
-        const coverLetterText = `HRUTIN NAMMI
-San Francisco, CA, United States | babufakemail@gmail.com | +1 202 555 0198 | linkedin: https://linkedin.com/in/hrutinnammi | github: https://github.com/hrutinnammi
-
-Dear Hiring Manager,
-
-I am writing to express my enthusiastic interest in joining your engineering team. As a Full-Stack AI Developer with comprehensive experience architecting scalable applications, RAG pipelines, FastAPI backends, and responsive React interfaces, I have a proven track record of delivering reliable, high-performance production systems.
-
-At Jobspring, I developed an AI-powered resume and career platform serving multi-user workloads using OpenAI APIs, optimizing database query flows and reducing API response latency by 30%. I designed and containerized scalable backend services using Docker and Azure App Service, cutting deployment cycles by 60%. In addition, my flagship project LocalMind OS demonstrates my depth in local LLM retrieval architectures, FAISS semantic search indexing, and resilient full-stack engineering.
-
-I am particularly excited about your mission and would welcome the opportunity to bring my technical expertise in Python, Node.js, FastAPI, React, and modern AI architectures to your team.
-
-Thank you very much for your time and consideration.
-
-Sincerely,
-Hrutin Nammi`;
+        const coverLetterText = generateCoverLetterText(prof);
 
         try {
           await generateResumePdf(coverLetterPath, coverLetterText);

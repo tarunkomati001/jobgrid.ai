@@ -443,8 +443,16 @@ export class SmartRecruitersAdapter implements ATSAdapter {
       let choice = "No";
       if (text.includes("gender") || text.includes("sex")) {
         choice = "Male";
-      } else if (text.includes("authorized") || text.includes("relocate") || text.includes("willing to relocate")) {
+      } else if (text.includes("race") || text.includes("ethnic") || text.includes("identify with")) {
+        choice = "Asian";
+      } else if (text.includes("authorized") || text.includes("eligible") || text.includes("relocate") || text.includes("willing to relocate")) {
         choice = "Yes";
+      } else if (text.includes("sponsorship") || text.includes("visa")) {
+        choice = "No";
+      } else if (text.includes("veteran")) {
+        choice = "No";
+      } else if (text.includes("disability")) {
+        choice = "No";
       }
 
       const radioChoice = group.locator(`text='${choice}'`).first();
@@ -506,6 +514,9 @@ export class SmartRecruitersAdapter implements ATSAdapter {
       const curVal = await inp.inputValue().catch(() => "");
 
       const isGenderField = text.includes("gender") || text.includes("sex");
+      const isRaceField = text.includes("race") || text.includes("ethnic") || text.includes("identify with");
+      const isAuthField = text.includes("authorized") || text.includes("legally");
+      const isSponField = text.includes("sponsorship") || text.includes("visa");
 
       if (isGenderField) {
         console.log(`  Explicitly selecting Male for Gender dropdown...`);
@@ -524,6 +535,69 @@ export class SmartRecruitersAdapter implements ATSAdapter {
           }
         } else {
           await page.keyboard.type("Male");
+          await page.waitForTimeout(200);
+          await page.keyboard.press("Enter");
+        }
+        await page.waitForTimeout(400);
+      } else if (isRaceField) {
+        console.log(`  Explicitly selecting Asian for Race dropdown...`);
+        try {
+          await humanClick(page, inp);
+        } catch {
+          await inp.click().catch(() => {});
+        }
+        await page.waitForTimeout(400);
+        const asianOption = page.locator("spl-option:has-text('Asian'), spl-autocomplete-option:has-text('Asian'), [role='option']:has-text('Asian')").first();
+        if ((await asianOption.count()) > 0) {
+          try {
+            await humanClick(page, asianOption);
+          } catch {
+            await asianOption.click({ force: true }).catch(() => {});
+          }
+        } else {
+          await page.keyboard.type("Asian");
+          await page.waitForTimeout(200);
+          await page.keyboard.press("Enter");
+        }
+        await page.waitForTimeout(400);
+      } else if (isAuthField) {
+        console.log(`  Explicitly selecting Yes for Work Authorization dropdown...`);
+        try {
+          await humanClick(page, inp);
+        } catch {
+          await inp.click().catch(() => {});
+        }
+        await page.waitForTimeout(400);
+        const yesOption = page.locator("spl-option:has-text('Yes'), spl-autocomplete-option:has-text('Yes'), [role='option']:has-text('Yes')").first();
+        if ((await yesOption.count()) > 0) {
+          try {
+            await humanClick(page, yesOption);
+          } catch {
+            await yesOption.click({ force: true }).catch(() => {});
+          }
+        } else {
+          await page.keyboard.type("Yes");
+          await page.waitForTimeout(200);
+          await page.keyboard.press("Enter");
+        }
+        await page.waitForTimeout(400);
+      } else if (isSponField) {
+        console.log(`  Explicitly selecting No for Visa Sponsorship dropdown...`);
+        try {
+          await humanClick(page, inp);
+        } catch {
+          await inp.click().catch(() => {});
+        }
+        await page.waitForTimeout(400);
+        const noOption = page.locator("spl-option:has-text('No'), spl-autocomplete-option:has-text('No'), [role='option']:has-text('No')").first();
+        if ((await noOption.count()) > 0) {
+          try {
+            await humanClick(page, noOption);
+          } catch {
+            await noOption.click({ force: true }).catch(() => {});
+          }
+        } else {
+          await page.keyboard.type("No");
           await page.waitForTimeout(200);
           await page.keyboard.press("Enter");
         }

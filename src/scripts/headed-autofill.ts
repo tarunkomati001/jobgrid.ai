@@ -3,6 +3,7 @@ import { chromium } from "playwright";
 import { applyStealthScripts, createBrowser, createPersistentBrowserContext, DEFAULT_USER_AGENT } from "../browser/browser-manager";
 import { detectAndGetAdapter } from "../ats/ats-factory";
 import { UserProfile, WorkExperienceItem, EducationItem } from "../ats/ats.interface";
+import { getAllUserProfiles, getUserProfile } from "../database/user-profile.service";
 import { resolveLocalResumePath } from "../utils/path-resolver";
 import { handleCloudflareTurnstile } from "../browser/turnstile-handler";
 import { dismissCommonPopups } from "../browser/popup-handler";
@@ -18,70 +19,75 @@ async function main() {
 
   // Parse command line arguments
   const args = process.argv.slice(2);
-  const isForceAllAutoSubmit = args.includes("--force-auto-submit-all") || args.includes("--auto-submit-all");
+  const isForceAllAutoSubmit = args.includes("--force-auto-submit-all") || args.includes("--auto-submit-all") || args.includes("--auto-submit");
   const isManualOnly = args.includes("--manual") || args.includes("--no-auto-submit");
   const isParallelAllMode = args.includes("--parallel");
   const isSequentialMode = !isParallelAllMode; // Default to safe sequential execution to prevent anti-bot spam flags
   const isKeepOpenMode = !args.includes("--close"); // Default to keeping tabs open on screen
 
-  console.log(`⚙️  Auto-Submit Policy: 🟢 AUTO-SUBMIT FOR LEVER & WORKABLE JOBS | 🟡 MANUAL REVIEW FOR ALL OTHER ATS PLATFORMS`);
+  console.log(`⚙️  Auto-Submit Policy: 🟢 AUTO-SUBMIT FOR LEVER, WORKABLE & PAYLOCITY JOBS | 🟡 MANUAL REVIEW FOR ALL OTHER ATS PLATFORMS`);
   console.log(`⚙️  Execution: ${isParallelAllMode ? "⚡ SIMULTANEOUS PARALLEL (All tabs open at once)" : "🎯 Sequential"}`);
   console.log(`⚙️  Window Control: ${isKeepOpenMode ? "📌 Keep Windows Open" : "🔒 Auto-close tabs on finish"}\n`);
 
-  // 1. Fetch all user profiles from DB and deduplicate by full name
-  const profilesRes = await db.query(
-    "SELECT u.email, p.* FROM user_profiles p JOIN users u ON p.user_id = u.id ORDER BY p.user_id ASC"
-  );
-  
-  if (profilesRes.rowCount === 0) {
-    console.error("❌ No users found in database. Run database seed first!");
+  // 1. Fetch dynamic user profiles completely from PostgreSQL DB
+  const allProfiles: UserProfile[] = await getAllUserProfiles();
+  if (allProfiles.length === 0) {
+    console.error("❌ [HeadedAutofill]: No user profiles found in database!");
     process.exit(1);
   }
 
-  // Deduplicate by name so each job gets a distinct person (Aarav, Rohan, Ananya, Vikram, Neha, Arjun, Priya, Karan, Sneha, Aditya, Kavya, Rahul, Divya, Siddharth, Meera)
-  const seenNames = new Set<string>();
-  const allProfiles = profilesRes.rows.filter((p: any) => {
-    const nameKey = `${p.first_name}_${p.last_name}`.toLowerCase();
-    if (seenNames.has(nameKey)) return false;
-    seenNames.add(nameKey);
-    return true;
-  });
-
-  // Check if a specific user candidate is requested via --user flag (e.g. --user 2, --user sandeep, --user 1, --user chetan)
+  // Check if a specific user candidate is requested via --user flag (e.g. --user 2, --user sandeep, --user 1, --user hrutin, --user "Michael Carter")
   const userArgIdx = args.indexOf("--user");
   const isRotateMode = args.includes("--rotate");
-  let selectedUser: any = null;
+  let selectedUser: UserProfile | null = null;
 
   if (userArgIdx !== -1 && args[userArgIdx + 1]) {
-    const uVal = args[userArgIdx + 1].toLowerCase();
-    if (uVal.includes("hrutin") || uVal.includes("nammi")) {
-      selectedUser = allProfiles.find(p => p.email.includes("hrutin") || p.first_name.toLowerCase().includes("hrutin")) || allProfiles[0];
-    } else if (uVal === "2" || uVal.includes("sandeep") || uVal.includes("yalla")) {
-      selectedUser = allProfiles.find(p => p.email.includes("sandeep") || p.first_name.toLowerCase().includes("sandeep")) || allProfiles[1] || allProfiles[0];
-    } else if (uVal === "1" || uVal.includes("chetan") || uVal.includes("midde")) {
-      selectedUser = allProfiles.find(p => p.email.includes("chetan") || p.first_name.toLowerCase().includes("chetan")) || allProfiles[0];
-    } else {
-      const idxNum = parseInt(uVal, 10);
-      if (!isNaN(idxNum) && idxNum > 0 && idxNum <= allProfiles.length) {
-        selectedUser = allProfiles[idxNum - 1];
-      }
-    }
+    const requested = args[userArgIdx + 1];
+    selectedUser = await getUserProfile(requested);
+    console.log(`👤 [Target Candidate Selected]: ${selectedUser.firstName} ${selectedUser.lastName} (${selectedUser.email})`);
   } else if (!isRotateMode) {
-    // DEFAULT TO HRUTIN NAMMI FOR ALL JOBS
-    selectedUser = allProfiles.find(p => p.email.includes("hrutin") || p.first_name.toLowerCase().includes("hrutin")) || allProfiles[0];
-  }
-
-  // Pre-fetch resumes map upfront to avoid querying DB during browser runs (strictly select PDF resume)
-  const resumesRes = await db.query("SELECT user_id, file_path FROM resumes WHERE is_active = 1 AND (resume_type = 'PDF' OR resume_type IS NULL) ORDER BY created_at ASC").catch(() => ({ rows: [] }));
-  const resumeMap = new Map<string, string>();
-  for (const row of (resumesRes.rows || [])) {
-    resumeMap.set(row.user_id, row.file_path);
+    // Default strictly to Hrutin Nammi (Main Candidate Blueprint for all testing)
+    selectedUser = await getUserProfile("hrutin");
+    console.log(`👤 [Main Test Candidate (Hrutin Blueprint)]: ${selectedUser.firstName} ${selectedUser.lastName} (${selectedUser.email})`);
   }
 
   // Determine URLs to process
   let urls: string[] = [];
-  const urlArgs = args.filter(arg => arg.startsWith("http://") || arg.startsWith("https://"));
-  const isSmartRecruitersOnly = args.includes("--sr-only") || args.includes("--smartrecruiters-only");
+  const normalizeCliUrl = (val: string) => {
+    if (!val) return "";
+    let clean = val.trim();
+    if (!clean.startsWith("http://") && !clean.startsWith("https://")) {
+      if (clean.includes(".com") || clean.includes(".io") || clean.includes(".ai") || clean.includes("/")) {
+        clean = "https://" + clean;
+      }
+    }
+    return clean.startsWith("http") ? clean : "";
+  };
+
+  const urlParamIdx = args.indexOf("--url") !== -1 ? args.indexOf("--url") : args.indexOf("--link");
+  const explicitUrlVal = urlParamIdx !== -1 && args[urlParamIdx + 1] ? normalizeCliUrl(args[urlParamIdx + 1]) : null;
+  const equalUrlArg = normalizeCliUrl(args.find(a => a.startsWith("--url=") || a.startsWith("--link="))?.split("=")[1] || "");
+  const directUrls = args.map(normalizeCliUrl).filter(Boolean);
+  const urlArgs = Array.from(new Set([
+    ...(explicitUrlVal ? [explicitUrlVal] : []),
+    ...(equalUrlArg ? [equalUrlArg] : []),
+    ...directUrls
+  ]));
+  const isSmartRecruitersOnly = 
+    args.includes("--smartrecruiters") ||
+    args.includes("--smart-recruiters") ||
+    args.includes("--sr") ||
+    args.includes("--sr-only") || 
+    args.includes("--smartrecruiters-only") ||
+    (args.includes("--ats") && args[args.indexOf("--ats") + 1]?.toLowerCase()?.includes("smartrecruiter")) ||
+    process.env.SMARTRECRUITERS_ONLY === "true" ||
+    process.env.ATS_FILTER?.toUpperCase() === "SMARTRECRUITERS";
+  const isTaleoOnly =
+    args.includes("--taleo") ||
+    args.includes("--taleo-only") ||
+    (args.includes("--ats") && args[args.indexOf("--ats") + 1]?.toLowerCase() === "taleo") ||
+    process.env.TALEO_ONLY === "true" ||
+    process.env.ATS_FILTER?.toUpperCase() === "TALEO";
   const isWorkableOnly =
     args.includes("--workable") ||
     args.includes("--workable-only") ||
@@ -115,10 +121,126 @@ async function main() {
     (args.includes("--ats") && args[args.indexOf("--ats") + 1]?.toLowerCase() === "rippling") ||
     process.env.RIPPLING_ONLY === "true" ||
     process.env.ATS_FILTER?.toUpperCase() === "RIPPLING";
+  const isWellfoundOnly =
+    args.includes("--wellfound") ||
+    args.includes("--wellfound-only") ||
+    (args.includes("--ats") && args[args.indexOf("--ats") + 1]?.toLowerCase() === "wellfound") ||
+    process.env.WELLFOUND_ONLY === "true" ||
+    process.env.ATS_FILTER?.toUpperCase() === "WELLFOUND";
+  const isBambooHROnly =
+    args.includes("--bamboohr") ||
+    args.includes("--bamboohr-only") ||
+    (args.includes("--ats") && args[args.indexOf("--ats") + 1]?.toLowerCase() === "bamboohr") ||
+    process.env.BAMBOOHR_ONLY === "true" ||
+    process.env.ATS_FILTER?.toUpperCase() === "BAMBOOHR";
+  const isBreezyHROnly =
+    args.includes("--breezy") ||
+    args.includes("--breezyhr") ||
+    args.includes("--breezy-only") ||
+    (args.includes("--ats") && args[args.indexOf("--ats") + 1]?.toLowerCase()?.includes("breezy")) ||
+    process.env.BREEZYHR_ONLY === "true" ||
+    process.env.ATS_FILTER?.toUpperCase() === "BREEZYHR";
+  const isAvatureOnly =
+    args.includes("--avature") ||
+    args.includes("--avature-only") ||
+    (args.includes("--ats") && args[args.indexOf("--ats") + 1]?.toLowerCase() === "avature") ||
+    process.env.AVATURE_ONLY === "true" ||
+    process.env.ATS_FILTER?.toUpperCase() === "AVATURE";
+  const isJobviteOnly =
+    args.includes("--jobvite") ||
+    args.includes("--jobvite-only") ||
+    (args.includes("--ats") && args[args.indexOf("--ats") + 1]?.toLowerCase() === "jobvite") ||
+    process.env.JOBVITE_ONLY === "true" ||
+    process.env.ATS_FILTER?.toUpperCase() === "JOBVITE";
+  const isJazzHROnly =
+    args.includes("--jazzhr") ||
+    args.includes("--jazzhr-only") ||
+    (args.includes("--ats") && args[args.indexOf("--ats") + 1]?.toLowerCase() === "jazzhr") ||
+    process.env.JAZZHR_ONLY === "true" ||
+    process.env.ATS_FILTER?.toUpperCase() === "JAZZHR";
+  const isPaylocityOnly =
+    args.includes("--paylocity") ||
+    args.includes("--paylocity-only") ||
+    (args.includes("--ats") && args[args.indexOf("--ats") + 1]?.toLowerCase() === "paylocity") ||
+    process.env.PAYLOCITY_ONLY === "true" ||
+    process.env.ATS_FILTER?.toUpperCase() === "PAYLOCITY";
   const isAll = args.includes("--all");
   
   if (urlArgs.length > 0) {
     urls = urlArgs;
+  } else if (isAvatureOnly) {
+    console.log("🎯 Filtering queued jobs strictly for AVATURE ATS (5 requested jobs)...");
+    urls = [
+      "https://bloomberg.avature.net/careers/JobDetail/Senior-Software-Engineer-Public-Cloud-Engineering/20217#",
+      "https://bloomberg.avature.net/careers/JobDetail/Senior-WordPress-Engineer-Marketing-Platforms/45956",
+      "https://cdcn.avature.net/careers/JobDetail/Software-Engineer-I/8611",
+      "https://koch.avature.net/en_US/careers/JobDetail/United-States-Electrical-Maintenance-Technician-San-Leandro-CA/197452",
+      "https://cdcn.avature.net/careers/JobDetail/Caregiver-Dayton-Minden-Surrounding-Areas/9343"
+    ];
+  } else if (isJobviteOnly) {
+    console.log("🎯 Filtering queued jobs strictly for JOBVITE ATS (9 requested jobs)...");
+    urls = [
+      "https://jobs.jobvite.com/actionet/job/oAd3Afwa",
+      "https://jobs.jobvite.com/actionet/job/oVq9AfwO",
+      "https://jobs.jobvite.com/actionet/job/oGlQAfwb",
+      "https://jobs.jobvite.com/actionet/job/oATCAfwp",
+      "https://jobs.jobvite.com/iboss/job/oLudAfwM",
+      "https://jobs.jobvite.com/iboss/job/orvdAfwt",
+      "https://jobs.jobvite.com/iboss/job/ojdfAfw5",
+      "https://jobs.jobvite.com/ninjaone/job/oKjFAfw2",
+      "https://jobs.jobvite.com/enverus/job/oUSzAfwF"
+    ];
+  } else if (isBreezyHROnly) {
+    console.log("🎯 Filtering queued jobs strictly for BREEZYHR ATS (6 requested jobs)...");
+    urls = [
+      "https://tristero.breezy.hr/p/026d43128c81-junior-software-engineer",
+      "https://beli.breezy.hr/p/f5e1ac51ce99-software-engineer",
+      "https://centrl.breezy.hr/p/00c5292242bc-software-engineer/apply",
+      "https://pri.breezy.hr/p/a5f78c8ec2ab-practice-lead-structural-engineering",
+      "https://pri.breezy.hr/p/c04e91eddf71-senior-geotechnical-engineer",
+      "https://turaco.breezy.hr/p/c3b472050c6b-software-engineer/apply"
+    ];
+  } else if (isBambooHROnly) {
+    console.log("🎯 Filtering queued jobs strictly for BAMBOOHR ATS (7 requested jobs)...");
+    urls = [
+      "https://atlas.bamboohr.com/careers/633",
+      "https://atlas.bamboohr.com/careers/604",
+      "https://headspin.bamboohr.com/careers/331",
+      "https://prentkeromich.bamboohr.com/careers/506",
+      "https://prentkeromich.bamboohr.com/careers/526",
+      "https://greenparkcontent.bamboohr.com/careers/831",
+      "https://prentkeromich.bamboohr.com/careers/527"
+    ];
+  } else if (isJazzHROnly) {
+    console.log("🎯 Filtering queued jobs strictly for JAZZHR ATS (8 requested jobs)...");
+    urls = [
+      "https://snapsheet.applytojob.com/apply/7dY1TUAJrl/Account-Manager-Appraisals",
+      "https://snapsheet.applytojob.com/apply/c1KTdrlE1X/Quality-Assurance-Engineer",
+      "https://snapsheet.applytojob.com/apply/zbmXAVAZXm/Senior-Account-Executive",
+      "https://peregrineteam.applytojob.com/apply/ppXpgq8Ykg/Software-Engineer",
+      "https://eclipsefoundation.applytojob.com/apply/yxw4F4HTOW/Intermediate-SecOps-Engineer",
+      "https://bibleproject.applytojob.com/apply/CIsBvf6BHr/Quality-Engineer-Mobile-Audience-Experience",
+      "https://vivsofttechnologiesfa.applytojob.com/apply/1kNuql214Y/OneStream-Developer",
+      "https://vivsofttechnologiesfa.applytojob.com/apply/ECytI4yKss/Salesforce-Developer"
+    ];
+  } else if (isWellfoundOnly) {
+    console.log("🎯 Filtering queued jobs strictly for WELLFOUND ATS only...");
+    const jobsRes = await db.query("SELECT DISTINCT url FROM jobs WHERE (ats = 'WELLFOUND' OR url LIKE '%wellfound.com%' OR url LIKE '%angel.co%') ORDER BY url ASC").catch(() => ({ rows: [] }));
+    urls = Array.from(new Set(jobsRes.rows.map((row: any) => row.url)));
+    if (urls.length === 0) {
+      urls = ["https://wellfound.com/jobs"];
+    }
+  } else if (isPaylocityOnly) {
+    console.log("🎯 Filtering queued jobs strictly for PAYLOCITY ATS (7 requested jobs)...");
+    urls = [
+      "https://recruiting.paylocity.com/Recruiting/Jobs/Details/4447994",
+      "https://recruiting.paylocity.com/Recruiting/Jobs/Details/4402684",
+      "https://recruiting.paylocity.com/Recruiting/Jobs/Details/4402734",
+      "https://recruiting.paylocity.com/Recruiting/Jobs/Details/4616387",
+      "https://recruiting.paylocity.com/Recruiting/Jobs/Apply/4585012",
+      "https://recruiting.paylocity.com/Recruiting/Jobs/Apply/4589597",
+      "https://recruiting.paylocity.com/Recruiting/Jobs/Details/4358710"
+    ];
   } else if (isRipplingOnly) {
     console.log("🎯 Filtering queued jobs strictly for RIPPLING ATS only...");
     const jobsRes = await db.query("SELECT DISTINCT url FROM jobs WHERE (ats = 'RIPPLING' OR url LIKE '%rippling.com%') ORDER BY url ASC").catch(() => ({ rows: [] }));
@@ -146,12 +268,11 @@ async function main() {
       ];
     }
   } else if (isOracleOnly) {
-    console.log("🎯 Filtering queued jobs strictly for ORACLE ATS (4 requested jobs)...");
+    console.log("🎯 Filtering queued jobs strictly for ORACLE ATS (3 active jobs)...");
     urls = [
+      "https://fa-extu-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1/job/3889",
       "https://careers.oracle.com/en/sites/jobsearch/jobs/preview/344557/?keyword=software+engineer",
-      "https://careers.oracle.com/en/sites/jobsearch/jobs/preview/344708/?keyword=software+engineer&mode=location",
-      "https://careers.oracle.com/en/sites/jobsearch/jobs/preview/345236/?keyword=software+engineer",
-      "https://careers.oracle.com/en/sites/jobsearch/jobs/preview/338844/?keyword=software+engineers"
+      "https://careers.oracle.com/en/sites/jobsearch/jobs/preview/344708/?keyword=software+engineer&mode=location"
     ];
   } else if (isWorkableOnly) {
     console.log("🎯 Filtering queued jobs strictly for WORKABLE ATS only...");
@@ -166,14 +287,17 @@ async function main() {
     }
   } else if (isLeverOnly) {
     console.log("🎯 Filtering queued jobs strictly for LEVER ATS only...");
-    const jobsRes = await db.query("SELECT DISTINCT url FROM jobs WHERE (ats = 'LEVER' OR url LIKE '%lever.co%') ORDER BY url ASC");
-    urls = Array.from(new Set(jobsRes.rows.map((row: any) => row.url)));
-    if (urls.length === 0) {
-      urls = [
-        "https://jobs.lever.co/sonatype/dc2c0041-d681-4b0b-b113-b99984af95f4/apply",
-        "https://jobs.lever.co/moonpay/6e864b20-6e5b-4918-b0b5-a7ec5a3e65ca/apply"
-      ];
-    }
+    let dbUrls: string[] = [];
+    try {
+      const jobsRes = await db.query("SELECT DISTINCT url FROM jobs WHERE (ats = 'LEVER' OR url LIKE '%lever.co%') ORDER BY url ASC");
+      dbUrls = Array.from(new Set(jobsRes.rows.map((row: any) => row.url)));
+    } catch (e) {}
+    urls = [
+      "https://jobs.lever.co/gohighlevel/ce928065-f2cf-4412-a5e7-32677e6f4e4b/apply",
+      "https://jobs.lever.co/kinsta/44982157-55fc-42e7-b5ce-3f8bfc3f65c7/apply",
+      "https://jobs.lever.co/kinsta/caadac8e-381f-42a2-9801-202b351fff28/apply",
+      ...dbUrls
+    ];
   } else if (isWorkdayOnly) {
     console.log("🎯 Filtering queued jobs strictly for WORKDAY ATS only...");
     const jobsRes = await db.query("SELECT DISTINCT url FROM jobs WHERE (ats = 'WORKDAY' OR url LIKE '%myworkdayjobs.com%') ORDER BY url ASC");
@@ -186,8 +310,17 @@ async function main() {
     }
   } else if (isGreenhouseOnly) {
     console.log("🎯 Filtering queued jobs strictly for GREENHOUSE ATS only...");
-    const jobsRes = await db.query("SELECT DISTINCT url FROM jobs WHERE (ats = 'GREENHOUSE' OR url LIKE '%greenhouse.io%') ORDER BY url ASC");
-    urls = Array.from(new Set(jobsRes.rows.map((row: any) => row.url)));
+    let dbUrls: string[] = [];
+    try {
+      const jobsRes = await db.query("SELECT DISTINCT url FROM jobs WHERE (ats = 'GREENHOUSE' OR url LIKE '%greenhouse.io%') ORDER BY url ASC");
+      dbUrls = Array.from(new Set(jobsRes.rows.map((row: any) => row.url)));
+    } catch (e) {}
+    urls = [
+      "https://boards.greenhouse.io/cleo/jobs/4491104004",
+      "https://boards.greenhouse.io/smartsheet/jobs/5049377004",
+      "https://job-boards.greenhouse.io/reddit/jobs/8282760",
+      ...dbUrls
+    ];
   } else if (isAshbyOnly) {
     console.log("🎯 Filtering queued jobs strictly for ASHBY ATS only...");
     const jobsRes = await db.query("SELECT DISTINCT url FROM jobs WHERE (ats = 'ASHBY' OR url LIKE '%ashbyhq.com%') AND url != 'https://ashbyhq.com/test-job' ORDER BY url ASC");
@@ -196,6 +329,21 @@ async function main() {
     console.log("🎯 Filtering queued jobs strictly for SMARTRECRUITERS ATS only...");
     const jobsRes = await db.query("SELECT DISTINCT url FROM jobs WHERE (ats = 'SMARTRECRUITERS' OR url LIKE '%smartrecruiters.com%') ORDER BY url ASC");
     urls = Array.from(new Set(jobsRes.rows.map((row: any) => row.url)));
+    if (urls.length === 0) {
+      urls = [
+        "https://jobs.smartrecruiters.com/oneclick-ui/company/LinkedIn3/publication/20b83e43-2e4d-49c8-bf80-238bf9bb3396?dcr_ci=LinkedIn3",
+        "https://jobs.smartrecruiters.com/oneclick-ui/company/ServiceNow/publication/83647ca1-c14d-4d2e-bf5a-e190e6416a26?dcr_ci=ServiceNow",
+        "https://jobs.smartrecruiters.com/oneclick-ui/company/ServiceNow/publication/26858c6b-0e57-412d-9afe-502a27055512?dcr_ci=ServiceNow",
+        "https://jobs.smartrecruiters.com/oneclick-ui/company/Socotec/publication/cc5c9e54-2843-4201-9096-e222015570a7?dcr_ci=Socotec"
+      ];
+    }
+  } else if (isTaleoOnly) {
+    console.log("🎯 Filtering queued jobs strictly for TALEO ATS (3 active jobs)...");
+    urls = [
+      "https://ttec.taleo.net/careersection/2/jobapply.ftl?job=04EZP",
+      "https://tas-daimler.taleo.net/careersection/ex/jobapply.ftl?job=MER0003OP8&lang=en",
+      "https://phh.tbe.taleo.net/phh01/ats/careers/v2/viewRequisition?org=BASESOLU&cws=37&rid=5403"
+    ];
   } else if (isAll) {
     // Fetch all unique real application URLs from jobs table (exclude test job)
     console.log("🎯 Processing ALL queued jobs from database...");
@@ -242,21 +390,21 @@ async function main() {
 
   if (selectedUser) {
     console.log(`🎯 CANDIDATE SELECTION: All ${urls.length} job(s) will be applied strictly using:`);
-    console.log(`   👉 ${selectedUser.first_name} ${selectedUser.last_name} (${selectedUser.email})\n`);
+    console.log(`   👉 ${selectedUser.firstName} ${selectedUser.lastName} (${selectedUser.email})\n`);
   } else {
     console.log(`👥 MULTI-USER ROTATION ACTIVE: Rotating candidates per job (Use --user 2 for Sandeep only or --user 1 for Chetan only)\n`);
   }
 
   console.log(`📋 Found ${urls.length} job(s) queued for autofill.\n`);
 
-  // Launch Chrome context (Persistent Chrome Profile for Lever & Workable to preserve Cloudflare / hCaptcha clearance & cookies)
-  const isPersistentContext = isLeverOnly || isWorkableOnly || urls.some(u => u.includes("lever.co") || u.includes("workable.com"));
+  // Launch Chrome context (Use Persistent Chrome Context in sequential mode to avoid blank duplicate tabs & preserve anti-bot clearance)
+  const isPersistentContext = !isParallelAllMode;
   let browser: any = null;
   let persistentContext: any = null;
   let sharedContext: any = null;
 
   if (isPersistentContext) {
-    console.log("🛡️ [Anti-Bot Engine]: Initializing Persistent Chrome Session to preserve Cloudflare / hCaptcha clearance & cookies...");
+    console.log("🛡️ [Anti-Bot Engine]: Initializing Persistent Chrome Session to preserve cookies and prevent duplicate tabs...");
     persistentContext = await createPersistentBrowserContext(false);
   } else {
     browser = await createBrowser(false);
@@ -270,104 +418,23 @@ async function main() {
 
   const processJob = async (url: string, index: number, total: number) => {
     // Pick designated user profile or rotate if --rotate passed
-    const dbProfile = selectedUser || allProfiles[index % allProfiles.length];
+    const baseCandidate = selectedUser || allProfiles[index % allProfiles.length];
+    const profile: UserProfile = { ...baseCandidate };
     
     // Support custom email via CLI flag --email <email> or subaddressing
     const emailArgIdx = args.indexOf("--email");
-    let email = (emailArgIdx !== -1 && args[emailArgIdx + 1]) ? args[emailArgIdx + 1] : dbProfile.email;
-    if (args.includes("--subaddress") && email && email.includes("@")) {
-      const [localPart, domainPart] = email.split("@");
+    if (emailArgIdx !== -1 && args[emailArgIdx + 1]) {
+      profile.email = args[emailArgIdx + 1];
+    }
+    if (args.includes("--subaddress") && profile.email && profile.email.includes("@")) {
+      const [localPart, domainPart] = profile.email.split("@");
       const baseLocal = localPart.split("+")[0];
-      email = `${baseLocal}+1@${domainPart}`;
+      profile.email = `${baseLocal}+1@${domainPart}`;
     }
 
-    // Parse location parts into street, city, state, zipCode, country
-    const isOracle = isOracleOnly || args.includes("--oracle") || process.env.ATS_FILTER?.toUpperCase() === "ORACLE";
-    const street = isOracle ? "500 Oracle Parkway" : "123 Market St";
-    const addressLine2 = isOracle ? "Suite 100" : "Suite 400";
-    const city = isOracle ? "Redwood City" : "San Francisco";
-    const state = isOracle ? "California" : "California";
-    const zipCode = isOracle ? "94065" : "94105";
-    const country = "United States";
-    const phone = isOracle ? "4155552671" : "2025550198";
-    const location = isOracle ? "Redwood City, California, United States" : "San Francisco, CA, United States";
-    const experiences: WorkExperienceItem[] = [
-      {
-        jobTitle: "Full Stack AI Developer",
-        company: "Jobspring",
-        location: isOracle ? "Redwood City, California, United States" : "San Francisco, CA, United States",
-        currentlyWorkHere: true,
-        startDate: "01/2024",
-        startMonth: "01",
-        startYear: "2024",
-        endDate: "01/2026",
-        endMonth: "01",
-        endYear: "2026",
-        description: "Built an AI-powered resume generation platform using OpenAI APIs, generating 50+ customized resumes for users. Designed and implemented scalable FastAPI backend services and React frontend workflows for multi-user applications. Reduced API response latency by 30% through database query optimization and backend performance improvements. Containerized and deployed applications using Docker and Azure App Service, reducing deployment time by 60%."
-      },
-      {
-        jobTitle: "Full Stack Developer",
-        company: "Nomadic Trails",
-        location: "Remote",
-        currentlyWorkHere: false,
-        startDate: "09/2024",
-        startMonth: "09",
-        startYear: "2024",
-        endDate: "10/2025",
-        endMonth: "10",
-        endYear: "2025",
-        description: "Delivered full-stack features for a travel-tech platform serving customer-facing applications. Built scalable backend APIs and responsive frontend interfaces using modern development practices. Integrated third-party APIs for itinerary generation and workflow automation."
-      }
-    ];
-
-    const educations: EducationItem[] = [
-      {
-        school: "Parul University",
-        degree: "Bachelor of Technology",
-        fieldOfStudy: "Computer Science and Engineering",
-        gpa: "7.1",
-        startDate: "08/2023",
-        startYear: "2023",
-        endDate: "06/2027",
-        endYear: "2027"
-      }
-    ];
-
-    const skills = [
-      "Python", "FastAPI", "React", "JavaScript", "Docker", "REST APIs", "MySQL", "MongoDB", "Git", "Azure", "NLP", "RAG"
-    ];
-
-    const profile: UserProfile = {
-      userId: dbProfile.user_id,
-      firstName: dbProfile.first_name,
-      lastName: dbProfile.last_name,
-      email: email,
-      phone: phone,
-      location: location,
-      street: street,
-      addressLine2: addressLine2,
-      city: city,
-      state: state,
-      zipCode: zipCode,
-      country: country,
-      linkedinUrl: dbProfile.linkedin_url || "https://linkedin.com/in/hrutinnammi",
-      githubUrl: dbProfile.github_url || "https://github.com/hrutinnammi",
-      portfolioUrl: dbProfile.portfolio_url || "https://github.com/hrutinnammi",
-      workAuthorization: dbProfile.work_authorization,
-      willingToRelocate: dbProfile.willing_to_relocate === 1,
-      yearsOfExperience: dbProfile.years_of_experience || 2,
-      gender: dbProfile.gender || "Male",
-      experiences: experiences,
-      educations: educations,
-      skills: skills,
-      websites: [
-        dbProfile.linkedin_url || "https://linkedin.com/in/hrutinnammi",
-        dbProfile.github_url || "https://github.com/hrutinnammi"
-      ]
-    };
-
-    const rawResumePath = dbProfile.resume_path || resumeMap.get(dbProfile.user_id) || `resumes/user_${dbProfile.user_id}/resume.pdf`;
-    const resumePath = resolveLocalResumePath(rawResumePath);
+    // Resolve resume path
+    const rawResumePath = profile.resumePath || `resumes/user_${profile.userId}/resume.pdf`;
+    const resumePath = resolveLocalResumePath(rawResumePath) || rawResumePath;
     profile.resumePath = resumePath;
 
     console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
@@ -377,13 +444,85 @@ async function main() {
     console.log(`📄 Resume: ${resumePath}`);
     console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
 
-    const context = persistentContext || sharedContext;
-    const page = await context.newPage();
+    let context = persistentContext || sharedContext;
+    const isContextAlive = () => {
+      try {
+        if (!context) return false;
+        if (context.browser && context.browser() && !context.browser()!.isConnected()) return false;
+        context.pages();
+        return true;
+      } catch {
+        return false;
+      }
+    };
+
+    if (!isContextAlive()) {
+      console.log("🔄 Browser context is closed or disconnected. Re-launching Chrome session...");
+      if (isPersistentContext) {
+        persistentContext = await createPersistentBrowserContext(false);
+        context = persistentContext;
+      } else {
+        browser = await createBrowser(false);
+        sharedContext = await browser.newContext({
+          userAgent: DEFAULT_USER_AGENT,
+          viewport: null,
+          locale: "en-US",
+        });
+        await applyStealthScripts(sharedContext);
+        context = sharedContext;
+      }
+    }
+
+    let page: any = null;
+    try {
+      const existingPages = context.pages ? context.pages() : [];
+      if (index === 0 && existingPages.length > 0) {
+        page = existingPages[0];
+      } else {
+        page = await context.newPage();
+      }
+    } catch (npErr: any) {
+      console.warn("⚠️ newPage error on existing context, re-launching Chrome session:", npErr.message);
+      if (isPersistentContext) {
+        persistentContext = await createPersistentBrowserContext(false);
+        context = persistentContext;
+      } else {
+        browser = await createBrowser(false);
+        sharedContext = await browser.newContext({
+          userAgent: DEFAULT_USER_AGENT,
+          viewport: null,
+          locale: "en-US",
+        });
+        await applyStealthScripts(sharedContext);
+        context = sharedContext;
+      }
+      page = await context.newPage();
+    }
     let jobHasError = false;
+
+    // Proactively capture any filechooser dialog on the page so Windows OS dialog never pops up
+    const resolvedCandidateResume = resolveLocalResumePath(resumePath) || 
+      resolveLocalResumePath("resumes/user_usr_hrutin_nammi/Hrutin_Nammi_Resume.pdf");
+    page.on("filechooser", async (fc: any) => {
+      console.log("📁 [Global Interceptor]: Automatically fulfilled browser filechooser event (preventing OS dialog).");
+      if (resolvedCandidateResume) {
+        await fc.setFiles(resolvedCandidateResume).catch(() => {});
+      }
+    });
 
     const additionalAnswers: Record<string, string> = {
       resumePath: resumePath,
       "How did you hear about this opportunity?": "LinkedIn",
+      "How did you hear about this position?": "LinkedIn",
+      "How did you hear about this position": "LinkedIn",
+      "How did you hear about us?": "LinkedIn",
+      "How did you hear about us": "LinkedIn",
+      "Where did you hear about this position?": "LinkedIn",
+      "Where did you hear about us?": "LinkedIn",
+      "Source": "LinkedIn",
+      "Candidate Source": "LinkedIn",
+      "Please Specify": "LinkedIn",
+      "Specify": "LinkedIn",
       "Notice Period": "Immediate",
       "Current Notice Period": "Immediate",
       "What is your current notice period?": "Immediate",
@@ -405,7 +544,19 @@ async function main() {
       // Ensure Job and Application exist in DB so any new link automatically gets registered & tracked
       let jobId: string;
       const jobCheck = await db.query("SELECT id FROM jobs WHERE url = $1", [url]);
-      const detectedAtsFallback = url.includes("rippling.com")
+      const detectedAtsFallback = url.includes("avature.net")
+        ? "AVATURE"
+        : url.includes("jobvite.com")
+        ? "JOBVITE"
+        : url.includes("breezy.hr")
+        ? "BREEZYHR"
+        : (url.includes("applytojob.com") || url.includes("jazzhr.com"))
+        ? "JAZZHR"
+        : url.includes("paylocity.com")
+        ? "PAYLOCITY"
+        : url.includes("bamboohr.com")
+        ? "BAMBOOHR"
+        : url.includes("rippling.com")
         ? "RIPPLING"
         : (url.includes("recruitee.com") || url.includes("/o/"))
         ? "RECRUITEE"
@@ -436,7 +587,11 @@ async function main() {
         [profile.userId, jobId]
       );
       if (appCheck.rowCount === 0) {
-        const resumeId = resumeMap.get(profile.userId) || (resumesRes.rows[0]?.id || "res_usr_hrutin_nammi");
+        let resumeId: string | null = null;
+        if (profile.userId) {
+          const rRes = await db.query("SELECT id FROM resumes WHERE user_id = $1 AND is_active = 1 LIMIT 1", [profile.userId]).catch(() => ({ rows: [] }));
+          resumeId = rRes.rows[0]?.id || null;
+        }
         await db.query(
           `INSERT INTO applications (id, user_id, job_id, resume_id, ats, status)
            VALUES ($1, $2, $3, $4, $5, $6)`,
@@ -445,8 +600,16 @@ async function main() {
         console.log(`➕ [Database]: Registered new Application record for user ${profile.firstName} in database.`);
       }
 
-      // If Lever URL without /apply, append /apply to go directly to the application form
       let targetUrl = url;
+      // If Jobvite URL has /job/ without /apply, append /apply to go directly to application form
+      if (targetUrl.includes("jobvite.com") && targetUrl.includes("/job/") && !targetUrl.includes("/apply")) {
+        targetUrl = targetUrl.replace(/\/?$/, "/apply");
+      }
+      // If Breezy HR URL has /p/ without /apply, append /apply to go directly to application form
+      if (targetUrl.includes("breezy.hr") && targetUrl.includes("/p/") && !targetUrl.includes("/apply")) {
+        targetUrl = targetUrl.replace(/\/?$/, "/apply");
+      }
+      // If Lever URL without /apply, append /apply to go directly to the application form
       if (targetUrl.includes("lever.co") && !targetUrl.includes("/apply")) {
         targetUrl = targetUrl.replace(/\/?$/, "/apply");
       }
@@ -454,16 +617,31 @@ async function main() {
       if ((targetUrl.includes("recruitee.com") || targetUrl.includes("/o/")) && !targetUrl.includes("/c/new")) {
         targetUrl = targetUrl.replace(/\/?$/, "/c/new");
       }
+      // If Paylocity Details URL, convert directly to Apply URL for fast direct loading
+      if (targetUrl.toLowerCase().includes("paylocity.com") && targetUrl.toLowerCase().includes("/details/")) {
+        const paylocityMatch = targetUrl.match(/details\/(\d+)/i);
+        if (paylocityMatch) {
+          targetUrl = `https://recruiting.paylocity.com/Recruiting/jobs/Apply/${paylocityMatch[1]}`;
+        }
+      }
       // If Oracle careers URL without /apply, convert directly to /apply/email for instant direct loading
-      if (targetUrl.includes("careers.oracle.com")) {
+      if (targetUrl.includes("careers.oracle.com") || targetUrl.includes("oraclecloud.com")) {
         const oracleJobMatch = targetUrl.match(/\/job[s]?(?:\/preview)?\/(\d+)/i);
         if (oracleJobMatch && !targetUrl.includes("/apply")) {
-          targetUrl = `https://careers.oracle.com/en/sites/jobsearch/job/${oracleJobMatch[1]}/apply/email`;
+          if (targetUrl.includes("careers.oracle.com")) {
+            targetUrl = `https://careers.oracle.com/en/sites/jobsearch/job/${oracleJobMatch[1]}/apply/email`;
+          } else {
+            const baseMatch = targetUrl.match(/(https:\/\/[^\/]+\/hcmUI\/CandidateExperience\/[^\/]+\/sites\/[^\/]+)/i);
+            if (baseMatch) {
+              targetUrl = `${baseMatch[1]}/job/${oracleJobMatch[1]}/apply/email`;
+            }
+          }
         }
       }
 
       console.log(`🌐 Navigating to application page: ${targetUrl}...`);
-      await page.goto(targetUrl, { waitUntil: "load", timeout: 60000 });
+      const isFastNav = targetUrl.includes("avature.net") || targetUrl.includes("paylocity.com") || targetUrl.includes("oracle") || targetUrl.includes("rippling") || targetUrl.includes("recruitee") || targetUrl.includes("bamboohr.com") || targetUrl.includes("applytojob.com") || targetUrl.includes("breezy.hr") || targetUrl.includes("jobvite.com");
+      await page.goto(targetUrl, { waitUntil: isFastNav ? "domcontentloaded" : "load", timeout: 45000 });
       
       // Auto-detect & resolve Cloudflare Turnstile if intercepted
       await handleCloudflareTurnstile(page);
@@ -500,10 +678,22 @@ async function main() {
         console.warn("⚠️ Notice updating job details in DB:", e.message);
       }
 
-      // Auto-submit policy: Auto-submit for LEVER and WORKABLE jobs (unless manual only)
+      // Auto-submit policy: Auto-submit for LEVER, GREENHOUSE, WORKABLE, PAYLOCITY, WELLFOUND, and BAMBOOHR jobs (unless manual only)
       const isLeverJob = ats === "LEVER" || targetUrl.toLowerCase().includes("lever.co");
+      const isGreenhouseJob = ats === "GREENHOUSE" || targetUrl.toLowerCase().includes("greenhouse.io");
       const isWorkableJob = ats === "WORKABLE" || targetUrl.toLowerCase().includes("workable.com");
-      const shouldAutoSubmitThisJob = (isLeverJob || isWorkableJob || isForceAllAutoSubmit) && !isManualOnly;
+      const isPaylocityJob = ats === "PAYLOCITY" || targetUrl.toLowerCase().includes("paylocity.com");
+      const isWellfoundJob = ats === "WELLFOUND" || targetUrl.toLowerCase().includes("wellfound.com") || targetUrl.toLowerCase().includes("angel.co");
+      const isBambooHRJob = ats === "BAMBOOHR" || targetUrl.toLowerCase().includes("bamboohr.com");
+      const isJazzHRJob = ats === "JAZZHR" || targetUrl.toLowerCase().includes("applytojob.com") || targetUrl.toLowerCase().includes("jazzhr.com");
+      const isBreezyHRJob = ats === "BREEZYHR" || targetUrl.toLowerCase().includes("breezy.hr");
+      const isAvatureJob = ats === "AVATURE" || targetUrl.toLowerCase().includes("avature.net");
+      const isJobviteJob = ats === "JOBVITE" || targetUrl.toLowerCase().includes("jobvite.com");
+      const isAshbyJob = ats === "ASHBY" || targetUrl.toLowerCase().includes("ashbyhq.com");
+      const isSmartRecruitersJob = ats === "SMARTRECRUITERS" || targetUrl.toLowerCase().includes("smartrecruiters.com");
+      const isTaleoJob = ats === "TALEO" || targetUrl.toLowerCase().includes("taleo.net");
+      const isOracleJob = ats === "ORACLE" || targetUrl.toLowerCase().includes("oracle");
+      const shouldAutoSubmitThisJob = (isOracleJob || isAvatureJob || isLeverJob || isGreenhouseJob || isWorkableJob || isPaylocityJob || isWellfoundJob || isBambooHRJob || isJazzHRJob || isBreezyHRJob || isJobviteJob || isAshbyJob || isSmartRecruitersJob || isTaleoJob || isForceAllAutoSubmit || process.env.AUTO_SUBMIT === "true") && !isManualOnly;
 
       if (shouldAutoSubmitThisJob) {
         process.env.AUTO_SUBMIT = "true";
@@ -523,15 +713,11 @@ async function main() {
       // Fill form fields with user specific profile & DB saved answers in parallel with human mouse
       console.log(`✍️ Automatically filling form with ${profile.firstName} ${profile.lastName}'s details & smart answers...`);
       await adapter.fillForm(page, profile, additionalAnswers, fields);
-
-      // Upload user resume
-      console.log(`📂 Uploading ${profile.firstName}'s resume: ${resumePath}...`);
-      await (adapter as any).uploadResume(page, resumePath, fields, profile);
       
       // Wait for parser if present
       await page.waitForSelector(
         "[data-upload-state='complete'], [class*='uploadComplete'], [class*='upload-complete']",
-        { timeout: 8000 }
+        { timeout: 5000 }
       ).catch(() => {});
       
       // Validate all required inputs
@@ -580,17 +766,22 @@ async function main() {
       console.log(`\n✅ Completed application for ${profile.firstName} ${profile.lastName} (Job ${index + 1}/${total}).`);
     } catch (error: any) {
       jobHasError = true;
-      if (error.message.includes("Target page, context or browser has been closed") || error.message.includes("closed")) {
+      const isClosedErr = error.message.includes("Target page, context or browser has been closed") ||
+                          error.message.includes("Target closed") ||
+                          error.message.includes("browser has been closed");
+      if (isClosedErr) {
         console.log(`ℹ️ [Job ${index + 1}] Browser closed by user.`);
       } else {
         console.error(`❌ [Job ${index + 1}] Error during autofill for ${profile.firstName}:`, error.message);
       }
     } finally {
-      if (!isKeepOpenMode && !jobHasError) {
-        await page.close().catch(() => {});
-        console.log(`🔒 Closed tab for Job ${index + 1}/${total}.\n`);
-      } else {
-        console.log(`📌 Keeping tab open for Job ${index + 1}/${total}.\n`);
+      if (page) {
+        if (!isKeepOpenMode && !jobHasError) {
+          await page.close().catch(() => {});
+          console.log(`🔒 Closed tab for Job ${index + 1}/${total}.\n`);
+        } else {
+          console.log(`📌 Keeping tab open for Job ${index + 1}/${total}.\n`);
+        }
       }
     }
   };

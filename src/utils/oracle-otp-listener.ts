@@ -20,9 +20,9 @@ export interface OracleInboxState {
  * Useful to call BEFORE clicking 'Next' so we know the baseline ID/timestamp
  * and can HOLD until a strictly newer email arrives.
  */
-export async function getLatestOracleInboxState(): Promise<OracleInboxState | null> {
-  const user = process.env.GMAIL_USER;
-  const pass = process.env.GMAIL_APP_PASSWORD?.replace(/\s+/g, "");
+export async function getLatestOracleInboxState(customUser?: string, customPass?: string): Promise<OracleInboxState | null> {
+  const user = customUser || process.env.GMAIL_USER;
+  const pass = (customPass || process.env.GMAIL_APP_PASSWORD)?.replace(/\s+/g, "");
 
   if (!user || !pass) return null;
 
@@ -55,7 +55,7 @@ export async function getLatestOracleInboxState(): Promise<OracleInboxState | nu
       } else if (step === 2 && buffer.includes("a002 OK")) {
         step = 3;
         buffer = "";
-        socket.write(`a003 SEARCH TEXT "Oracle"\r\n`);
+        socket.write(`a003 SEARCH X-GM-RAW "oracle OR oraclecloud OR \\\"verification code\\\" OR \\\"pass code\\\""\r\n`);
       } else if (step === 3 && buffer.includes("a003 OK")) {
         const match = buffer.match(/\* SEARCH (.*)\r\n/);
         const ids = match && match[1] ? match[1].trim().split(" ").filter(Boolean).map(Number) : [];
@@ -102,10 +102,12 @@ export async function getLatestOracleInboxState(): Promise<OracleInboxState | nu
  */
 export async function fetchLatestOracleOtp(
   optionsOrTimeout?: number | OracleOtpOptions,
-  fallbackKnownOldCode: string = ""
+  fallbackKnownOldCode: string = "",
+  customUser?: string,
+  customPass?: string
 ): Promise<string | null> {
-  const user = process.env.GMAIL_USER;
-  const pass = process.env.GMAIL_APP_PASSWORD?.replace(/\s+/g, "");
+  const user = customUser || process.env.GMAIL_USER;
+  const pass = (customPass || process.env.GMAIL_APP_PASSWORD)?.replace(/\s+/g, "");
 
   if (!user || !pass) {
     console.log("ℹ️ [Gmail OTP Listener] GMAIL_USER or GMAIL_APP_PASSWORD not set. Skipping automatic OTP retrieval.");
@@ -166,7 +168,7 @@ export async function fetchLatestOracleOtp(
         } else if (step === 2 && buffer.includes("a002 OK")) {
           step = 3;
           buffer = "";
-          socket.write(`a003 SEARCH TEXT "Oracle"\r\n`);
+          socket.write(`a003 SEARCH X-GM-RAW "oracle OR oraclecloud OR \\\"verification code\\\" OR \\\"pass code\\\""\r\n`);
         } else if (step === 3 && buffer.includes("a003 OK")) {
           const match = buffer.match(/\* SEARCH (.*)\r\n/);
           const ids = match && match[1] ? match[1].trim().split(" ").filter(Boolean).map(Number) : [];
@@ -201,10 +203,14 @@ export async function fetchLatestOracleOtp(
             }
           }
 
-          // Extract OTP cleanly
+          // Extract OTP cleanly across various Oracle Cloud hostings
           // Oracle emails: "You must confirm your identity using this one-time pass code: 779487"
-          const otpRegex = /(?:one-time\s*pass\s*code|pass\s*code|verification\s*code|identity\s*code)[\s:]*([0-9]{6})/i;
-          const match = buffer.match(otpRegex);
+          // Or: "Your verification code is: 123456"
+          const otpRegex = /(?:one-time\s*pass\s*code|pass\s*code|verification\s*code|identity\s*code|your\s*code\s*is)[\s:]*([0-9]{6})/i;
+          let match = buffer.match(otpRegex);
+          if (!match && (/oracle/i.test(buffer) || /oraclecloud/i.test(buffer) || /candidate\s*experience/i.test(buffer))) {
+            match = buffer.match(/\b([0-9]{6})\b/);
+          }
 
           if (match && match[1]) {
             const foundCode = match[1];

@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS public.user_profiles (
   last_name text NOT NULL,
   phone text,
   location text,
+  
   linkedin_url text,
   github_url text,
   portfolio_url text,

@@ -12,11 +12,11 @@ import {
   extractWorkdayDomain
 } from "./workday-account-store";
 
-export const DEFAULT_HRUTIN_EXPERIENCES: WorkExperienceItem[] = [
+export const DEFAULT_EXPERIENCES: WorkExperienceItem[] = [
   {
-    jobTitle: "Full Stack AI Developer",
-    company: "Jobspring",
-    location: "San Francisco, CA, United States",
+    jobTitle: "Software Engineer",
+    company: "Technology Solutions",
+    location: "Remote",
     currentlyWorkHere: true,
     startDate: "01/2024",
     startMonth: "01",
@@ -24,44 +24,28 @@ export const DEFAULT_HRUTIN_EXPERIENCES: WorkExperienceItem[] = [
     endDate: "01/2026",
     endMonth: "01",
     endYear: "2026",
-    description: "Built an AI-powered resume generation platform using OpenAI APIs, generating 50+ customized resumes for users. Designed and implemented scalable FastAPI backend services and React frontend workflows for multi-user applications. Reduced API response latency by 30% through database query optimization and backend performance improvements. Containerized and deployed applications using Docker and Azure App Service, reducing deployment time by 60%."
-  },
-  {
-    jobTitle: "Full Stack Developer",
-    company: "Nomadic Trails",
-    location: "Remote",
-    currentlyWorkHere: false,
-    startDate: "09/2025",
-    startMonth: "09",
-    startYear: "2025",
-    endDate: "10/2025",
-    endMonth: "10",
-    endYear: "2025",
-    description: "Delivered full-stack features for a travel-tech platform serving customer-facing applications. Built scalable backend APIs and responsive frontend interfaces using modern development practices. Integrated third-party APIs for itinerary generation and workflow automation."
+    description: "Architected and delivered high-impact engineering solutions. Collaborated across distributed teams to optimize API response times, improve scalability, and deliver robust software features."
   }
 ];
 
-export const DEFAULT_HRUTIN_EDUCATIONS: EducationItem[] = [
+export const DEFAULT_EDUCATIONS: EducationItem[] = [
   {
-    school: "Parul University",
-    degree: "Bachelor of Technology",
-    fieldOfStudy: "Computer Science and Engineering",
-    gpa: "7.1",
-    startDate: "08/2023",
-    startYear: "2023",
-    endDate: "06/2027",
-    endYear: "2027"
+    school: "University",
+    degree: "Bachelor of Science",
+    fieldOfStudy: "Computer Science",
+    gpa: "3.8",
+    startDate: "08/2022",
+    startYear: "2022",
+    endDate: "05/2026",
+    endYear: "2026"
   }
 ];
 
-export const DEFAULT_HRUTIN_SKILLS = [
-  "Python", "FastAPI", "React", "JavaScript", "Docker", "REST APIs", "MySQL", "MongoDB", "Git", "Azure", "NLP", "RAG"
+export const DEFAULT_SKILLS = [
+  "TypeScript", "Python", "React", "Node.js", "PostgreSQL", "Docker", "REST APIs", "Cloud Infrastructure"
 ];
 
-export const DEFAULT_HRUTIN_WEBSITES = [
-  "https://linkedin.com/in/hrutinnammi",
-  "https://github.com/hrutinnammi"
-];
+export const DEFAULT_WEBSITES: string[] = [];
 
 export class WorkdayAdapter implements ATSAdapter {
   private authenticatedSessions = new Set<string>();
@@ -728,8 +712,6 @@ export class WorkdayAdapter implements ATSAdapter {
       specifiedPath,
       this.cachedResumePath,
       this.candidateProfile?.resumePath,
-      path.resolve("resumes/user_usr_hrutin_nammi/Hrutin_Nammi_Resume.pdf"),
-      path.resolve("resumes/user_hrutin/resume.pdf"),
       path.resolve("resumes/resume.pdf"),
       path.resolve("scratch/test-resume.pdf")
     ].filter(Boolean) as string[];
@@ -878,10 +860,10 @@ export class WorkdayAdapter implements ATSAdapter {
       this.candidateProfile = profile;
     }
     const userProf = profile || this.candidateProfile || {
-      firstName: "Hrutin",
-      lastName: "Nammi",
-      email: "babufakemail@gmail.com",
-      phone: "2025550198",
+      firstName: "Applicant",
+      lastName: "Candidate",
+      email: "candidate@example.com",
+      phone: "+1 202 555 0198",
       location: "San Francisco, CA, United States",
       willingToRelocate: true,
       workAuthorization: "Yes",
@@ -1152,8 +1134,8 @@ export class WorkdayAdapter implements ATSAdapter {
    * Helper to format names to proper Title Case to avoid Workday capitalization alerts
    */
   private async formatNamesToTitleCase(page: Page, profile: UserProfile): Promise<void> {
-    const cleanFirst = this.sanitizeNameCapitals(profile.firstName || "Hrutin", "Hrutin");
-    const cleanLast = this.sanitizeNameCapitals(profile.lastName || "Nammi", "Nammi");
+    const cleanFirst = this.sanitizeNameCapitals(profile.firstName || "Applicant", "Applicant");
+    const cleanLast = this.sanitizeNameCapitals(profile.lastName || "Candidate", "Candidate");
 
     console.log(`👤 [WorkdayAdapter]: Ensuring Given Name is "${cleanFirst}" and Family Name is "${cleanLast}" (<= 2 capitals)...`);
 
@@ -1649,8 +1631,8 @@ export class WorkdayAdapter implements ATSAdapter {
   }
 
   private async fillPersonalInfoFields(page: Page, profile: UserProfile): Promise<void> {
-    const cleanFirst = this.sanitizeNameCapitals(profile.firstName || "Hrutin", "Hrutin");
-    const cleanLast = this.sanitizeNameCapitals(profile.lastName || "Nammi", "Nammi");
+    const cleanFirst = this.sanitizeNameCapitals(profile.firstName || "Applicant", "Applicant");
+    const cleanLast = this.sanitizeNameCapitals(profile.lastName || "Candidate", "Candidate");
 
     // First Name / Given Name
     const firstNameLocators = [
@@ -1981,7 +1963,7 @@ export class WorkdayAdapter implements ATSAdapter {
     const experiences: WorkExperienceItem[] =
       profile.experiences && profile.experiences.length > 0
         ? profile.experiences
-        : DEFAULT_HRUTIN_EXPERIENCES;
+        : DEFAULT_EXPERIENCES;
 
     let jobTitleInputs = page.locator("input[data-automation-id='jobTitle'], input[id*='jobTitle'], input[name='jobTitle']");
     let count = await jobTitleInputs.count();
@@ -2100,7 +2082,7 @@ export class WorkdayAdapter implements ATSAdapter {
     const educations: EducationItem[] =
       profile.educations && profile.educations.length > 0
         ? profile.educations
-        : DEFAULT_HRUTIN_EDUCATIONS;
+        : DEFAULT_EDUCATIONS;
 
     let schoolInputs = page.locator("input[data-automation-id='school'], button[data-automation-id='school'], input[id*='school'], input[name*='schoolName']");
     let count = await schoolInputs.count();
@@ -2230,7 +2212,7 @@ export class WorkdayAdapter implements ATSAdapter {
       const sites: string[] =
         profile.websites && profile.websites.length > 0
           ? profile.websites
-          : DEFAULT_HRUTIN_WEBSITES;
+          : DEFAULT_WEBSITES;
 
       let webInputs = page.locator("input[data-automation-id='website'], input[data-automation-id='url'], input[id*='webAddress'], input[name='url']");
       let count = await webInputs.count();
@@ -2261,18 +2243,20 @@ export class WorkdayAdapter implements ATSAdapter {
     }
 
     // Social Network URLs (Strictly ensure LinkedIn URL format with https://www.linkedin.com/...)
-    let formattedLinkedIn = profile.linkedinUrl || "https://www.linkedin.com/in/hrutinnammi";
-    if (formattedLinkedIn.startsWith("https://linkedin.com")) {
-      formattedLinkedIn = formattedLinkedIn.replace("https://linkedin.com", "https://www.linkedin.com");
-    } else if (!formattedLinkedIn.startsWith("http")) {
-      formattedLinkedIn = `https://www.linkedin.com/in/${formattedLinkedIn.replace(/^\/+/, "")}`;
-    }
+    let formattedLinkedIn = profile.linkedinUrl || "";
+    if (formattedLinkedIn) {
+      if (formattedLinkedIn.startsWith("https://linkedin.com")) {
+        formattedLinkedIn = formattedLinkedIn.replace("https://linkedin.com", "https://www.linkedin.com");
+      } else if (!formattedLinkedIn.startsWith("http")) {
+        formattedLinkedIn = `https://www.linkedin.com/in/${formattedLinkedIn.replace(/^\/+/, "")}`;
+      }
 
-    const linkedinInp = page.locator(
-      "input[id*='socialNetworkAccounts--linkedInAccount'], input[name='linkedInAccount'], input[data-automation-id*='linkedInAccount'], input[id*='linkedIn' i]"
-    ).first();
-    if (await linkedinInp.count() > 0 && await linkedinInp.isVisible().catch(() => false)) {
-      await this.fillSingleInput(page, linkedinInp, formattedLinkedIn);
+      const linkedinInp = page.locator(
+        "input[id*='socialNetworkAccounts--linkedInAccount'], input[name='linkedInAccount'], input[data-automation-id*='linkedInAccount'], input[id*='linkedIn' i]"
+      ).first();
+      if (await linkedinInp.count() > 0 && await linkedinInp.isVisible().catch(() => false)) {
+        await this.fillSingleInput(page, linkedinInp, formattedLinkedIn);
+      }
     }
   }
 
@@ -2292,7 +2276,7 @@ export class WorkdayAdapter implements ATSAdapter {
     const skillsList: string[] =
       profile.skills && profile.skills.length > 0
         ? profile.skills
-        : DEFAULT_HRUTIN_SKILLS;
+        : DEFAULT_SKILLS;
 
     for (const skill of skillsList.slice(0, 6)) {
       try {
@@ -2822,23 +2806,23 @@ export class WorkdayAdapter implements ATSAdapter {
         parentLabel.toLowerCase().includes("which location")
       ) {
         answer = "N/A";
-      } else if (lower.includes("company") || lower.includes("employer")) answer = "Jobspring";
-      else if (lower.includes("job title") || lower.includes("role") || lower.includes("title")) answer = "Full Stack AI Developer";
+      } else if (lower.includes("company") || lower.includes("employer")) answer = profile.experiences?.[0]?.company || profile.savedAnswers?.get("current_company") || "Technology Solutions";
+      else if (lower.includes("job title") || lower.includes("role") || lower.includes("title")) answer = profile.experiences?.[0]?.jobTitle || profile.headline || "Software Engineer";
       else if (lower.includes("first name")) answer = profile.firstName;
       else if (lower.includes("last name")) answer = profile.lastName;
       else if (lower.includes("name") && !lower.includes("user")) answer = `${profile.firstName} ${profile.lastName}`;
       else if (lower.includes("email")) answer = profile.email;
-      else if (lower.includes("phone")) answer = profile.phone;
+      else if (lower.includes("phone")) answer = profile.phone || "";
       else if (lower.includes("gender") || lower.includes("sex")) answer = profile.gender || "Male";
       else if (lower.includes("salary") || lower.includes("compensation") || lower.includes("gross")) answer = "Negotiable";
       else if (lower.includes("english") || lower.includes("language")) answer = "Fluent / Professional Working Proficiency";
       else if ((lower.includes("notice") || lower.includes("start")) && !lower.includes("date") && !lower.includes("from")) answer = "Immediate";
-      else if (lower.includes("city") && !lower.includes("ethnicity")) answer = profile.location ? (profile.location.toLowerCase().includes("india") ? profile.location.split(",")[0].trim() : "San Francisco") : "San Francisco";
-      else if (lower.includes("state") || lower.includes("province")) answer = profile.location?.toLowerCase().includes("india") ? "Gujarat" : "California";
-      else if (lower.includes("postal") || lower.includes("zip")) answer = profile.location?.toLowerCase().includes("india") ? "390001" : "94105";
-      else if (lower.includes("address") && !lower.includes("email")) answer = "123 Market St";
-      else if (lower.includes("country") && !lower.includes("ethnicity")) answer = profile.location?.toLowerCase().includes("india") ? "India" : "United States";
-      else if (lower.includes("location") && !lower.includes("salary")) answer = profile.location || "San Francisco, CA, United States";
+      else if (lower.includes("city") && !lower.includes("ethnicity")) answer = profile.city || profile.location?.split(",")[0]?.trim() || "";
+      else if (lower.includes("state") || lower.includes("province")) answer = profile.state || "";
+      else if (lower.includes("postal") || lower.includes("zip")) answer = profile.zipCode || "";
+      else if (lower.includes("address") && !lower.includes("email")) answer = profile.street || "";
+      else if (lower.includes("country") && !lower.includes("ethnicity")) answer = profile.country || "United States";
+      else if (lower.includes("location") && !lower.includes("salary")) answer = profile.location || "";
       else if (
         (lower.includes("years of experience") ||
          lower.includes("total experience") ||
@@ -2853,12 +2837,12 @@ export class WorkdayAdapter implements ATSAdapter {
       ) {
         answer = `${profile.yearsOfExperience || 3}`;
       }
-      else if (lower.includes("linkedin")) answer = profile.linkedinUrl || "https://linkedin.com/in/hrutinnammi";
-      else if (lower.includes("github") || lower.includes("portfolio") || lower.includes("website")) answer = profile.githubUrl || profile.portfolioUrl || "https://github.com/hrutinnammi";
-      else if (lower.includes("school") || lower.includes("university") || lower.includes("institution")) answer = "Parul University";
-      else if (lower.includes("degree")) answer = "Bachelor of Technology";
-      else if (lower.includes("field of study") || lower.includes("major")) answer = "Computer Science and Engineering";
-      else if (lower.includes("gpa")) answer = "7.1";
+      else if (lower.includes("linkedin")) answer = profile.linkedinUrl || "";
+      else if (lower.includes("github") || lower.includes("portfolio") || lower.includes("website")) answer = profile.portfolioUrl || profile.githubUrl || "";
+      else if (lower.includes("school") || lower.includes("university") || lower.includes("institution")) answer = profile.educations?.[0]?.school || profile.savedAnswers?.get("school") || "University";
+      else if (lower.includes("degree")) answer = profile.educations?.[0]?.degree || profile.savedAnswers?.get("degree") || "Bachelor of Science";
+      else if (lower.includes("field of study") || lower.includes("major")) answer = profile.educations?.[0]?.fieldOfStudy || profile.savedAnswers?.get("major") || "Computer Science";
+      else if (lower.includes("gpa")) answer = profile.educations?.[0]?.gpa || "3.8";
       else if (lower.includes("month")) answer = "01";
       else if (lower.includes("year")) answer = "2024";
       else if (additionalAnswers) {

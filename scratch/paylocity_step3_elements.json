@@ -1,0 +1,274 @@
+[
+  {
+    "tag": "BUTTON",
+    "id": "",
+    "name": "",
+    "text": "",
+    "type": "submit",
+    "visible": true
+  },
+  {
+    "tag": "BUTTON",
+    "id": "",
+    "name": "",
+    "text": "",
+    "type": "submit",
+    "visible": true
+  },
+  {
+    "tag": "BUTTON",
+    "id": "",
+    "name": "",
+    "text": "",
+    "type": "submit",
+    "visible": true
+  },
+  {
+    "tag": "BUTTON",
+    "id": "",
+    "name": "",
+    "text": "",
+    "type": "submit",
+    "visible": true
+  },
+  {
+    "tag": "P",
+    "id": "",
+    "name": "",
+    "text": "Step 3 of 3",
+    "type": "",
+    "visible": true
+  },
+  {
+    "tag": "H2",
+    "id": "",
+    "name": "",
+    "text": "Equal Employment Opportunity",
+    "type": "",
+    "visible": true
+  },
+  {
+    "tag": "P",
+    "id": "",
+    "name": "",
+    "text": "This information is collected in compliance with government record-keeping requirements. It is completely optional for you to submit and will be used ",
+    "type": "",
+    "visible": true
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": "",
+    "text": "Gender (required)",
+    "type": "",
+    "visible": true
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": "",
+    "text": "Race and/or Ethnicity (required)",
+    "type": "",
+    "visible": true
+  },
+  {
+    "tag": "H2",
+    "id": "",
+    "name": "",
+    "text": "Voluntary Self-Identification of “Protected” Veteran Status",
+    "type": "",
+    "visible": true
+  },
+  {
+    "tag": "H3",
+    "id": "",
+    "name": "",
+    "text": "Why Are You Being Asked to Complete This Form?",
+    "type": "",
+    "visible": true
+  },
+  {
+    "tag": "P",
+    "id": "",
+    "name": "",
+    "text": "This employer is a Government contractor subject to the Vietnam Era Veterans' Readjustment Assistance Act of 1974, as amended by the Jobs for Veterans",
+    "type": "",
+    "visible": true
+  },
+  {
+    "tag": "P",
+    "id": "",
+    "name": "",
+    "text": "For more information about this form or the equal employment obligations of Federal contractors, visit the U.S. Department of Labor's Office of Federa",
+    "type": "",
+    "visible": true
+  },
+  {
+    "tag": "H3",
+    "id": "",
+    "name": "",
+    "text": "How Do You Know if You Are a Veteran Protected by VEVRAA?",
+    "type": "",
+    "visible": true
+  },
+  {
+    "tag": "P",
+    "id": "",
+    "name": "",
+    "text": "Contrary to the name, VEVRAA does not just cover Vietnam Era veterans. It covers several categories of veterans from World War II, the Korean conflict",
+    "type": "",
+    "visible": true
+  },
+  {
+    "tag": "P",
+    "id": "",
+    "name": "",
+    "text": "If you believe you belong to any of the categories of protected Veterans listed above, please indicate by selecting the appropriate option below.",
+    "type": "",
+    "visible": true
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": "",
+    "text": "Veteran Status (required)",
+    "type": "",
+    "visible": true
+  },
+  {
+    "tag": "H3",
+    "id": "",
+    "name": "",
+    "text": "What Categories of Veterans Are “Protected” by VEVRAA?",
+    "type": "",
+    "visible": true
+  },
+  {
+    "tag": "P",
+    "id": "",
+    "name": "",
+    "text": "“Protected” veterans include the following categories; (1) disabled veterans; (2) recently separated veterans; (3) active duty wartime or campaign bad",
+    "type": "",
+    "visible": true
+  },
+  {
+    "tag": "P",
+    "id": "",
+    "name": "",
+    "text": "Protected veterans may have additional rights under USERRA - the Uniformed Services Employment and Reemployment Rights Act. In particular, if you were",
+    "type": "",
+    "visible": true
+  },
+  {
+    "tag": "H2",
+    "id": "",
+    "name": "",
+    "text": "Voluntary Self-Identification of Disability",
+    "type": "",
+    "visible": true
+  },
+  {
+    "tag": "H3",
+    "id": "",
+    "name": "",
+    "text": "Why are you being asked to complete this form?",
+    "type": "",
+    "visible": true
+  },
+  {
+    "tag": "P",
+    "id": "",
+    "name": "",
+    "text": "We are a federal contractor or subcontractor. The law requires us to provide equal employment opportunity to qualified people with disabilities. We ha",
+    "type": "",
+    "visible": true
+  },
+  {
+    "tag": "P",
+    "id": "",
+    "name": "",
+    "text": "Completing this form is voluntary, and we hope that you will choose to do so. Your answer is confidential. No one who makes hiring decisions will see ",
+    "type": "",
+    "visible": true
+  },
+  {
+    "tag": "H3",
+    "id": "",
+    "name": "",
+    "text": "How do you know if you have a disability?",
+    "type": "",
+    "visible": true
+  },
+  {
+    "tag": "P",
+    "id": "",
+    "name": "",
+    "text": "A disability is a condition that substantially limits one or more of your “major life activities.” If you have or have ever had such a condition, you ",
+    "type": "",
+    "visible": true
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": "",
+    "text": "Disability Status",
+    "type": "",
+    "visible": true
+  },
+  {
+    "tag": "P",
+    "id": "",
+    "name": "",
+    "text": "PUBLIC BURDEN STATEMENT: According to the Paperwork Reduction Act of 1995 no persons are required to respond to a collection of information unless suc",
+    "type": "",
+    "visible": true
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": "",
+    "text": "Are you authorized to work lawfully in the United States?",
+    "type": "",
+    "visible": true
+  },
+  {
+    "tag": "INPUT",
+    "id": "applyAcknowledgement",
+    "name": "applyAcknowledgement",
+    "text": "on",
+    "type": "checkbox",
+    "visible": true
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": "",
+    "text": "I have read and accept the above acknowledgement (required)",
+    "type": "",
+    "visible": true
+  },
+  {
+    "tag": "BUTTON",
+    "id": "btn-submit",
+    "name": "",
+    "text": "Submit",
+    "type": "submit",
+    "visible": true
+  },
+  {
+    "tag": "BUTTON",
+    "id": "",
+    "name": "",
+    "text": "",
+    "type": "submit",
+    "visible": true
+  },
+  {
+    "tag": "P",
+    "id": "",
+    "name": "",
+    "text": ":",
+    "type": "",
+    "visible": true
+  }
+]

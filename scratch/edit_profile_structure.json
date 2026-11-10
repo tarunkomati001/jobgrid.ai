@@ -1,0 +1,447 @@
+{
+  "headings": [
+    "Edit your Wellfound profile"
+  ],
+  "inputs": [
+    {
+      "tag": "INPUT",
+      "id": "search",
+      "name": "search",
+      "placeholder": "Search",
+      "value": "",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "id": "",
+      "name": null,
+      "placeholder": null,
+      "value": "",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "id": "",
+      "name": null,
+      "placeholder": null,
+      "value": "",
+      "text": "interviewingReady to interview"
+    },
+    {
+      "tag": "BUTTON",
+      "id": "",
+      "name": null,
+      "placeholder": null,
+      "value": "",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "id": "",
+      "name": null,
+      "placeholder": null,
+      "value": "",
+      "text": "Previous"
+    },
+    {
+      "tag": "BUTTON",
+      "id": "",
+      "name": null,
+      "placeholder": null,
+      "value": "",
+      "text": "Next"
+    },
+    {
+      "tag": "BUTTON",
+      "id": "",
+      "name": null,
+      "placeholder": null,
+      "value": "",
+      "text": "Yes, feature me"
+    },
+    {
+      "tag": "BUTTON",
+      "id": "",
+      "name": null,
+      "placeholder": null,
+      "value": "",
+      "text": "Not right now"
+    },
+    {
+      "tag": "BUTTON",
+      "id": "",
+      "name": null,
+      "placeholder": null,
+      "value": "",
+      "text": "Not now"
+    },
+    {
+      "tag": "BUTTON",
+      "id": "",
+      "name": null,
+      "placeholder": null,
+      "value": "",
+      "text": "Review"
+    },
+    {
+      "tag": "INPUT",
+      "id": "form-input--name",
+      "name": "name",
+      "placeholder": "",
+      "value": "Tharun Komite",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "id": "",
+      "name": null,
+      "placeholder": null,
+      "value": "",
+      "text": "Upload a new photo"
+    },
+    {
+      "tag": "INPUT",
+      "id": "",
+      "name": null,
+      "placeholder": null,
+      "value": "",
+      "text": ""
+    },
+    {
+      "tag": "INPUT",
+      "id": "react-select-form-input--primaryRole-input",
+      "name": null,
+      "placeholder": null,
+      "value": "",
+      "text": ""
+    },
+    {
+      "tag": "INPUT",
+      "id": "",
+      "name": "primaryRole",
+      "placeholder": null,
+      "value": "14726",
+      "text": ""
+    },
+    {
+      "tag": "INPUT",
+      "id": "react-select-form-input--yearsExperienceInPrimaryRole-input",
+      "name": null,
+      "placeholder": null,
+      "value": "",
+      "text": ""
+    },
+    {
+      "tag": "INPUT",
+      "id": "",
+      "name": "yearsExperienceInPrimaryRole",
+      "placeholder": null,
+      "value": "2",
+      "text": ""
+    },
+    {
+      "tag": "INPUT",
+      "id": "react-select-form-input--roleIds-input",
+      "name": null,
+      "placeholder": null,
+      "value": "",
+      "text": ""
+    },
+    {
+      "tag": "INPUT",
+      "id": "",
+      "name": "roleIds",
+      "placeholder": null,
+      "value": "",
+      "text": ""
+    },
+    {
+      "tag": "TEXTAREA",
+      "id": "form-input--bio",
+      "name": "bio",
+      "placeholder": "Stanford CS, Full stack generalist; launched a successful Android app, worked at Google",
+      "value": "",
+      "text": ""
+    },
+    {
+      "tag": "INPUT",
+      "id": "form-input--onlineBioUrl",
+      "name": "onlineBioUrl",
+      "placeholder": "https://",
+      "value": "https://tharunkomite.dev",
+      "text": ""
+    },
+    {
+      "tag": "INPUT",
+      "id": "form-input--linkedinUrl",
+      "name": "linkedinUrl",
+      "placeholder": "https://linkedin.com/in/username",
+      "value": "https://linkedin.com/in/tharunkomite",
+      "text": ""
+    },
+    {
+      "tag": "INPUT",
+      "id": "form-input--githubUrl",
+      "name": "githubUrl",
+      "placeholder": "https://github.com/username",
+      "value": "",
+      "text": ""
+    },
+    {
+      "tag": "INPUT",
+      "id": "form-input--twitterUrl",
+      "name": "twitterUrl",
+      "placeholder": "https://twitter.com/username",
+      "value": "",
+      "text": ""
+    },
+    {
+      "tag": "INPUT",
+      "id": "downshift-420-input",
+      "name": null,
+      "placeholder": "College / University",
+      "value": "",
+      "text": ""
+    },
+    {
+      "tag": "INPUT",
+      "id": "",
+      "name": null,
+      "placeholder": "Graduation",
+      "value": "",
+      "text": ""
+    },
+    {
+      "tag": "INPUT",
+      "id": "react-select-form-input--degreeType-input",
+      "name": null,
+      "placeholder": null,
+      "value": "",
+      "text": ""
+    },
+    {
+      "tag": "INPUT",
+      "id": "",
+      "name": "degreeType",
+      "placeholder": null,
+      "value": "",
+      "text": ""
+    },
+    {
+      "tag": "INPUT",
+      "id": "form-input--majors[0]",
+      "name": "majors[0]",
+      "placeholder": "Major / Field of Study",
+      "value": "",
+      "text": ""
+    },
+    {
+      "tag": "INPUT",
+      "id": "form-input--gpa",
+      "name": "gpa",
+      "placeholder": "GPA",
+      "value": "",
+      "text": ""
+    },
+    {
+      "tag": "INPUT",
+      "id": "form-input--maxGpa",
+      "name": "maxGpa",
+      "placeholder": "Max",
+      "value": "",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "id": "",
+      "name": null,
+      "placeholder": null,
+      "value": "",
+      "text": "Save"
+    },
+    {
+      "tag": "BUTTON",
+      "id": "",
+      "name": null,
+      "placeholder": null,
+      "value": "",
+      "text": "Cancel"
+    },
+    {
+      "tag": "INPUT",
+      "id": "downshift-421-input",
+      "name": null,
+      "placeholder": "e.g. Python, React",
+      "value": "",
+      "text": ""
+    },
+    {
+      "tag": "TEXTAREA",
+      "id": "form-input--whatIveBuilt",
+      "name": "whatIveBuilt",
+      "placeholder": "It's OK to brag - e.g. I launched 3 successful Facebook apps which in total reached 2M+ users and generated $100k+ in revenue. I built everything from the front-end to the back-end and everything in between.",
+      "value": "",
+      "text": ""
+    },
+    {
+      "tag": "INPUT",
+      "id": "react-select-form-input--pronouns-input",
+      "name": null,
+      "placeholder": null,
+      "value": "",
+      "text": ""
+    },
+    {
+      "tag": "INPUT",
+      "id": "",
+      "name": "pronouns",
+      "placeholder": null,
+      "value": "",
+      "text": ""
+    },
+    {
+      "tag": "INPUT",
+      "id": "displayPronouns",
+      "name": null,
+      "placeholder": null,
+      "value": "on",
+      "text": ""
+    },
+    {
+      "tag": "INPUT",
+      "id": "react-select-form-input--gender-input",
+      "name": null,
+      "placeholder": null,
+      "value": "",
+      "text": ""
+    },
+    {
+      "tag": "INPUT",
+      "id": "",
+      "name": "gender",
+      "placeholder": null,
+      "value": "",
+      "text": ""
+    },
+    {
+      "tag": "INPUT",
+      "id": "form-input--raceEthnicityOrigins--BLACK_OR_AFRICAN_AMERICAN",
+      "name": null,
+      "placeholder": null,
+      "value": "BLACK_OR_AFRICAN_AMERICAN",
+      "text": ""
+    },
+    {
+      "tag": "INPUT",
+      "id": "form-input--raceEthnicityOrigins--EAST_ASIAN",
+      "name": null,
+      "placeholder": null,
+      "value": "EAST_ASIAN",
+      "text": ""
+    },
+    {
+      "tag": "INPUT",
+      "id": "form-input--raceEthnicityOrigins--HISPANIC_OR_LATINO",
+      "name": null,
+      "placeholder": null,
+      "value": "HISPANIC_OR_LATINO",
+      "text": ""
+    },
+    {
+      "tag": "INPUT",
+      "id": "form-input--raceEthnicityOrigins--MIDDLE_EASTERN",
+      "name": null,
+      "placeholder": null,
+      "value": "MIDDLE_EASTERN",
+      "text": ""
+    },
+    {
+      "tag": "INPUT",
+      "id": "form-input--raceEthnicityOrigins--AMERICAN_INDIAN_OR_ALASKA_NATIVE",
+      "name": null,
+      "placeholder": null,
+      "value": "AMERICAN_INDIAN_OR_ALASKA_NATIVE",
+      "text": ""
+    },
+    {
+      "tag": "INPUT",
+      "id": "form-input--raceEthnicityOrigins--NATIVE_HAWAIIAN_OR_OTHER_PACIFIC_ISLANDER",
+      "name": null,
+      "placeholder": null,
+      "value": "NATIVE_HAWAIIAN_OR_OTHER_PACIFIC_ISLANDER",
+      "text": ""
+    },
+    {
+      "tag": "INPUT",
+      "id": "form-input--raceEthnicityOrigins--SOUTH_ASIAN",
+      "name": null,
+      "placeholder": null,
+      "value": "SOUTH_ASIAN",
+      "text": ""
+    },
+    {
+      "tag": "INPUT",
+      "id": "form-input--raceEthnicityOrigins--SOUTH_EAST_ASIAN",
+      "name": null,
+      "placeholder": null,
+      "value": "SOUTH_EAST_ASIAN",
+      "text": ""
+    },
+    {
+      "tag": "INPUT",
+      "id": "form-input--raceEthnicityOrigins--WHITE",
+      "name": null,
+      "placeholder": null,
+      "value": "WHITE",
+      "text": ""
+    },
+    {
+      "tag": "INPUT",
+      "id": "form-input--raceEthnicityOrigins--PREFER_NOT_TO_SAY",
+      "name": null,
+      "placeholder": null,
+      "value": "PREFER_NOT_TO_SAY",
+      "text": ""
+    },
+    {
+      "tag": "INPUT",
+      "id": "form-input--raceEthnicityOrigins--SELF_DESCRIBE",
+      "name": null,
+      "placeholder": null,
+      "value": "SELF_DESCRIBE",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "id": "",
+      "name": null,
+      "placeholder": null,
+      "value": "",
+      "text": "In two weeks"
+    },
+    {
+      "tag": "BUTTON",
+      "id": "",
+      "name": null,
+      "placeholder": null,
+      "value": "",
+      "text": "In a month"
+    },
+    {
+      "tag": "BUTTON",
+      "id": "",
+      "name": null,
+      "placeholder": null,
+      "value": "",
+      "text": "In 3 months"
+    },
+    {
+      "tag": "BUTTON",
+      "id": "",
+      "name": null,
+      "placeholder": null,
+      "value": "",
+      "text": "Not interested"
+    }
+  ]
+}

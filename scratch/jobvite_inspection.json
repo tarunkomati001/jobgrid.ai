@@ -1,0 +1,796 @@
+[
+  {
+    "title": "Office Administrator (Temp-to-Hire)",
+    "company": "ActioNet, Inc. Careers - Apply for Office Administrator (Temp-to-Hire)",
+    "currentUrl": "https://jobs.jobvite.com/actionet/job/oAd3Afwa/apply",
+    "totalInputs": 36,
+    "inputs": [
+      {
+        "id": "jv-edit-resume-textarea0",
+        "name": "",
+        "type": "textarea",
+        "label": "Type or paste your Resume here",
+        "placeholder": "",
+        "required": false,
+        "options": [],
+        "className": "needsclick ng-pristine ng-untouched ng-valid ng-empty"
+      },
+      {
+        "id": "jv-field-yhdqXfwB",
+        "name": "input-yhdqXfwB",
+        "type": "text",
+        "label": "First Name*",
+        "placeholder": "",
+        "required": true,
+        "options": [],
+        "className": "ng-pristine ng-untouched ng-scope ng-empty ng-invalid ng-invalid-required ng-valid-pattern ng-valid-maxlength"
+      },
+      {
+        "id": "jv-field-yjdqXfwD",
+        "name": "input-yjdqXfwD",
+        "type": "text",
+        "label": "Last Name*",
+        "placeholder": "",
+        "required": true,
+        "options": [],
+        "className": "ng-pristine ng-untouched ng-scope ng-empty ng-invalid ng-invalid-required ng-valid-pattern ng-valid-maxlength"
+      },
+      {
+        "id": "jv-field-yoeqXfwJ",
+        "name": "input-yoeqXfwJ",
+        "type": "text",
+        "label": "Address*",
+        "placeholder": "",
+        "required": true,
+        "options": [],
+        "className": "ng-pristine ng-untouched ng-scope ng-empty ng-invalid ng-invalid-required ng-valid-pattern ng-valid-maxlength"
+      },
+      {
+        "id": "jv-field-ygdqXfwA",
+        "name": "input-ygdqXfwA",
+        "type": "text",
+        "label": "Address2",
+        "placeholder": "",
+        "required": true,
+        "options": [],
+        "className": "ng-pristine ng-untouched ng-valid ng-scope ng-empty ng-valid-required ng-valid-pattern ng-valid-maxlength"
+      },
+      {
+        "id": "jv-field-yadqXfwu",
+        "name": "input-yadqXfwu",
+        "type": "text",
+        "label": "City*",
+        "placeholder": "",
+        "required": true,
+        "options": [],
+        "className": "ng-pristine ng-untouched ng-scope ng-empty ng-invalid ng-invalid-required ng-valid-pattern ng-valid-maxlength"
+      },
+      {
+        "id": "jv-field-ypeqXfwK",
+        "name": "input-ypeqXfwK",
+        "type": "select",
+        "label": "State*",
+        "placeholder": "",
+        "required": true,
+        "options": [
+          "Select an option...",
+          "Not Applicable",
+          "Alaska",
+          "Alabama",
+          "Arkansas",
+          "Arizona",
+          "California",
+          "Colorado",
+          "Connecticut",
+          "District Of Columbia"
+        ],
+        "className": "ng-pristine ng-untouched ng-scope ng-empty ng-invalid ng-invalid-required jv-empty-select"
+      },
+      {
+        "id": "jv-field-ycdqXfww",
+        "name": "input-ycdqXfww",
+        "type": "text",
+        "label": "Zip/Postal Code*",
+        "placeholder": "",
+        "required": true,
+        "options": [],
+        "className": "ng-pristine ng-untouched ng-scope ng-empty ng-invalid ng-invalid-required ng-valid-pattern ng-valid-maxlength"
+      },
+      {
+        "id": "jv-field-ybdqXfwv",
+        "name": "input-ybdqXfwv",
+        "type": "text",
+        "label": "Email*",
+        "placeholder": "",
+        "required": true,
+        "options": [],
+        "className": "ng-pristine ng-untouched ng-scope ng-empty ng-invalid ng-invalid-required ng-valid-pattern ng-valid-maxlength"
+      },
+      {
+        "id": "jv-field-yedqXfwy",
+        "name": "input-yedqXfwy",
+        "type": "tel",
+        "label": "Phone*",
+        "placeholder": "",
+        "required": true,
+        "options": [],
+        "className": "ng-pristine ng-untouched ng-scope ng-empty ng-invalid ng-invalid-required ng-valid-pattern ng-valid-maxlength"
+      },
+      {
+        "id": "jv-field-yE0X1fwm",
+        "name": "input-yE0X1fwm",
+        "type": "number",
+        "label": "Desired Salary Amount*",
+        "placeholder": "",
+        "required": true,
+        "options": [],
+        "className": "ng-pristine ng-untouched ng-scope ng-empty ng-invalid ng-invalid-required ng-valid-pattern ng-valid-maxlength"
+      },
+      {
+        "id": "jv-field-yfdqXfwz",
+        "name": "input-yfdqXfwz",
+        "type": "select",
+        "label": "Gender*",
+        "placeholder": "",
+        "required": true,
+        "options": [
+          "Select an option...",
+          "Male",
+          "Female",
+          "Decline To Self Identify"
+        ],
+        "className": "ng-pristine ng-untouched ng-scope ng-empty ng-invalid ng-invalid-required jv-empty-select"
+      },
+      {
+        "id": "jv-field-yddqXfwx",
+        "name": "input-yddqXfwx",
+        "type": "select",
+        "label": "Race/Ethnicity*",
+        "placeholder": "",
+        "required": true,
+        "options": [
+          "Select an option...",
+          "American Indian or Alaskan Native",
+          "Asian",
+          "Black or African American",
+          "Hispanic or Latino",
+          "White",
+          "Native Hawaiian Or Pacific Islander",
+          "Two or more races",
+          "Decline to Self Identify"
+        ],
+        "className": "ng-pristine ng-untouched ng-scope ng-empty ng-invalid ng-invalid-required jv-empty-select"
+      },
+      {
+        "id": "jv-field-yrZX0fw7",
+        "name": "input-yrZX0fw7",
+        "type": "select",
+        "label": "Disability Status*",
+        "placeholder": "",
+        "required": true,
+        "options": [
+          "Select an option...",
+          "Yes, I have a disability or have had one in the past.",
+          "No, I do not have a disability and I have not had one in the past.",
+          "I do not wish to answer"
+        ],
+        "className": "ng-pristine ng-untouched ng-scope ng-empty ng-invalid ng-invalid-required jv-empty-select"
+      },
+      {
+        "id": "jv-field-yldqXfwF",
+        "name": "input-yldqXfwF",
+        "type": "select",
+        "label": "Veteran Status*",
+        "placeholder": "",
+        "required": true,
+        "options": [
+          "Select an option...",
+          "Special Disabled Veteran",
+          "Vietnam Era Veteran",
+          "Newly Separated Veteran",
+          "Other Protected Veteran",
+          "Not a Veteran",
+          "Decline To Self Identify"
+        ],
+        "className": "ng-pristine ng-untouched ng-scope ng-empty ng-invalid ng-invalid-required jv-empty-select"
+      },
+      {
+        "id": "jv-field-ykdqXfwE",
+        "name": "input-ykdqXfwE",
+        "type": "select",
+        "label": "Are you age 18 or older?",
+        "placeholder": "",
+        "required": true,
+        "options": [
+          "Select an option...",
+          "Yes",
+          "No"
+        ],
+        "className": "ng-pristine ng-untouched ng-valid ng-scope ng-empty ng-valid-required jv-empty-select"
+      },
+      {
+        "id": "jv-field-yidqXfwC",
+        "name": "input-yidqXfwC",
+        "type": "select",
+        "label": "Do you have an Active Clearance/Public Trust?*",
+        "placeholder": "",
+        "required": true,
+        "options": [
+          "Select an option...",
+          "Yes",
+          "No"
+        ],
+        "className": "ng-pristine ng-untouched ng-scope ng-empty ng-invalid ng-invalid-required jv-empty-select"
+      },
+      {
+        "id": "jv-field-yneqXfwI",
+        "name": "input-yneqXfwI",
+        "type": "select",
+        "label": "Clearance Type",
+        "placeholder": "",
+        "required": true,
+        "options": [
+          "Select an option...",
+          "None",
+          "Public Trust",
+          "Interim Secret Clearance",
+          "Secret Clearance",
+          "Interim Top Secret Clearance",
+          "Top Secret Clearance",
+          "Top Secret Full Scope Polygraph Clearance",
+          "Top Secret/ SCI Clearance",
+          "DOE Badge Access Only"
+        ],
+        "className": "ng-pristine ng-untouched ng-valid ng-scope ng-empty ng-valid-required jv-empty-select"
+      },
+      {
+        "id": "jv-field-yP5jZfwW",
+        "name": "input-yP5jZfwW",
+        "type": "select",
+        "label": "What is your highest education?*",
+        "placeholder": "",
+        "required": true,
+        "options": [
+          "Select an option...",
+          "High School",
+          "GED",
+          "Associates",
+          "Bachelors",
+          "Masters",
+          "Ph.D",
+          "Some College",
+          "Technical School",
+          "None"
+        ],
+        "className": "ng-pristine ng-untouched ng-scope ng-empty ng-invalid ng-invalid-required jv-empty-select"
+      },
+      {
+        "id": "jv-field-yQ5jZfwX",
+        "name": "input-yQ5jZfwX",
+        "type": "textarea",
+        "label": "Do you currently hold any certifications? If so, please list.*",
+        "placeholder": "",
+        "required": true,
+        "options": [],
+        "className": "ng-pristine ng-untouched ng-scope ng-isolate-scope ng-empty ng-invalid ng-invalid-required"
+      },
+      {
+        "id": "jv-field-yPP61fwv",
+        "name": "input-yPP61fwv",
+        "type": "text",
+        "label": "Please provide the total number of years of relevant experience you have.*",
+        "placeholder": "",
+        "required": true,
+        "options": [],
+        "className": "ng-pristine ng-untouched ng-scope ng-empty ng-invalid ng-invalid-required ng-valid-pattern ng-valid-maxlength"
+      },
+      {
+        "id": "jv-field-yEqkZfw7",
+        "name": "input-yEqkZfw7",
+        "type": "select",
+        "label": "Are you current or past employee of ActioNet, Inc.?*",
+        "placeholder": "",
+        "required": true,
+        "options": [
+          "Select an option...",
+          "Current ActioNet Employee",
+          "Past ActioNet Employee",
+          "Neither"
+        ],
+        "className": "ng-pristine ng-untouched ng-scope ng-empty ng-invalid ng-invalid-required jv-empty-select"
+      },
+      {
+        "id": "jv-field-yjukZfwQ",
+        "name": "input-yjukZfwQ",
+        "type": "text",
+        "label": "Do you have a family member/relative that currently works at ActioNet? If Yes, please list the Employee's name and their relationship to you.*",
+        "placeholder": "",
+        "required": true,
+        "options": [],
+        "className": "ng-pristine ng-untouched ng-scope ng-empty ng-invalid ng-invalid-required ng-valid-pattern ng-valid-maxlength"
+      },
+      {
+        "id": "jv-field-yqeqXfwL",
+        "name": "input-yqeqXfwL",
+        "type": "select",
+        "label": "How did you hear about the position?",
+        "placeholder": "",
+        "required": true,
+        "options": [
+          "Select an option...",
+          "ActioNet Career Page",
+          "CareerBuilder",
+          "ClearanceJobs",
+          "Current Employee",
+          "Dice",
+          "Indeed",
+          "Job Fair",
+          "LinkedIn",
+          "Referred by ActioNet Employee"
+        ],
+        "className": "ng-pristine ng-untouched ng-valid ng-scope ng-empty ng-valid-required jv-empty-select"
+      },
+      {
+        "id": "jv-field-yETcZfws",
+        "name": "input-yETcZfws",
+        "type": "text",
+        "label": "If referred by ActioNet employee, please provide the name.",
+        "placeholder": "",
+        "required": true,
+        "options": [],
+        "className": "ng-pristine ng-untouched ng-valid ng-scope ng-empty ng-valid-required ng-valid-pattern ng-valid-maxlength"
+      },
+      {
+        "id": "jv-field-ygNsZfwe",
+        "name": "input-ygNsZfwe",
+        "type": "text",
+        "label": "If you attended ActioNet's Job Fair, please provide the name of the job fair and date attended.",
+        "placeholder": "",
+        "required": true,
+        "options": [],
+        "className": "ng-pristine ng-untouched ng-valid ng-scope ng-empty ng-valid-required ng-valid-pattern ng-valid-maxlength"
+      },
+      {
+        "id": "jv-field-ya54Yfw1",
+        "name": "input-ya54Yfw1",
+        "type": "select",
+        "label": "Are you aware of ANY potential conflicts of interest regarding potential employment with ActioNet? (i.e. family relationships, safe harbor restrictions)*",
+        "placeholder": "",
+        "required": true,
+        "options": [
+          "Select an option...",
+          "Yes",
+          "No"
+        ],
+        "className": "ng-pristine ng-untouched ng-scope ng-empty ng-invalid ng-invalid-required jv-empty-select"
+      },
+      {
+        "id": "jv-field-yc54Yfw3",
+        "name": "input-yc54Yfw3",
+        "type": "select",
+        "label": "Are you aware of any non-competes or employment agreements that would affect your potential employment with ActioNet?*",
+        "placeholder": "",
+        "required": true,
+        "options": [
+          "Select an option...",
+          "Yes",
+          "No"
+        ],
+        "className": "ng-pristine ng-untouched ng-scope ng-empty ng-invalid ng-invalid-required jv-empty-select"
+      },
+      {
+        "id": "jv-field-y964Yfw1",
+        "name": "input-y964Yfw1",
+        "type": "select",
+        "label": "Are you a current or former government employee?*",
+        "placeholder": "",
+        "required": true,
+        "options": [
+          "Select an option...",
+          "Yes",
+          "No"
+        ],
+        "className": "ng-pristine ng-untouched ng-scope ng-empty ng-invalid ng-invalid-required jv-empty-select"
+      },
+      {
+        "id": "jv-field-ya64Yfw2",
+        "name": "input-ya64Yfw2",
+        "type": "select",
+        "label": "If you are a current or former government employee, are you currently or were you ever previously involved in any ActioNet contracts or programs?*",
+        "placeholder": "",
+        "required": true,
+        "options": [
+          "Select an option...",
+          "Yes",
+          "No",
+          "I am not a current or former government employee"
+        ],
+        "className": "ng-pristine ng-untouched ng-scope ng-empty ng-invalid ng-invalid-required jv-empty-select"
+      },
+      {
+        "id": "jv-field-yb64Yfw3",
+        "name": "input-yb64Yfw3",
+        "type": "select",
+        "label": "If you are a current or former government employee, have you recused yourself in writing to the appropriate government official from working on all contracts or programs involving ActioNet?*",
+        "placeholder": "",
+        "required": true,
+        "options": [
+          "Select an option...",
+          "Yes",
+          "No",
+          "I am not a current or former government employee"
+        ],
+        "className": "ng-pristine ng-untouched ng-scope ng-empty ng-invalid ng-invalid-required jv-empty-select"
+      },
+      {
+        "id": "jv-field-yc64Yfw4",
+        "name": "input-yc64Yfw4",
+        "type": "select",
+        "label": "Are you currently or have you ever been a procurement official (i.e. Procuring Contracting Officer; Source Selection Authority; Member of Source Selection Evaluation Board; Chief of Financial or Technical Evaluation Team; Program Manager; Deputy Program Manager; and Administrative Contracting Officers)?*",
+        "placeholder": "",
+        "required": true,
+        "options": [
+          "Select an option...",
+          "Yes",
+          "No"
+        ],
+        "className": "ng-pristine ng-untouched ng-scope ng-empty ng-invalid ng-invalid-required jv-empty-select"
+      },
+      {
+        "id": "file-input-0",
+        "name": "",
+        "type": "file",
+        "label": "File",
+        "placeholder": "",
+        "required": false,
+        "options": [],
+        "className": ""
+      },
+      {
+        "id": "jv-paste-resume-textarea0",
+        "name": "",
+        "type": "textarea",
+        "label": "Type or paste your Resume here",
+        "placeholder": "Type or paste your Resume here",
+        "required": false,
+        "options": [],
+        "className": "needsclick ng-pristine ng-untouched ng-valid ng-isolate-scope ng-empty"
+      },
+      {
+        "id": "file-input-1",
+        "name": "",
+        "type": "file",
+        "label": "File",
+        "placeholder": "",
+        "required": false,
+        "options": [],
+        "className": ""
+      },
+      {
+        "id": "jv-paste-resume-textarea1",
+        "name": "",
+        "type": "textarea",
+        "label": "Type or paste your Cover Letter here",
+        "placeholder": "Type or paste your Cover Letter here",
+        "required": false,
+        "options": [],
+        "className": "needsclick ng-pristine ng-untouched ng-valid ng-isolate-scope ng-empty"
+      }
+    ],
+    "fileElements": [
+      {
+        "tag": "H3",
+        "id": "jv-resume-header",
+        "className": "jv-step-header",
+        "outerHTML": "<h3 class=\"jv-step-header\" id=\"jv-resume-header\">\n        Add Resume*\n    </h3>"
+      },
+      {
+        "tag": "TEXTAREA",
+        "id": "jv-edit-resume-textarea0",
+        "className": "needsclick ng-pristine ng-untouched ng-valid ng-empty",
+        "outerHTML": "<textarea id=\"jv-edit-resume-textarea0\" ng-model=\"resumeContent\" class=\"needsclick ng-pristine ng-untouched ng-valid ng-empty\"></textarea>"
+      },
+      {
+        "tag": "DIV",
+        "id": "socialProfile",
+        "className": "jv-apply-section ng-scope",
+        "outerHTML": "<div ng-controller=\"JVAttachProfile\" ng-show=\"showInvalidField()\" class=\"jv-apply-section ng-scope\" id=\"socialProfile\">\n    <h3 class=\"jv-step-header\" id=\"\">\n        Social Profile (optional)\n    </h3>\n            <div class=\"jv-apply-section-content"
+      },
+      {
+        "tag": "SPAN",
+        "id": "attachProfile",
+        "className": "",
+        "outerHTML": "<span id=\"attachProfile\" ng-mouseenter=\"widgetType(false)\"> <span class=\"awli-container\">\n    <span class=\"IN-widget\" data-lnkd-debug=\"&lt;script type=&quot;IN/AwliWidget+init&quot; data-company-job-code=&quot;9987841&quot; data-integration-context=&"
+      },
+      {
+        "tag": "I",
+        "id": "",
+        "className": "jv-attachment-icon icon needsclick ng-scope icon-upload-bottom",
+        "outerHTML": "<i class=\"jv-attachment-icon icon needsclick ng-scope icon-upload-bottom\" ng-class=\"browser.ios ? 'icon-camera' : 'icon-upload-bottom'\"></i>"
+      },
+      {
+        "tag": "INPUT",
+        "id": "file-input-0",
+        "className": "",
+        "outerHTML": "<input id=\"file-input-0\" type=\"file\" style=\"position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0;\" onchange=\"angular.element(this).scope().change()\">"
+      },
+      {
+        "tag": "TEXTAREA",
+        "id": "jv-paste-resume-textarea0",
+        "className": "needsclick ng-pristine ng-untouched ng-valid ng-isolate-scope ng-empty",
+        "outerHTML": "<textarea id=\"jv-paste-resume-textarea0\" ng-model=\"pastedText\" class=\"needsclick ng-pristine ng-untouched ng-valid ng-isolate-scope ng-empty\" jv-textarea-placeholder=\"Type or paste your Resume here\" placeholder=\"Type or paste your Resume here\"></text"
+      },
+      {
+        "tag": "I",
+        "id": "",
+        "className": "jv-attachment-icon icon needsclick ng-scope icon-upload-bottom",
+        "outerHTML": "<i class=\"jv-attachment-icon icon needsclick ng-scope icon-upload-bottom\" ng-class=\"browser.ios ? 'icon-camera' : 'icon-upload-bottom'\"></i>"
+      },
+      {
+        "tag": "INPUT",
+        "id": "file-input-1",
+        "className": "",
+        "outerHTML": "<input id=\"file-input-1\" type=\"file\" style=\"position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0;\" onchange=\"angular.element(this).scope().change()\">"
+      },
+      {
+        "tag": "TEXTAREA",
+        "id": "jv-paste-resume-textarea1",
+        "className": "needsclick ng-pristine ng-untouched ng-valid ng-isolate-scope ng-empty",
+        "outerHTML": "<textarea id=\"jv-paste-resume-textarea1\" ng-model=\"pastedText\" class=\"needsclick ng-pristine ng-untouched ng-valid ng-isolate-scope ng-empty\" jv-textarea-placeholder=\"Type or paste your Cover Letter here\" placeholder=\"Type or paste your Cover Letter "
+      }
+    ],
+    "submitButtons": [
+      {
+        "tag": "BUTTON",
+        "id": "",
+        "className": "jv-button jv-button-primary jv-button-large",
+        "text": "Send Application\n            Sending Application"
+      }
+    ]
+  },
+  {
+    "title": "iboss Careers",
+    "company": "iboss Careers - Apply for Apple iOS Developer",
+    "currentUrl": "https://jobs.jobvite.com/iboss/job/oLudAfwM/apply",
+    "totalInputs": 12,
+    "inputs": [
+      {
+        "id": "jv-edit-resume-textarea0",
+        "name": "",
+        "type": "textarea",
+        "label": "Type or paste your Resume here",
+        "placeholder": "",
+        "required": false,
+        "options": [],
+        "className": "needsclick ng-pristine ng-untouched ng-valid ng-empty"
+      },
+      {
+        "id": "jv-field-yXZkYfwY",
+        "name": "input-yXZkYfwY",
+        "type": "text",
+        "label": "First Name*",
+        "placeholder": "",
+        "required": true,
+        "options": [],
+        "className": "ng-pristine ng-untouched ng-scope ng-empty ng-invalid ng-invalid-required ng-valid-pattern ng-valid-maxlength"
+      },
+      {
+        "id": "jv-field-yZZkYfw0",
+        "name": "input-yZZkYfw0",
+        "type": "text",
+        "label": "Last Name*",
+        "placeholder": "",
+        "required": true,
+        "options": [],
+        "className": "ng-pristine ng-untouched ng-scope ng-empty ng-invalid ng-invalid-required ng-valid-pattern ng-valid-maxlength"
+      },
+      {
+        "id": "jv-field-yYZkYfwZ",
+        "name": "input-yYZkYfwZ",
+        "type": "text",
+        "label": "Email Address*",
+        "placeholder": "",
+        "required": true,
+        "options": [],
+        "className": "ng-pristine ng-untouched ng-scope ng-empty ng-invalid ng-invalid-required ng-valid-pattern ng-valid-maxlength"
+      },
+      {
+        "id": "jv-field-y9jkYfwu",
+        "name": "input-y9jkYfwu",
+        "type": "textarea",
+        "label": "Full Address",
+        "placeholder": "Full Address",
+        "required": true,
+        "options": [],
+        "className": "ng-pristine ng-untouched ng-valid ng-scope ng-isolate-scope ng-empty ng-valid-required"
+      },
+      {
+        "id": "jv-field-yajkYfwv",
+        "name": "input-yajkYfwv",
+        "type": "tel",
+        "label": "Phone",
+        "placeholder": "",
+        "required": true,
+        "options": [],
+        "className": "ng-pristine ng-untouched ng-valid ng-scope ng-empty ng-valid-required ng-valid-pattern ng-valid-maxlength"
+      },
+      {
+        "id": "jv-field-ybjkYfww",
+        "name": "input-ybjkYfww",
+        "type": "text",
+        "label": "Title",
+        "placeholder": "",
+        "required": true,
+        "options": [],
+        "className": "ng-pristine ng-untouched ng-valid ng-scope ng-empty ng-valid-required ng-valid-pattern ng-valid-maxlength"
+      },
+      {
+        "id": "jv-field-ycjkYfwx",
+        "name": "input-ycjkYfwx",
+        "type": "text",
+        "label": "Company",
+        "placeholder": "",
+        "required": true,
+        "options": [],
+        "className": "ng-pristine ng-untouched ng-valid ng-scope ng-empty ng-valid-required ng-valid-pattern ng-valid-maxlength"
+      },
+      {
+        "id": "file-input-0",
+        "name": "",
+        "type": "file",
+        "label": "File",
+        "placeholder": "",
+        "required": false,
+        "options": [],
+        "className": ""
+      },
+      {
+        "id": "jv-paste-resume-textarea0",
+        "name": "",
+        "type": "textarea",
+        "label": "Type or paste your Resume here",
+        "placeholder": "Type or paste your Resume here",
+        "required": false,
+        "options": [],
+        "className": "needsclick ng-pristine ng-untouched ng-valid ng-isolate-scope ng-empty"
+      },
+      {
+        "id": "file-input-1",
+        "name": "",
+        "type": "file",
+        "label": "File",
+        "placeholder": "",
+        "required": false,
+        "options": [],
+        "className": ""
+      },
+      {
+        "id": "jv-paste-resume-textarea1",
+        "name": "",
+        "type": "textarea",
+        "label": "Type or paste your Cover Letter here",
+        "placeholder": "Type or paste your Cover Letter here",
+        "required": false,
+        "options": [],
+        "className": "needsclick ng-pristine ng-untouched ng-valid ng-isolate-scope ng-empty"
+      }
+    ],
+    "fileElements": [
+      {
+        "tag": "H3",
+        "id": "jv-resume-header",
+        "className": "jv-step-header",
+        "outerHTML": "<h3 class=\"jv-step-header\" id=\"jv-resume-header\">\n        Add Resume*\n    </h3>"
+      },
+      {
+        "tag": "TEXTAREA",
+        "id": "jv-edit-resume-textarea0",
+        "className": "needsclick ng-pristine ng-untouched ng-valid ng-empty",
+        "outerHTML": "<textarea id=\"jv-edit-resume-textarea0\" ng-model=\"resumeContent\" class=\"needsclick ng-pristine ng-untouched ng-valid ng-empty\"></textarea>"
+      },
+      {
+        "tag": "DIV",
+        "id": "socialProfile",
+        "className": "jv-apply-section ng-scope",
+        "outerHTML": "<div ng-controller=\"JVAttachProfile\" ng-show=\"showInvalidField()\" class=\"jv-apply-section ng-scope\" id=\"socialProfile\">\n    <h3 class=\"jv-step-header\" id=\"\">\n        Social Profile (optional)\n    </h3>\n            <div class=\"jv-apply-section-content"
+      },
+      {
+        "tag": "SPAN",
+        "id": "attachProfile",
+        "className": "",
+        "outerHTML": "<span id=\"attachProfile\" ng-mouseenter=\"widgetType(false)\"> <span class=\"awli-container\">\n    <span class=\"IN-widget\" data-lnkd-debug=\"&lt;script type=&quot;IN/AwliWidget+init&quot; data-company-job-code=&quot;9789018&quot; data-integration-context=&"
+      },
+      {
+        "tag": "I",
+        "id": "",
+        "className": "jv-attachment-icon icon needsclick ng-scope icon-upload-bottom",
+        "outerHTML": "<i class=\"jv-attachment-icon icon needsclick ng-scope icon-upload-bottom\" ng-class=\"browser.ios ? 'icon-camera' : 'icon-upload-bottom'\"></i>"
+      },
+      {
+        "tag": "INPUT",
+        "id": "file-input-0",
+        "className": "",
+        "outerHTML": "<input id=\"file-input-0\" type=\"file\" style=\"position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0;\" onchange=\"angular.element(this).scope().change()\">"
+      },
+      {
+        "tag": "TEXTAREA",
+        "id": "jv-paste-resume-textarea0",
+        "className": "needsclick ng-pristine ng-untouched ng-valid ng-isolate-scope ng-empty",
+        "outerHTML": "<textarea id=\"jv-paste-resume-textarea0\" ng-model=\"pastedText\" class=\"needsclick ng-pristine ng-untouched ng-valid ng-isolate-scope ng-empty\" jv-textarea-placeholder=\"Type or paste your Resume here\" placeholder=\"Type or paste your Resume here\"></text"
+      },
+      {
+        "tag": "I",
+        "id": "",
+        "className": "jv-attachment-icon icon needsclick ng-scope icon-upload-bottom",
+        "outerHTML": "<i class=\"jv-attachment-icon icon needsclick ng-scope icon-upload-bottom\" ng-class=\"browser.ios ? 'icon-camera' : 'icon-upload-bottom'\"></i>"
+      },
+      {
+        "tag": "INPUT",
+        "id": "file-input-1",
+        "className": "",
+        "outerHTML": "<input id=\"file-input-1\" type=\"file\" style=\"position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0;\" onchange=\"angular.element(this).scope().change()\">"
+      },
+      {
+        "tag": "TEXTAREA",
+        "id": "jv-paste-resume-textarea1",
+        "className": "needsclick ng-pristine ng-untouched ng-valid ng-isolate-scope ng-empty",
+        "outerHTML": "<textarea id=\"jv-paste-resume-textarea1\" ng-model=\"pastedText\" class=\"needsclick ng-pristine ng-untouched ng-valid ng-isolate-scope ng-empty\" jv-textarea-placeholder=\"Type or paste your Cover Letter here\" placeholder=\"Type or paste your Cover Letter "
+      }
+    ],
+    "submitButtons": [
+      {
+        "tag": "BUTTON",
+        "id": "",
+        "className": "jv-button jv-button-primary jv-button-large ng-hide",
+        "text": "Send Application\n            Sending Application"
+      }
+    ]
+  },
+  {
+    "title": "NinjaOne Careers",
+    "company": "NinjaOne Careers",
+    "currentUrl": "https://jobs.jobvite.com/ninjaone/job/oKjFAfw2/apply",
+    "totalInputs": 1,
+    "inputs": [
+      {
+        "id": "jv-country-select",
+        "name": "",
+        "type": "select",
+        "label": "Location of Residence and Language:",
+        "placeholder": "",
+        "required": true,
+        "options": [
+          "Select your location of residence and language",
+          "Global NinjaOne Candidate Privacy Policy - English"
+        ],
+        "className": "ng-pristine ng-untouched ng-empty ng-invalid ng-invalid-required"
+      }
+    ],
+    "fileElements": [],
+    "submitButtons": []
+  },
+  {
+    "title": "Enverus Careers",
+    "company": "Enverus Careers",
+    "currentUrl": "https://jobs.jobvite.com/enverus/job/oUSzAfwF/apply",
+    "totalInputs": 1,
+    "inputs": [
+      {
+        "id": "jv-country-select",
+        "name": "",
+        "type": "select",
+        "label": "Location of Residence and Language:",
+        "placeholder": "",
+        "required": true,
+        "options": [
+          "Select your location of residence and language",
+          "Other",
+          "EU"
+        ],
+        "className": "ng-pristine ng-untouched ng-empty ng-invalid ng-invalid-required"
+      }
+    ],
+    "fileElements": [],
+    "submitButtons": []
+  }
+]

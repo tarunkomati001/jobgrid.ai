@@ -10,6 +10,7 @@ import { dismissCommonPopups } from "../../browser/popup-handler";
 import { db } from "../../database/db";
 
 export class RipplingAdapter implements ATSAdapter {
+  private candidateProfile?: UserProfile;
 
   /**
    * Detects whether the current page is powered by Rippling ATS.
@@ -84,18 +85,19 @@ export class RipplingAdapter implements ATSAdapter {
       fieldContainers.forEach((fc, idx) => {
         let label = "";
         const labelEl = fc.querySelector("label, span[id$='-label'], [class*='label']");
-        if (labelEl) {
-          label = (labelEl.textContent || "").trim();
+        if (labelEl && labelEl.textContent && labelEl.textContent.trim().length > 1) {
+          label = labelEl.textContent.trim();
         }
 
-        // Check if there is a preceding sibling title (for customQuestions)
-        if (!label) {
-          let p = fc.parentElement;
+        // Check if there is a preceding sibling title (for customQuestions or when label is generic)
+        if (!label || label.toLowerCase().startsWith("select") || label.length < 3) {
+          let p: Element | null = fc;
           while (p && p.tagName !== "FORM" && p.tagName !== "BODY") {
             if (p.previousElementSibling) {
-              const prevText = p.previousElementSibling.querySelector("p, h4, h5, label");
-              if (prevText && prevText.textContent) {
-                label = prevText.textContent.trim();
+              const headingP = p.previousElementSibling.querySelector("p, h1, h2, h3, h4, h5, h6, label") || p.previousElementSibling;
+              const headingText = (headingP.textContent || "").trim();
+              if (headingText && headingText.length > 3 && !headingText.toLowerCase().includes("apply now")) {
+                label = headingText;
                 break;
               }
             }
@@ -103,7 +105,7 @@ export class RipplingAdapter implements ATSAdapter {
           }
         }
 
-        const input = fc.querySelector("input, textarea, div[role='combobox']");
+        const input = fc.querySelector("input, textarea, div[role='combobox'], div[role='radio']");
         if (!input) return;
 
         const testId = input.getAttribute("data-testid") || fc.getAttribute("data-testid") || `field-${idx}`;
@@ -113,7 +115,7 @@ export class RipplingAdapter implements ATSAdapter {
         else if (typeAttr === "email") type = "email";
         else if (typeAttr === "tel") type = "tel";
         else if (input.getAttribute("role") === "combobox" || typeAttr === "select") type = "select";
-        else if (typeAttr === "radio") type = "radio";
+        else if (typeAttr === "radio" || input.getAttribute("role") === "radio" || fc.querySelectorAll("div[role='radio']").length > 0) type = "radio";
         else if (typeAttr === "checkbox") type = "checkbox";
 
         results.push({
@@ -165,7 +167,8 @@ export class RipplingAdapter implements ATSAdapter {
     }
 
     // Cover letter if available
-    const coverLetterPath = path.resolve(path.dirname(resumePath), "Hrutin_Nammi_Cover_Letter.pdf");
+    const prof = this.candidateProfile;
+    const coverLetterPath = prof?.coverLetterPath || (resumePath ? path.resolve(path.dirname(resumePath), `${prof?.firstName || 'Candidate'}_${prof?.lastName || 'User'}_Cover_Letter.pdf`) : "");
     const clInput = page.locator("input[type='file'][data-testid='input-cover_letter'], label[data-testid='cover_letter'] input[type='file']").first();
     if (await clInput.count() > 0 && fs.existsSync(coverLetterPath)) {
       console.log(`📄 [RipplingAdapter]: Uploading cover letter: ${coverLetterPath}`);
@@ -186,6 +189,7 @@ export class RipplingAdapter implements ATSAdapter {
     additionalAnswers: Record<string, string> = {},
     preExtractedFields?: FormField[]
   ): Promise<void> {
+    this.candidateProfile = profile;
     console.log("🚀 [RipplingAdapter]: Starting Rippling form filling flow...");
     await injectVisualHUD(page);
     await updateHUDStatus(page, "Preparing Rippling application...", `Candidate: ${profile.firstName} ${profile.lastName}`, "info", 20);
@@ -330,11 +334,13 @@ export class RipplingAdapter implements ATSAdapter {
     // ─────────────────────────────────────────────────────────────────────────────
     const linkedinInput = page.locator("input[data-testid='input-linkedin_link']").first();
     if (await linkedinInput.count() > 0) {
-      const linkedinVal = profile.linkedinUrl || "https://www.linkedin.com/in/hrutin-nammi";
-      console.log(`🔗 [RipplingAdapter]: Filling LinkedIn -> "${linkedinVal}"`);
-      await linkedinInput.scrollIntoViewIfNeeded().catch(() => {});
-      await linkedinInput.fill("");
-      await linkedinInput.pressSequentially(linkedinVal, { delay: 30 });
+      const linkedinVal = profile.linkedinUrl || "";
+      if (linkedinVal) {
+        console.log(`🔗 [RipplingAdapter]: Filling LinkedIn -> "${linkedinVal}"`);
+        await linkedinInput.scrollIntoViewIfNeeded().catch(() => {});
+        await linkedinInput.fill("");
+        await linkedinInput.pressSequentially(linkedinVal, { delay: 30 });
+      }
     }
 
     // ─────────────────────────────────────────────────────────────────────────────
@@ -354,13 +360,14 @@ export class RipplingAdapter implements ATSAdapter {
       // Extract question text
       const qText = await field.evaluate(el => {
         let label = el.querySelector("label, span[id$='-label'], [class*='label']")?.textContent || "";
-        if (!label) {
-          let p = el.parentElement;
+        if (!label || label.toLowerCase().startsWith("select") || label.trim().length < 3) {
+          let p: Element | null = el;
           while (p && p.tagName !== "FORM" && p.tagName !== "BODY") {
             if (p.previousElementSibling) {
-              const prevText = p.previousElementSibling.querySelector("p, h4, h5, label")?.textContent;
-              if (prevText && prevText.trim().length > 3) {
-                label = prevText.trim();
+              const headingP = p.previousElementSibling.querySelector("p, h1, h2, h3, h4, h5, h6, label") || p.previousElementSibling;
+              const headingText = (headingP.textContent || "").trim();
+              if (headingText && headingText.length > 3 && !headingText.toLowerCase().includes("apply now")) {
+                label = headingText;
                 break;
               }
             }
@@ -446,47 +453,54 @@ export class RipplingAdapter implements ATSAdapter {
       }
 
       // Handle custom radio questions
-      const radioInputs = await field.locator("input[type='radio'], [role='radiogroup'] [role='radio']").all();
-      if (radioInputs.length > 0) {
+      const hasRadios = (await field.locator("div[role='radio'], input[type='radio']").count()) > 0;
+      if (hasRadios) {
         console.log(`🔘 [RipplingAdapter]: Answering custom radio question: "${qText.slice(0, 80)}"`);
-        let chosenRadio = "No";
+        let chosenRadio = "Yes";
         if (
           lowerQ.includes("require work authorization") ||
           lowerQ.includes("require visa") ||
           lowerQ.includes("require sponsorship") ||
           lowerQ.includes("sponsorship support") ||
-          (lowerQ.includes("sponsorship") && !lowerQ.includes("without"))
+          lowerQ.includes("sponsor") ||
+          (lowerQ.includes("sponsorship") && !lowerQ.includes("without")) ||
+          lowerQ.includes("family members") ||
+          lowerQ.includes("relatives") ||
+          lowerQ.includes("conflict of interest") ||
+          lowerQ.includes("personal relationships")
         ) {
           chosenRadio = "No";
-        } else if (lowerQ.includes("authorized") || lowerQ.includes("eligible") || lowerQ.includes("able to intern") || lowerQ.includes("able to work") || lowerQ.includes("full time")) {
+        } else if (
+          lowerQ.includes("background") ||
+          lowerQ.includes("reference check") ||
+          lowerQ.includes("authorized") ||
+          lowerQ.includes("eligible") ||
+          lowerQ.includes("able to intern") ||
+          lowerQ.includes("able to work") ||
+          lowerQ.includes("full time")
+        ) {
           chosenRadio = "Yes";
         } else {
           chosenRadio = "Yes";
         }
 
-        // Click via DOM evaluate directly to trigger React state updates
-        const radioName = await radioInputs[0].getAttribute("name").catch(() => "");
-        const clicked = await page.evaluate(({ rName, val }) => {
-          const matchingRadio = Array.from(document.querySelectorAll<HTMLInputElement>("input[type='radio']")).find(r => {
-            if (rName && r.name !== rName) return false;
-            return r.value?.toLowerCase() === val.toLowerCase();
+        const radioTarget = field.locator(`div[role='radio'][data-value='${chosenRadio}'], div[data-value='${chosenRadio}'], div[role='radio']:has-text('${chosenRadio}')`).first();
+        if (await radioTarget.count() > 0) {
+          await radioTarget.scrollIntoViewIfNeeded().catch(() => {});
+          await radioTarget.click({ timeout: 2000 }).catch(async () => {
+            await radioTarget.evaluate((el: HTMLElement) => el.click());
           });
-          if (matchingRadio) {
-            matchingRadio.focus();
-            matchingRadio.click();
-            matchingRadio.checked = true;
-            matchingRadio.dispatchEvent(new Event("change", { bubbles: true }));
-            matchingRadio.dispatchEvent(new Event("input", { bubbles: true }));
-            if (matchingRadio.parentElement) (matchingRadio.parentElement as HTMLElement).click();
-            return true;
-          }
-          return false;
-        }, { rName: radioName, val: chosenRadio });
-
-        if (!clicked) {
-          const targetRadio = field.locator(`label:has-text('${chosenRadio}'), input[value='${chosenRadio}'], [data-value='${chosenRadio}']`).first();
-          if (await targetRadio.count() > 0) {
-            await targetRadio.click({ force: true }).catch(() => {});
+        } else {
+          const matchingInput = field.locator(`input[type='radio'][value='${chosenRadio}'], input[type='radio'][data-value='${chosenRadio}']`).first();
+          if (await matchingInput.count() > 0) {
+            await matchingInput.scrollIntoViewIfNeeded().catch(() => {});
+            await matchingInput.click({ force: true }).catch(async () => {
+              await matchingInput.evaluate((el: HTMLInputElement) => {
+                el.checked = true;
+                el.dispatchEvent(new Event("change", { bubbles: true }));
+                el.dispatchEvent(new Event("input", { bubbles: true }));
+              });
+            });
           }
         }
         console.log(`   Selected radio: "${chosenRadio}"`);
@@ -513,12 +527,20 @@ export class RipplingAdapter implements ATSAdapter {
           lowerQ.includes("require visa") ||
           lowerQ.includes("require sponsorship") ||
           lowerQ.includes("sponsorship support") ||
+          lowerQ.includes("sponsor") ||
           (lowerQ.includes("sponsorship") && !lowerQ.includes("without"))
+        ) {
+          answer = "No";
+        } else if (
+          lowerQ.includes("family members") ||
+          lowerQ.includes("personal relationships")
         ) {
           answer = "No";
         } else if (lowerQ.includes("able to intern") || lowerQ.includes("able to work") || lowerQ.includes("full time")) {
           answer = "Yes";
         } else if (lowerQ.includes("authorized") || lowerQ.includes("legally") || lowerQ.includes("eligible to work")) {
+          answer = "Yes";
+        } else if (lowerQ.includes("background") || lowerQ.includes("reference check")) {
           answer = "Yes";
         } else if (lowerQ.includes("relocate") || lowerQ.includes("willing to relocate")) {
           answer = "Yes";
@@ -558,13 +580,58 @@ export class RipplingAdapter implements ATSAdapter {
           console.log(`✍️ [RipplingAdapter]: Answering custom text question: "${qText.slice(0, 80)}"`);
           const norm = normalizeLabel(qText);
           let ans = additionalAnswers[norm] || userSavedAnswers[norm] || "";
+
           if (!ans) {
-            ans = await suggestAnswerForQuestion(qText, profile, { company: "Rippling", title: "Role", ats: "RIPPLING" });
+            // Direct candidate profile mapping for standard candidate details
+            if (lowerQ.includes("linkedin")) ans = profile.linkedinUrl || "";
+            else if (lowerQ.includes("github")) ans = profile.githubUrl || "";
+            else if (lowerQ.includes("portfolio") || lowerQ.includes("website") || lowerQ.includes("blog")) ans = profile.portfolioUrl || profile.githubUrl || "";
+            else if (lowerQ.includes("salary") || lowerQ.includes("compensation") || lowerQ.includes("pay")) ans = userSavedAnswers["salary"] || userSavedAnswers["minimum_desired_salary"] || "Negotiable";
+            else if (lowerQ.includes("start date") || lowerQ.includes("date available") || lowerQ.includes("earliest")) ans = "Immediate";
+            else if (lowerQ.includes("notice period") || lowerQ.includes("notice")) ans = "Immediate";
+            else if (lowerQ.includes("years of experience") || lowerQ.includes("experience")) ans = String(profile.yearsOfExperience || 3);
+            else if (lowerQ.includes("school") || lowerQ.includes("university") || lowerQ.includes("college")) ans = profile.educations?.[0]?.school || profile.savedAnswers?.get("school") || "University";
+            else if (lowerQ.includes("degree")) ans = profile.educations?.[0]?.degree || profile.savedAnswers?.get("degree") || "Bachelor's Degree";
+            else if (lowerQ.includes("major") || lowerQ.includes("discipline") || lowerQ.includes("study")) ans = profile.educations?.[0]?.fieldOfStudy || profile.savedAnswers?.get("major") || "Computer Science";
+            else if (lowerQ.includes("city")) ans = profile.city || "";
+            else if (lowerQ.includes("state")) ans = profile.state || "";
+            else if (lowerQ.includes("zip") || lowerQ.includes("postal")) ans = profile.zipCode || "";
+            else if (lowerQ.includes("address") || lowerQ.includes("street")) ans = profile.street || "";
+            else if (lowerQ.includes("country")) ans = profile.country || "United States";
+            else if (lowerQ.includes("referred by") || lowerQ.includes("referral")) ans = profile.savedAnswers?.get("referral") || "Direct Application";
+            else if (lowerQ.includes("why are you interested") || lowerQ.includes("why do you want")) ans = "Excited by the company's mission and technical innovation, and eager to contribute my software engineering skills to the team.";
+            else {
+              ans = suggestAnswerForQuestion(qText);
+            }
           }
           await textInput.fill(ans || "N/A").catch(() => {});
         }
       }
+
+      // Handle checkboxes (e.g. Terms, consent, agreement, acknowledgment)
+      const checkbox = field.locator("input[type='checkbox'], div[role='checkbox']").first();
+      if (await checkbox.count() > 0) {
+        const isChecked = await checkbox.isChecked().catch(() => false);
+        if (!isChecked) {
+          console.log(`☑️ [RipplingAdapter]: Checking agreement/consent checkbox: "${qText.slice(0, 80)}"`);
+          await checkbox.scrollIntoViewIfNeeded().catch(() => {});
+          await checkbox.click({ timeout: 2000 }).catch(async () => {
+            await checkbox.evaluate((el: HTMLElement) => el.click());
+          });
+        }
+      }
     }
+
+    // Final Safety Sweep: ensure no visible required fields are left blank
+    await page.evaluate(() => {
+      const emptyInputs = Array.from(document.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>("input[required], textarea[required], [aria-required='true'] input, [aria-required='true'] textarea"))
+        .filter(el => el.offsetParent !== null && !el.value);
+      emptyInputs.forEach(input => {
+        input.value = "N/A";
+        input.dispatchEvent(new Event("input", { bubbles: true }));
+        input.dispatchEvent(new Event("change", { bubbles: true }));
+      });
+    });
 
     await page.waitForTimeout(1000);
     await updateHUDStatus(page, "Application Ready!", "All fields filled smoothly", "success", 95);

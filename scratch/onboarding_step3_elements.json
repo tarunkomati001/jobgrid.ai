@@ -1,0 +1,395 @@
+[
+  {
+    "tag": "INPUT",
+    "id": "",
+    "name": null,
+    "type": null,
+    "value": "",
+    "text": "",
+    "for": null
+  },
+  {
+    "tag": "INPUT",
+    "id": "",
+    "name": null,
+    "type": null,
+    "value": "",
+    "text": "",
+    "for": null
+  },
+  {
+    "tag": "INPUT",
+    "id": "638172",
+    "name": "638172",
+    "type": "radio",
+    "value": "638172",
+    "text": "",
+    "for": null
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": null,
+    "type": null,
+    "text": "Solving technical problems",
+    "for": "638172"
+  },
+  {
+    "tag": "INPUT",
+    "id": "638173",
+    "name": "638173",
+    "type": "radio",
+    "value": "638173",
+    "text": "",
+    "for": null
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": null,
+    "type": null,
+    "text": "Building products",
+    "for": "638173"
+  },
+  {
+    "tag": "INPUT",
+    "id": "638174",
+    "name": "638174",
+    "type": "radio",
+    "value": "638174",
+    "text": "",
+    "for": null
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": null,
+    "type": null,
+    "text": "Individual contributor",
+    "for": "638174"
+  },
+  {
+    "tag": "INPUT",
+    "id": "638175",
+    "name": "638175",
+    "type": "radio",
+    "value": "638175",
+    "text": "",
+    "for": null
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": null,
+    "type": null,
+    "text": "Manager",
+    "for": "638175"
+  },
+  {
+    "tag": "INPUT",
+    "id": "638178",
+    "name": "638178",
+    "type": "radio",
+    "value": "638178",
+    "text": "",
+    "for": null
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": null,
+    "type": null,
+    "text": "Clear role and set of responsibilities. Consistent feedback ",
+    "for": "638178"
+  },
+  {
+    "tag": "INPUT",
+    "id": "638179",
+    "name": "638179",
+    "type": "radio",
+    "value": "638179",
+    "text": "",
+    "for": null
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": null,
+    "type": null,
+    "text": "Employees wear a lot of hats. Assignments often require empl",
+    "for": "638179"
+  },
+  {
+    "tag": "INPUT",
+    "id": "638180",
+    "name": "638180",
+    "type": "checkbox",
+    "value": "638180",
+    "text": "",
+    "for": null
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": null,
+    "type": null,
+    "text": "Having a say in what I work on and how I work",
+    "for": "638180"
+  },
+  {
+    "tag": "INPUT",
+    "id": "638181",
+    "name": "638181",
+    "type": "checkbox",
+    "value": "638181",
+    "text": "",
+    "for": null
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": null,
+    "type": null,
+    "text": "Opportunities to progress within the company",
+    "for": "638181"
+  },
+  {
+    "tag": "INPUT",
+    "id": "638182",
+    "name": "638182",
+    "type": "checkbox",
+    "value": "638182",
+    "text": "",
+    "for": null
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": null,
+    "type": null,
+    "text": "Team members I can learn from",
+    "for": "638182"
+  },
+  {
+    "tag": "INPUT",
+    "id": "638183",
+    "name": "638183",
+    "type": "checkbox",
+    "value": "638183",
+    "text": "",
+    "for": null
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": null,
+    "type": null,
+    "text": "A company with a good growth trajectory",
+    "for": "638183"
+  },
+  {
+    "tag": "INPUT",
+    "id": "638184",
+    "name": "638184",
+    "type": "checkbox",
+    "value": "638184",
+    "text": "",
+    "for": null
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": null,
+    "type": null,
+    "text": "Having a say in the company's and/or my team's direction",
+    "for": "638184"
+  },
+  {
+    "tag": "INPUT",
+    "id": "638185",
+    "name": "638185",
+    "type": "checkbox",
+    "value": "638185",
+    "text": "",
+    "for": null
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": null,
+    "type": null,
+    "text": "Mentorship opportunities",
+    "for": "638185"
+  },
+  {
+    "tag": "INPUT",
+    "id": "638186",
+    "name": "638186",
+    "type": "checkbox",
+    "value": "638186",
+    "text": "",
+    "for": null
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": null,
+    "type": null,
+    "text": "Learn new things and develop my skills",
+    "for": "638186"
+  },
+  {
+    "tag": "INPUT",
+    "id": "638187",
+    "name": "638187",
+    "type": "checkbox",
+    "value": "638187",
+    "text": "",
+    "for": null
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": null,
+    "type": null,
+    "text": "Challenging problems to work on",
+    "for": "638187"
+  },
+  {
+    "tag": "INPUT",
+    "id": "638188",
+    "name": "638188",
+    "type": "checkbox",
+    "value": "638188",
+    "text": "",
+    "for": null
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": null,
+    "type": null,
+    "text": "A diverse team",
+    "for": "638188"
+  },
+  {
+    "tag": "INPUT",
+    "id": "8-very_interested",
+    "name": "8-very_interested",
+    "type": "radio",
+    "value": "8-very_interested",
+    "text": "",
+    "for": null
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": null,
+    "type": null,
+    "text": "Very important",
+    "for": "8-very_interested"
+  },
+  {
+    "tag": "INPUT",
+    "id": "8-interested",
+    "name": "8-interested",
+    "type": "radio",
+    "value": "8-interested",
+    "text": "",
+    "for": null
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": null,
+    "type": null,
+    "text": "Important",
+    "for": "8-interested"
+  },
+  {
+    "tag": "INPUT",
+    "id": "8-not_interested",
+    "name": "8-not_interested",
+    "type": "radio",
+    "value": "8-not_interested",
+    "text": "",
+    "for": null
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": null,
+    "type": null,
+    "text": "Not important",
+    "for": "8-not_interested"
+  },
+  {
+    "tag": "INPUT",
+    "id": "9-very_interested",
+    "name": "9-very_interested",
+    "type": "radio",
+    "value": "9-very_interested",
+    "text": "",
+    "for": null
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": null,
+    "type": null,
+    "text": "Very important",
+    "for": "9-very_interested"
+  },
+  {
+    "tag": "INPUT",
+    "id": "9-interested",
+    "name": "9-interested",
+    "type": "radio",
+    "value": "9-interested",
+    "text": "",
+    "for": null
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": null,
+    "type": null,
+    "text": "Important",
+    "for": "9-interested"
+  },
+  {
+    "tag": "INPUT",
+    "id": "9-not_interested",
+    "name": "9-not_interested",
+    "type": "radio",
+    "value": "9-not_interested",
+    "text": "",
+    "for": null
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": null,
+    "type": null,
+    "text": "Not important",
+    "for": "9-not_interested"
+  },
+  {
+    "tag": "TEXTAREA",
+    "id": "criteria",
+    "name": null,
+    "type": null,
+    "value": "",
+    "text": "",
+    "for": null
+  },
+  {
+    "tag": "BUTTON",
+    "id": "",
+    "name": null,
+    "type": "submit",
+    "value": "",
+    "text": "Save and continue",
+    "for": null
+  }
+]

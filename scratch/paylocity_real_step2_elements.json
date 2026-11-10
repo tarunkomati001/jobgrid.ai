@@ -1,0 +1,666 @@
+[
+  {
+    "tag": "BUTTON",
+    "id": "",
+    "name": "",
+    "text": "",
+    "type": "submit",
+    "visible": true
+  },
+  {
+    "tag": "BUTTON",
+    "id": "",
+    "name": "",
+    "text": "",
+    "type": "submit",
+    "visible": true
+  },
+  {
+    "tag": "BUTTON",
+    "id": "",
+    "name": "",
+    "text": "",
+    "type": "submit",
+    "visible": true
+  },
+  {
+    "tag": "BUTTON",
+    "id": "",
+    "name": "",
+    "text": "",
+    "type": "submit",
+    "visible": true
+  },
+  {
+    "tag": "P",
+    "id": "",
+    "name": "",
+    "text": "Step 1 of 3",
+    "type": "",
+    "visible": true
+  },
+  {
+    "tag": "BUTTON",
+    "id": "remove-resume",
+    "name": "",
+    "text": "Remove",
+    "type": "button",
+    "visible": true
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": "",
+    "text": "First Name (required)",
+    "type": "",
+    "visible": true
+  },
+  {
+    "tag": "INPUT",
+    "id": "info.firstName",
+    "name": "",
+    "text": "Hrutin",
+    "type": "text",
+    "visible": true
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": "",
+    "text": "Last Name (required)",
+    "type": "",
+    "visible": true
+  },
+  {
+    "tag": "INPUT",
+    "id": "info.lastName",
+    "name": "",
+    "text": "Nammi",
+    "type": "text",
+    "visible": true
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": "",
+    "text": "Middle Name",
+    "type": "",
+    "visible": true
+  },
+  {
+    "tag": "INPUT",
+    "id": "info.middleName",
+    "name": "",
+    "text": "",
+    "type": "text",
+    "visible": true
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": "",
+    "text": "Preferred First Name",
+    "type": "",
+    "visible": true
+  },
+  {
+    "tag": "INPUT",
+    "id": "info.preferredName",
+    "name": "",
+    "text": "Hrutin",
+    "type": "text",
+    "visible": true
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": "",
+    "text": "Email Address (required)",
+    "type": "",
+    "visible": true
+  },
+  {
+    "tag": "INPUT",
+    "id": "info.email",
+    "name": "",
+    "text": "babufakemail@gmail.com",
+    "type": "text",
+    "visible": true
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": "",
+    "text": "Mobile Number",
+    "type": "",
+    "visible": true
+  },
+  {
+    "tag": "INPUT",
+    "id": "info.cellPhone",
+    "name": "",
+    "text": "+12025550198",
+    "type": "text",
+    "visible": true
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": "",
+    "text": "Home Phone Number",
+    "type": "",
+    "visible": true
+  },
+  {
+    "tag": "INPUT",
+    "id": "info.phone",
+    "name": "",
+    "text": "",
+    "type": "text",
+    "visible": true
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": "",
+    "text": "Have you applied for a job with us before?",
+    "type": "",
+    "visible": true
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": "",
+    "text": "We may use SMS during the hiring process. Do you give us permission to text you? (required)",
+    "type": "",
+    "visible": true
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": "",
+    "text": "CountryUnited States",
+    "type": "",
+    "visible": true
+  },
+  {
+    "tag": "INPUT",
+    "id": "public-site-address-country",
+    "name": "",
+    "text": "",
+    "type": "text",
+    "visible": true
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": "",
+    "text": "Address Line 1",
+    "type": "",
+    "visible": true
+  },
+  {
+    "tag": "INPUT",
+    "id": "public-site-address-address-1",
+    "name": "",
+    "text": "123 Market St",
+    "type": "text",
+    "visible": true
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": "",
+    "text": "Address Line 2(optional)",
+    "type": "",
+    "visible": true
+  },
+  {
+    "tag": "INPUT",
+    "id": "public-site-address-address-2",
+    "name": "",
+    "text": "",
+    "type": "text",
+    "visible": true
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": "",
+    "text": "City",
+    "type": "",
+    "visible": true
+  },
+  {
+    "tag": "INPUT",
+    "id": "public-site-address-city",
+    "name": "",
+    "text": "San Francisco",
+    "type": "text",
+    "visible": true
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": "",
+    "text": "County",
+    "type": "",
+    "visible": true
+  },
+  {
+    "tag": "INPUT",
+    "id": "public-site-address-county",
+    "name": "",
+    "text": "",
+    "type": "text",
+    "visible": true
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": "",
+    "text": "StateSelect a state",
+    "type": "",
+    "visible": true
+  },
+  {
+    "tag": "INPUT",
+    "id": "public-site-address-us-state",
+    "name": "",
+    "text": "",
+    "type": "text",
+    "visible": true
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": "",
+    "text": "Zip Code",
+    "type": "",
+    "visible": true
+  },
+  {
+    "tag": "INPUT",
+    "id": "public-site-address-zip",
+    "name": "",
+    "text": "94105",
+    "type": "text",
+    "visible": true
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": "",
+    "text": "Available to Start",
+    "type": "",
+    "visible": true
+  },
+  {
+    "tag": "INPUT",
+    "id": "info.dateAvailableToStart",
+    "name": "",
+    "text": "",
+    "type": "text",
+    "visible": true
+  },
+  {
+    "tag": "BUTTON",
+    "id": "info.dateAvailableToStart-button",
+    "name": "",
+    "text": "",
+    "type": "button",
+    "visible": true
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": "",
+    "text": "LinkedIn Profile URL",
+    "type": "",
+    "visible": true
+  },
+  {
+    "tag": "INPUT",
+    "id": "info.linkedIn",
+    "name": "",
+    "text": "https://linkedin.com/in/hrutinnammi",
+    "type": "text",
+    "visible": true
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": "",
+    "text": "Desired Salary Type",
+    "type": "",
+    "visible": true
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": "",
+    "text": "Salary Range",
+    "type": "",
+    "visible": true
+  },
+  {
+    "tag": "INPUT",
+    "id": "info.minimumDesiredSalary",
+    "name": "",
+    "text": "95000",
+    "type": "text",
+    "visible": true
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": "",
+    "text": "to",
+    "type": "",
+    "visible": true
+  },
+  {
+    "tag": "INPUT",
+    "id": "info.maximumDesiredSalary",
+    "name": "",
+    "text": "115000",
+    "type": "text",
+    "visible": true
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": "",
+    "text": "How did you hear about us?(optional)Online Job BoardCompany WebsiteFriend or Family MemberCurrent EmployeeOther",
+    "type": "",
+    "visible": true
+  },
+  {
+    "tag": "LABEL",
+    "id": "howDidYouHearAboutUs-0",
+    "name": "",
+    "text": "Online Job Board",
+    "type": "",
+    "visible": true
+  },
+  {
+    "tag": "INPUT",
+    "id": "",
+    "name": "info.howDidYouHearAboutUs",
+    "text": "Online Job Board",
+    "type": "radio",
+    "visible": true
+  },
+  {
+    "tag": "LABEL",
+    "id": "howDidYouHearAboutUs-1",
+    "name": "",
+    "text": "Company Website",
+    "type": "",
+    "visible": true
+  },
+  {
+    "tag": "INPUT",
+    "id": "",
+    "name": "info.howDidYouHearAboutUs",
+    "text": "Company Website",
+    "type": "radio",
+    "visible": true
+  },
+  {
+    "tag": "LABEL",
+    "id": "howDidYouHearAboutUs-2",
+    "name": "",
+    "text": "Friend or Family Member",
+    "type": "",
+    "visible": true
+  },
+  {
+    "tag": "INPUT",
+    "id": "",
+    "name": "info.howDidYouHearAboutUs",
+    "text": "Friend or Family Member",
+    "type": "radio",
+    "visible": true
+  },
+  {
+    "tag": "LABEL",
+    "id": "howDidYouHearAboutUs-3",
+    "name": "",
+    "text": "Current Employee",
+    "type": "",
+    "visible": true
+  },
+  {
+    "tag": "INPUT",
+    "id": "",
+    "name": "info.howDidYouHearAboutUs",
+    "text": "Current Employee",
+    "type": "radio",
+    "visible": true
+  },
+  {
+    "tag": "LABEL",
+    "id": "howDidYouHearAboutUs-4",
+    "name": "",
+    "text": "Other",
+    "type": "",
+    "visible": true
+  },
+  {
+    "tag": "INPUT",
+    "id": "",
+    "name": "info.howDidYouHearAboutUs",
+    "text": "Other",
+    "type": "radio",
+    "visible": true
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": "",
+    "text": "Referred by",
+    "type": "",
+    "visible": true
+  },
+  {
+    "tag": "INPUT",
+    "id": "info.referredBy",
+    "name": "",
+    "text": "",
+    "type": "text",
+    "visible": true
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": "",
+    "text": "Skills",
+    "type": "",
+    "visible": true
+  },
+  {
+    "tag": "INPUT",
+    "id": "info.skills",
+    "name": "",
+    "text": "",
+    "type": "text",
+    "visible": true
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": "",
+    "text": "Have you worked with us before?",
+    "type": "",
+    "visible": true
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": "",
+    "text": "Upload Cover Letter",
+    "type": "",
+    "visible": true
+  },
+  {
+    "tag": "BUTTON",
+    "id": "",
+    "name": "",
+    "text": "Select Cover Letter",
+    "type": "submit",
+    "visible": true
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": "",
+    "text": "Upload Additional Files",
+    "type": "",
+    "visible": true
+  },
+  {
+    "tag": "BUTTON",
+    "id": "",
+    "name": "",
+    "text": "Select File(s)",
+    "type": "submit",
+    "visible": true
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": "",
+    "text": "School Name (required)",
+    "type": "",
+    "visible": true
+  },
+  {
+    "tag": "INPUT",
+    "id": "educationHistory.name.0",
+    "name": "",
+    "text": "",
+    "type": "text",
+    "visible": true
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": "",
+    "text": "Area of Study",
+    "type": "",
+    "visible": true
+  },
+  {
+    "tag": "INPUT",
+    "id": "educationHistory.areaOfStudy.0",
+    "name": "",
+    "text": "",
+    "type": "text",
+    "visible": true
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": "",
+    "text": "School Type",
+    "type": "",
+    "visible": true
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": "",
+    "text": "GPA",
+    "type": "",
+    "visible": true
+  },
+  {
+    "tag": "INPUT",
+    "id": "educationHistory.gpa.0",
+    "name": "",
+    "text": "",
+    "type": "text",
+    "visible": true
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": "",
+    "text": "Did you Graduate?",
+    "type": "",
+    "visible": true
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": "",
+    "text": "Country",
+    "type": "",
+    "visible": true
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": "",
+    "text": "City",
+    "type": "",
+    "visible": true
+  },
+  {
+    "tag": "INPUT",
+    "id": "educationHistory.city.0",
+    "name": "",
+    "text": "",
+    "type": "text",
+    "visible": true
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": "",
+    "text": "State",
+    "type": "",
+    "visible": true
+  },
+  {
+    "tag": "BUTTON",
+    "id": "",
+    "name": "",
+    "text": "Delete This Education History",
+    "type": "submit",
+    "visible": true
+  },
+  {
+    "tag": "BUTTON",
+    "id": "",
+    "name": "",
+    "text": "Add Education",
+    "type": "submit",
+    "visible": true
+  },
+  {
+    "tag": "BUTTON",
+    "id": "btn-submit",
+    "name": "",
+    "text": "Next Step",
+    "type": "submit",
+    "visible": true
+  },
+  {
+    "tag": "BUTTON",
+    "id": "",
+    "name": "",
+    "text": "",
+    "type": "submit",
+    "visible": true
+  },
+  {
+    "tag": "P",
+    "id": "",
+    "name": "",
+    "text": "success:",
+    "type": "",
+    "visible": true
+  }
+]

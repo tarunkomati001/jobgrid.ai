@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "autofill": "tsx src/scripts/headed-autofill.ts",
+    "apply:wellfound": "tsx src/scripts/headed-autofill.ts --wellfound --keep-open",
+    "apply:paylocity": "tsx src/scripts/headed-autofill.ts --paylocity --keep-open",
     "apply:rippling": "tsx src/scripts/headed-autofill.ts --rippling --keep-open",
     "apply:workday": "tsx src/scripts/headed-autofill.ts --workday --keep-open",
     "apply:lever": "tsx src/scripts/headed-autofill.ts --lever --keep-open",
@@ -16,6 +18,8 @@
     "seed:lever": "tsx src/scripts/seed-and-apply-lever.ts",
     "migrate": "tsx src/database/migrate.ts",
     "seed": "tsx src/database/seed.ts",
+    "apply:wellfound": "tsx src/scripts/apply-wellfound-jobs.ts",
+    "apply:wellfound:live": "tsx src/scripts/apply-wellfound-jobs.ts --submit",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

@@ -1,0 +1,94 @@
+[
+  {
+    "job": {
+      "id": 1,
+      "applyId": "4448048"
+    },
+    "pageData": {
+      "jobId": 4448048,
+      "companyName": "Inadev",
+      "title": "Developer",
+      "wizardStepsCompletedCSV": "1,2,5,6,3",
+      "acknowledgementText": "By submitting your application you hereby certify that the facts set forth in the above employment application are true and complete to the best of your knowledge.<br><br><br>",
+      "screenerQuestions": [],
+      "applicationFields": {
+        "howDidYouHearAboutUs": null,
+        "skills": null,
+        "desiredSalaryType": null
+      }
+    }
+  },
+  {
+    "job": {
+      "id": 2,
+      "applyId": "4358710"
+    },
+    "pageData": {
+      "jobId": 4358710,
+      "companyName": "Connect for Health Colorado",
+      "title": "Senior Full Stack Developer (Front-End Specialist)",
+      "wizardStepsCompletedCSV": "1,2,5,6,3,4",
+      "acknowledgementText": "By submitting your application you hereby certify that the facts set forth in the above employment application are true and complete to the best of your knowledge.<br><br><p><strong>Connect for Health Colorado may, at its discretion, conduct a background check on any workforce member and/or require job candidates to successfully complete a background check as a condition of employment.</strong></p>",
+      "screenerQuestions": [
+        {
+          "title": "Do you reside in one of the states listed?\n- Colorado, Texas, Illinois, Minnesota, Kansas, Oklahoma, Iowa, Nebraska, New Mexico, Indiana, Arizona, Michigan, North Carolina, or Nevada ",
+          "data": "<data><answers><title>Yes</title><isCorrect>true</isCorrect></answers><answers><title>No</title></answers><answers><title>No - planning to relocate (1 - 2 months)</title><isCorrect>false</isCorrect></answers><questionType>multi</questionType></data>",
+          "isRequired": true
+        },
+        {
+          "title": "Are you able to work remotely? (Internet requirements may apply)",
+          "data": "<data><answers><title>Yes</title><isCorrect>true</isCorrect></answers><answers><title>No</title></answers><questionType>multi</questionType></data>",
+          "isRequired": true
+        },
+        {
+          "title": "How many relevant years experience do you have?",
+          "data": "<data><answers><title>1-2 years</title><isCorrect>true</isCorrect></answers><answers><title>3 - 4  years</title><isCorrect>true</isCorrect></answers><answers><title>over 5 years</title><isCorrect>true</isCorrect></answers><answers><title>none</title></answers><questionType>multi</questionType></data>",
+          "isRequired": true
+        }
+      ],
+      "applicationFields": {
+        "howDidYouHearAboutUs": null,
+        "skills": null,
+        "desiredSalaryType": 0
+      }
+    }
+  },
+  {
+    "job": {
+      "id": 3,
+      "applyId": "4606392"
+    },
+    "pageData": {
+      "jobId": 4606392,
+      "companyName": "Inadev",
+      "title": "Red Hat OpenShift Platform Engineer",
+      "wizardStepsCompletedCSV": "1,2,5,6,3",
+      "acknowledgementText": "By submitting your application you hereby certify that the facts set forth in the above employment application are true and complete to the best of your knowledge.<br><br><br>",
+      "screenerQuestions": [],
+      "applicationFields": {
+        "howDidYouHearAboutUs": null,
+        "skills": null,
+        "desiredSalaryType": null
+      }
+    }
+  },
+  {
+    "job": {
+      "id": 4,
+      "applyId": "4605123"
+    },
+    "pageData": {
+      "jobId": 4605123,
+      "companyName": "Inadev",
+      "title": "Testing Engineer",
+      "wizardStepsCompletedCSV": "1,2,5,6,3",
+      "acknowledgementText": "By submitting your application you hereby certify that the facts set forth in the above employment application are true and complete to the best of your knowledge.<br><br><br>",
+      "screenerQuestions": [],
+      "applicationFields": {
+        "howDidYouHearAboutUs": null,
+        "skills": null,
+        "desiredSalaryType": null
+      }
+    }
+  }
+]

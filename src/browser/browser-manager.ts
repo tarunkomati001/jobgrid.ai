@@ -155,7 +155,7 @@ export async function createBrowser(headless: boolean = false): Promise<Browser>
       "--no-sandbox",
       "--disable-setuid-sandbox",
       "--disable-infobars",
-      "--window-size=1280,850"
+      "--start-maximized"
     ],
   };
 
@@ -183,31 +183,50 @@ export async function createPersistentBrowserContext(
   const slowMo = process.env.PLAYWRIGHT_SLOWMO ? parseInt(process.env.PLAYWRIGHT_SLOWMO, 10) : 120;
   console.log(`🚀 Launching Persistent Chrome Context (profile: ${profileDir}, headless: ${headless}, slowMo: ${slowMo}ms)...`);
 
-  const context = await chromium.launchPersistentContext(profileDir, {
-    channel: "chrome",
-    headless,
-    slowMo,
-    viewport: { width: 1280, height: 850 },
-    ignoreDefaultArgs: ["--enable-automation"],
-    args: [
-      "--disable-dev-shm-usage",
-      "--disable-blink-features=AutomationControlled",
-      "--disable-features=IsolateOrigins,site-per-process,EnablePasswordGeneration",
-      "--disable-ipc-flooding-protection",
-      "--disable-renderer-backgrounding",
-      "--disable-background-timer-throttling",
-      "--disable-backgrounding-occluded-windows",
-      "--no-first-run",
-      "--no-default-browser-check",
-      "--no-sandbox",
-      "--disable-setuid-sandbox",
-      "--disable-infobars",
-      "--window-size=1280,850"
-    ],
-  });
+  try {
+    const context = await chromium.launchPersistentContext(profileDir, {
+      channel: "chrome",
+      headless,
+      slowMo,
+      viewport: null,
+      ignoreDefaultArgs: ["--enable-automation"],
+      args: [
+        "--disable-dev-shm-usage",
+        "--disable-blink-features=AutomationControlled",
+        "--disable-features=IsolateOrigins,site-per-process,EnablePasswordGeneration",
+        "--disable-ipc-flooding-protection",
+        "--disable-renderer-backgrounding",
+        "--disable-background-timer-throttling",
+        "--disable-backgrounding-occluded-windows",
+        "--no-first-run",
+        "--no-default-browser-check",
+        "--no-sandbox",
+        "--disable-setuid-sandbox",
+        "--disable-infobars",
+        "--start-maximized"
+      ],
+    });
 
-  await applyStealthScripts(context);
-  return context;
+    await applyStealthScripts(context);
+    return context;
+  } catch (err: any) {
+    if (
+      err.message?.includes("ProcessSingleton") ||
+      err.message?.includes("already in use") ||
+      err.message?.includes("being used by another process")
+    ) {
+      console.warn("⚠️ Persistent Chrome profile locked by open browser. Launching isolated browser session...");
+      const browser = await createBrowser(headless);
+      const isolatedContext = await browser.newContext({
+        userAgent: DEFAULT_USER_AGENT,
+        viewport: null,
+        locale: "en-US",
+      });
+      await applyStealthScripts(isolatedContext);
+      return isolatedContext as any;
+    }
+    throw err;
+  }
 }
 
 /**

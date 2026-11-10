@@ -1,0 +1,112 @@
+[
+  {
+    "tag": "INPUT",
+    "id": "currentLocation",
+    "name": null,
+    "type": null,
+    "placeholder": null,
+    "text": "",
+    "role": "combobox",
+    "class": ""
+  },
+  {
+    "tag": "INPUT",
+    "id": "roles",
+    "name": null,
+    "type": null,
+    "placeholder": null,
+    "text": "",
+    "role": "combobox",
+    "class": ""
+  },
+  {
+    "tag": "INPUT",
+    "id": "yearsExperience",
+    "name": null,
+    "type": null,
+    "placeholder": null,
+    "text": "",
+    "role": "combobox",
+    "class": ""
+  },
+  {
+    "tag": "INPUT",
+    "id": "student-1",
+    "name": null,
+    "type": "radio",
+    "placeholder": null,
+    "text": "",
+    "role": null,
+    "class": ""
+  },
+  {
+    "tag": "INPUT",
+    "id": "student-0",
+    "name": null,
+    "type": "radio",
+    "placeholder": null,
+    "text": "",
+    "role": null,
+    "class": ""
+  },
+  {
+    "tag": "INPUT",
+    "id": "jobTitle",
+    "name": null,
+    "type": null,
+    "placeholder": "e.g., Design Director",
+    "text": "",
+    "role": null,
+    "class": ""
+  },
+  {
+    "tag": "INPUT",
+    "id": "company",
+    "name": null,
+    "type": null,
+    "placeholder": null,
+    "text": "",
+    "role": "combobox",
+    "class": ""
+  },
+  {
+    "tag": "INPUT",
+    "id": "currentlyUnemployed",
+    "name": "currentlyUnemployed",
+    "type": "checkbox",
+    "placeholder": null,
+    "text": "",
+    "role": null,
+    "class": ""
+  },
+  {
+    "tag": "INPUT",
+    "id": "linkedinUrl",
+    "name": null,
+    "type": null,
+    "placeholder": "https://linkedin.com/in/",
+    "text": "",
+    "role": null,
+    "class": ""
+  },
+  {
+    "tag": "INPUT",
+    "id": "onlineBioUrl",
+    "name": null,
+    "type": null,
+    "placeholder": "https://mypersonalwebsite.com",
+    "text": "",
+    "role": null,
+    "class": ""
+  },
+  {
+    "tag": "BUTTON",
+    "id": "",
+    "name": null,
+    "type": "submit",
+    "placeholder": null,
+    "text": "Create your profile",
+    "role": null,
+    "class": ""
+  }
+]

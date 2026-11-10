@@ -1,8 +1,9 @@
 import path from "path";
+import fs from "fs";
 import { Page, Frame } from "playwright";
 import { ATSAdapter, FormField, JobDetails, SubmissionResult, UserProfile } from "../ats.interface";
 import { mapLabelToProfileKey, normalizeLabel } from "../../application/field-mapper";
-import { suggestAnswerForQuestion } from "../../application/question-answering";
+import { suggestAnswerForQuestion, generateAnswerForQuestion } from "../../application/question-answering";
 import { extractLogicalFields, fillLogicalField, fillCustomSelectDropdown, verifyFieldFilled, simulateHumanMouse, humanClick, typeLikeHuman } from "../../browser/form-filler";
 import { injectVisualHUD, updateHUDStatus } from "../../browser/visual-hud";
 import { db } from "../../database/db";
@@ -104,6 +105,9 @@ export class GreenhouseAdapter implements ATSAdapter {
     const fields = preExtractedFields || await this.extractFields(page);
     console.log(`📋 [GreenhouseAdapter]: Processing ${fields.length} form fields for candidate ${profile.firstName} ${profile.lastName}...`);
 
+    // Extract job details for intelligent contextual answering
+    const jobDetails = await this.extractJob(page);
+
     // Fetch saved database answers
     let userSavedAnswers: Record<string, string> = {};
     if (profile.userId) {
@@ -143,10 +147,16 @@ export class GreenhouseAdapter implements ATSAdapter {
         targetValue = profile.lastName;
       } else if (normLabel === "email" || normLabel.includes("email address")) {
         targetValue = profile.email;
-      } else if (normLabel.includes("phone") || normLabel.includes("mobile") || normLabel === "country" || field.id === "country" || field.id === "phone") {
+      } else if (normLabel.includes("phone") || normLabel.includes("mobile") || field.id === "phone") {
         targetValue = profile.phone;
+      } else if (normLabel.includes("country of residence") || normLabel.includes("what country") || normLabel.includes("your country")) {
+        targetValue = profile.location?.includes("India") ? "India" : "United States";
       } else if (normLabel.includes("based in any of these countries") || normLabel.includes("accepting applications")) {
-        targetValue = "India";
+        targetValue = profile.location?.includes("United States") || profile.location?.includes("CA") ? "United States" : "India";
+      } else if (normLabel.includes("gender")) {
+        targetValue = profile.gender || "Male";
+      } else if (normLabel.includes("pronoun")) {
+        targetValue = profile.gender?.toLowerCase() === "female" ? "She/her" : "He/him";
       } else if (normLabel.includes("visa sponsorship")) {
         targetValue = "No";
       } else if (normLabel.includes("authorization to work") || normLabel.includes("work authorization")) {
@@ -177,10 +187,10 @@ export class GreenhouseAdapter implements ATSAdapter {
         targetValue = userSavedAnswers[normLabel];
       }
 
-      // 3. Smart Question Answering Suggestion
+      // 3. Smart Question Answering Suggestion (LLM for Big Questions, Deterministic for short)
       if (!targetValue) {
         const optionsLabels = field.options?.map(o => o.label);
-        targetValue = suggestAnswerForQuestion(field.label, optionsLabels);
+        targetValue = await generateAnswerForQuestion(field.label, jobDetails, profile, optionsLabels);
       }
 
       // Skip reCAPTCHA fields
@@ -274,7 +284,7 @@ export class GreenhouseAdapter implements ATSAdapter {
         normLabel.includes("built");
 
       if (!isFilled && isTextarea) {
-        const ta = target.locator(`textarea[id="${field.id}"], #${field.id}`).first();
+        const ta = target.locator(`textarea[id="${field.id}"], [id="${field.id}"]`).first();
         if (await ta.count() > 0) {
           await ta.scrollIntoViewIfNeeded().catch(() => {});
           await ta.click({ force: true }).catch(() => {});
@@ -288,7 +298,7 @@ export class GreenhouseAdapter implements ATSAdapter {
             el.dispatchEvent(new Event('blur', { bubbles: true }));
           }, targetValue).catch(() => {});
           const val = await ta.inputValue().catch(() => "");
-          console.log(`📝 [GreenhouseAdapter]: Textarea #${field.id} populated: "${val.slice(0, 45)}..."`);
+          console.log(`📝 [GreenhouseAdapter]: Textarea [id="${field.id}"] populated: "${val.slice(0, 45)}..."`);
           isFilled = true;
         }
       }
@@ -296,8 +306,8 @@ export class GreenhouseAdapter implements ATSAdapter {
       // ── 3. Comboboxes & Custom Select dropdowns
       // Only treat as select if element is ACTUALLY a select or combobox (NOT textarea/text input!)
       if (!isFilled) {
-        const isCombobox = (await target.locator(`input[role='combobox']#${field.id}, #${field.id}[role='combobox']`).count()) > 0;
-        const isNativeSelect = (await target.locator(`select#${field.id}`).count()) > 0;
+        const isCombobox = (await target.locator(`input[role='combobox'][id="${field.id}"], [id="${field.id}"][role='combobox']`).count()) > 0;
+        const isNativeSelect = (await target.locator(`select[id="${field.id}"]`).count()) > 0;
         const isSelectField = 
           field.type === "select" || 
           isCombobox || 
@@ -313,7 +323,7 @@ export class GreenhouseAdapter implements ATSAdapter {
 
       // ── 4. Plain text/email/URL inputs (first_name, last_name, email, linkedin, twitter, website, etc.)
       if (!isFilled) {
-        const explicitInput = target.locator(`input[id="${field.id}"], #${field.id}`).first();
+        const explicitInput = target.locator(`input[id="${field.id}"], [id="${field.id}"]`).first();
         if (await explicitInput.count() > 0) {
           try {
             await explicitInput.scrollIntoViewIfNeeded().catch(() => {});
@@ -329,7 +339,7 @@ export class GreenhouseAdapter implements ATSAdapter {
               el.dispatchEvent(new Event('blur', { bubbles: true }));
             }, targetValue).catch(() => {});
             isFilled = true;
-            console.log(`✍️ [GreenhouseAdapter]: Text input #${field.id} ("${field.label}") populated.`);
+            console.log(`✍️ [GreenhouseAdapter]: Text input [id="${field.id}"] ("${field.label}") populated.`);
           } catch (e) {}
         }
       }
@@ -354,6 +364,31 @@ export class GreenhouseAdapter implements ATSAdapter {
       }
     }
 
+    // Safety sweep: ensure any remaining unfilled text inputs or textareas on the page are populated
+    const remainingInputs = await target.locator("form input[type='text']:not([id='country']):not([id='phone']), form textarea").all().catch(() => []);
+    for (const inp of remainingInputs) {
+      if (!(await inp.isVisible().catch(() => false))) continue;
+      const currentVal = (await inp.inputValue().catch(() => "")).trim();
+      if (!currentVal || currentVal.toUpperCase() === "N/A" || currentVal.toUpperCase() === "NONE") {
+        let lbl = "";
+        const id = await inp.getAttribute("id").catch(() => "");
+        if (id) {
+          lbl = (await target.locator(`label[for="${id}"]`).first().innerText().catch(() => "")).trim();
+        }
+        if (!lbl) {
+          lbl = (await inp.locator("xpath=ancestor::label").first().innerText().catch(() => "")).trim();
+        }
+        if (!lbl) {
+          lbl = (await inp.getAttribute("placeholder").catch(() => "")) || (await inp.getAttribute("name").catch(() => "")) || "Application question";
+        }
+        const ans = await generateAnswerForQuestion(lbl, jobDetails, profile);
+        await inp.fill(ans).catch(() => {});
+        await inp.dispatchEvent("input").catch(() => {});
+        await inp.dispatchEvent("change").catch(() => {});
+        console.log(`🛡️ [GreenhouseAdapter]: Sweep populated empty field "${lbl}" -> "${ans.slice(0, 40)}..."`);
+      }
+    }
+
     console.log(`✅ [GreenhouseAdapter]: Successfully processed ${filledCount}/${fields.length} form fields.`);
     await updateHUDStatus(target, "Form Filling Complete", `Filled ${filledCount}/${fields.length} fields`, "success", 85);
   }
@@ -370,7 +405,7 @@ export class GreenhouseAdapter implements ATSAdapter {
     matchFn?: (optText: string) => boolean
   ): Promise<boolean> {
     const pageObj = "keyboard" in target ? target : (target as Frame).page();
-    const combobox = target.locator(`#${comboboxId}`);
+    const combobox = target.locator(`[id="${comboboxId}"]`);
     if (await combobox.count() === 0) return false;
 
     await combobox.scrollIntoViewIfNeeded().catch(() => {});
@@ -417,7 +452,7 @@ export class GreenhouseAdapter implements ATSAdapter {
 
     // Build scoped option locators (prefer aria-controls listbox, fallback to visible menu)
     const scopedSelectors: string[] = [];
-    if (listboxId) scopedSelectors.push(`#${listboxId} [role="option"]`);
+    if (listboxId) scopedSelectors.push(`[id="${listboxId}"] [role="option"]`);
     scopedSelectors.push(
       ".select__menu:visible [role='option']",
       ".select__menu:visible .select__option",
@@ -469,7 +504,7 @@ export class GreenhouseAdapter implements ATSAdapter {
    */
   private async fillGreenhouseSelect(target: Page | Frame, field: FormField, targetValue: string): Promise<boolean> {
     // If this is a React-Select combobox (has input[role='combobox'] with the field id), use direct method
-    const combobox = target.locator(`input[role='combobox']#${field.id}`).first();
+    const combobox = target.locator(`input[role='combobox'][id="${field.id}"], [id="${field.id}"][role='combobox'], [id="${field.id}"]`).first();
     if (await combobox.count() > 0) {
       const normLabel = field.label.toLowerCase();
       let matchFn: ((opt: string) => boolean) | undefined;
@@ -529,8 +564,9 @@ export class GreenhouseAdapter implements ATSAdapter {
 
   async uploadResume(page: Page, resumePath: string, fields?: FormField[]): Promise<void> {
     const target = await this.getTarget(page);
-    await updateHUDStatus(target, "Uploading Resume...", `Attaching PDF: ${path.basename(resumePath)}`, "info", 90);
-    console.log(`📄 [GreenhouseAdapter]: Attaching resume file: ${resumePath}`);
+    const resolvedPath = resolveLocalResumePath(resumePath) || resumePath;
+    await updateHUDStatus(target, "Uploading Resume...", `Attaching PDF: ${path.basename(resolvedPath)}`, "info", 90);
+    console.log(`📄 [GreenhouseAdapter]: Attaching resume file: ${resolvedPath}`);
 
     const fileInputSelectors = [
       "input[type='file'][id*='resume']",
@@ -545,7 +581,7 @@ export class GreenhouseAdapter implements ATSAdapter {
       const fileInput = target.locator(selector).first();
       if (await fileInput.count() > 0) {
         try {
-          await fileInput.setInputFiles(resumePath);
+          await fileInput.setInputFiles(resolvedPath);
           console.log(`✅ [GreenhouseAdapter]: Resume successfully attached using selector: ${selector}`);
           uploaded = true;
           break;
@@ -564,10 +600,21 @@ export class GreenhouseAdapter implements ATSAdapter {
           attachBtn.click().catch(() => attachBtn.click({ force: true }))
         ]);
         if (fileChooser) {
-          await fileChooser.setFiles(resumePath);
+          await fileChooser.setFiles(resolvedPath);
           console.log("✅ [GreenhouseAdapter]: Resume set via file chooser dialog.");
           uploaded = true;
         }
+      }
+    }
+
+    // Attach Cover Letter if Cover Letter file input is present
+    const coverInput = target.locator("input[type='file'][id*='cover_letter'], #cover_letter_file_input, input[type='file'][name*='cover_letter']").first();
+    if (await coverInput.count() > 0) {
+      const coverCandidatePath = resolvedPath.replace(/resume/i, "cover_letter").replace(/Resume/i, "Cover_Letter");
+      const resolvedCover = resolveLocalResumePath(coverCandidatePath);
+      if (resolvedCover && fs.existsSync(resolvedCover)) {
+        await coverInput.setInputFiles(resolvedCover).catch(() => {});
+        console.log(`✅ [GreenhouseAdapter]: Cover letter attached: ${path.basename(resolvedCover)}`);
       }
     }
 

@@ -11,9 +11,30 @@ import { TaleoAdapter } from "./taleo/taleo.adapter";
 import { OracleAdapter } from "./oracle/oracle.adapter";
 import { RecruiteeAdapter } from "./recruitee/recruitee.adapter";
 import { RipplingAdapter } from "./rippling/rippling.adapter";
+import { PaylocityAdapter } from "./paylocity/paylocity.adapter";
+import { WellfoundAdapter } from "./wellfound/wellfound.adapter";
+import { BambooHRAdapter } from "./bamboohr/bamboohr.adapter";
+import { JazzHRAdapter } from "./jazzhr/jazzhr.adapter";
+import { BreezyHRAdapter } from "./breezyhr/breezyhr.adapter";
+import { JobviteAdapter } from "./jobvite/jobvite.adapter";
+import { AvatureAdapter } from "./avature/avature.adapter";
 
 export function getAdapterForATS(atsType: ATSType): ATSAdapter {
   switch (atsType) {
+    case "AVATURE":
+      return new AvatureAdapter();
+    case "JOBVITE":
+      return new JobviteAdapter();
+    case "BREEZYHR":
+      return new BreezyHRAdapter();
+    case "JAZZHR":
+      return new JazzHRAdapter();
+    case "BAMBOOHR":
+      return new BambooHRAdapter();
+    case "WELLFOUND":
+      return new WellfoundAdapter();
+    case "PAYLOCITY":
+      return new PaylocityAdapter();
     case "GREENHOUSE":
       return new GreenhouseAdapter();
     case "LEVER":

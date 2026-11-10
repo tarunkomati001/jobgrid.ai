@@ -1,6 +1,6 @@
 import { Page } from "playwright";
 
-export type ATSType = "ASHBY" | "GREENHOUSE" | "LEVER" | "WORKDAY" | "SMARTRECRUITERS" | "WORKABLE" | "TALEO" | "ORACLE" | "RECRUITEE" | "RIPPLING" | "UNKNOWN";
+export type ATSType = "ASHBY" | "GREENHOUSE" | "LEVER" | "WORKDAY" | "SMARTRECRUITERS" | "WORKABLE" | "TALEO" | "ORACLE" | "RECRUITEE" | "RIPPLING" | "PAYLOCITY" | "WELLFOUND" | "BAMBOOHR" | "JAZZHR" | "BREEZYHR" | "JOBVITE" | "AVATURE" | "UNKNOWN";
 
 /**
  * Detects the ATS from a URL string (fast initial check).
@@ -9,6 +9,27 @@ export function detectATSByUrl(urlStr: string): ATSType {
   try {
     const hostname = new URL(urlStr).hostname.toLowerCase();
     
+    if (hostname.includes("avature.net") || urlStr.includes(".avature.net")) {
+      return "AVATURE";
+    }
+    if (hostname.includes("jobvite.com") || urlStr.includes("jobs.jobvite.com")) {
+      return "JOBVITE";
+    }
+    if (hostname.includes("breezy.hr") || urlStr.includes(".breezy.hr")) {
+      return "BREEZYHR";
+    }
+    if (hostname.includes("applytojob.com") || hostname.includes("jazzhr.com") || urlStr.includes(".applytojob.com/apply/")) {
+      return "JAZZHR";
+    }
+    if (hostname.includes("bamboohr.com") || urlStr.includes(".bamboohr.com/careers/")) {
+      return "BAMBOOHR";
+    }
+    if (hostname.includes("wellfound.com") || hostname.includes("angel.co")) {
+      return "WELLFOUND";
+    }
+    if (hostname.includes("paylocity.com") || urlStr.includes("recruiting.paylocity.com")) {
+      return "PAYLOCITY";
+    }
     if (hostname.includes("rippling.com") || urlStr.includes("ats.rippling.com")) {
       return "RIPPLING";
     }
@@ -70,6 +91,47 @@ export async function detectATSByPage(page: Page): Promise<ATSType> {
   const content = await page.content();
   const lowerContent = content.toLowerCase();
 
+  if (
+    lowerContent.includes("avature.net") ||
+    lowerContent.includes("avature") ||
+    (await page.$("#uploadFileResume, .applicationMethods, [class*='avature'], .tpt_loginBox")) !== null
+  ) {
+    return "AVATURE";
+  }
+
+  if (
+    lowerContent.includes("jobvite.com") ||
+    lowerContent.includes("jobvite") ||
+    (await page.$("#file-input-0, #jv-country-select, .jv-button-apply, [class*='jv-']")) !== null
+  ) {
+    return "JOBVITE";
+  }
+
+  if (
+    lowerContent.includes("breezy.hr") ||
+    lowerContent.includes("breezy-portal") ||
+    (await page.$("input[name='cResume']#main-attachment, a.button.resume, [ng-app='PortalApp']")) !== null
+  ) {
+    return "BREEZYHR";
+  }
+
+  if (
+    lowerContent.includes("applytojob.com") ||
+    lowerContent.includes("jazzhr") ||
+    lowerContent.includes("resumator") ||
+    (await page.$("form#form_submit_new_resume, #resumator-submit-resume, input[name^='resumator-'], [data-test='form_submit_new_resume']")) !== null
+  ) {
+    return "JAZZHR";
+  }
+
+  if (
+    lowerContent.includes("wellfound.com") ||
+    lowerContent.includes("angel.co") ||
+    lowerContent.includes("wellfound") ||
+    (await page.$("meta[property='og:site_name'][content*='Wellfound' i], [data-test='JobListing'], [class*='styles_jobListing']")) !== null
+  ) {
+    return "WELLFOUND";
+  }
   if (lowerContent.includes("ashbyhq.com") || (await page.$("[class*='ashby']")) !== null) {
     return "ASHBY";
   }
@@ -107,6 +169,20 @@ export async function detectATSByPage(page: Page): Promise<ATSType> {
     (await page.$("input[data-testid='input-first_name'], div[data-testid='phone_number-code'], div[data-testid='sms_opt_in']")) !== null
   ) {
     return "RIPPLING";
+  }
+  if (
+    lowerContent.includes("bamboohr.com") ||
+    lowerContent.includes("bamboohr") ||
+    (await page.$("button:has-text('Apply for This Job'), [data-fabric-version], [data-one-instance-messageslidedown], [class*='fabric-']")) !== null
+  ) {
+    return "BAMBOOHR";
+  }
+  if (
+    lowerContent.includes("paylocity.com") ||
+    lowerContent.includes("paylocity") ||
+    (await page.$("button[data-automation-id='btn-resume'], input#btn-resume, #pcty-wr-apply-info, a[href*='paylocity.com']")) !== null
+  ) {
+    return "PAYLOCITY";
   }
 
   return "UNKNOWN";

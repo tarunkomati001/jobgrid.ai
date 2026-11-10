@@ -1,0 +1,448 @@
+[
+  {
+    "tag": "INPUT",
+    "id": "candidateState-interviewing",
+    "name": null,
+    "type": "radio",
+    "value": "on",
+    "text": "",
+    "for": null
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": null,
+    "type": null,
+    "text": "Ready to interview",
+    "for": "candidateState-interviewing"
+  },
+  {
+    "tag": "INPUT",
+    "id": "candidateState-open",
+    "name": null,
+    "type": "radio",
+    "value": "on",
+    "text": "",
+    "for": null
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": null,
+    "type": null,
+    "text": "Open to offers",
+    "for": "candidateState-open"
+  },
+  {
+    "tag": "INPUT",
+    "id": "candidateState-closed",
+    "name": null,
+    "type": "radio",
+    "value": "on",
+    "text": "",
+    "for": null
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": null,
+    "type": null,
+    "text": "Closed to offers",
+    "for": "candidateState-closed"
+  },
+  {
+    "tag": "INPUT",
+    "id": "primaryLookingFor-full_time",
+    "name": null,
+    "type": "radio",
+    "value": "on",
+    "text": "",
+    "for": null
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": null,
+    "type": null,
+    "text": "Full-time Employee",
+    "for": "primaryLookingFor-full_time"
+  },
+  {
+    "tag": "INPUT",
+    "id": "primaryLookingFor-contract",
+    "name": null,
+    "type": "radio",
+    "value": "on",
+    "text": "",
+    "for": null
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": null,
+    "type": null,
+    "text": "Contractor",
+    "for": "primaryLookingFor-contract"
+  },
+  {
+    "tag": "INPUT",
+    "id": "primaryLookingFor-internships",
+    "name": null,
+    "type": "radio",
+    "value": "on",
+    "text": "",
+    "for": null
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": null,
+    "type": null,
+    "text": "Intern",
+    "for": "primaryLookingFor-internships"
+  },
+  {
+    "tag": "INPUT",
+    "id": "primaryLookingFor-cofounders",
+    "name": null,
+    "type": "radio",
+    "value": "on",
+    "text": "",
+    "for": null
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": null,
+    "type": null,
+    "text": "Co-founder",
+    "for": "primaryLookingFor-cofounders"
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": null,
+    "type": null,
+    "text": "$",
+    "for": "expectedSalary"
+  },
+  {
+    "tag": "INPUT",
+    "id": "expectedSalary",
+    "name": null,
+    "type": "text",
+    "value": "",
+    "text": "",
+    "for": null
+  },
+  {
+    "tag": "INPUT",
+    "id": "",
+    "name": "expectedSalaryCurrency",
+    "type": "hidden",
+    "value": "USD",
+    "text": "",
+    "for": null
+  },
+  {
+    "tag": "INPUT",
+    "id": "expectedSalaryCurrency",
+    "name": null,
+    "type": null,
+    "value": "",
+    "text": "",
+    "for": null
+  },
+  {
+    "tag": "INPUT",
+    "id": "",
+    "name": "roles",
+    "type": "hidden",
+    "value": "14726",
+    "text": "",
+    "for": null
+  },
+  {
+    "tag": "INPUT",
+    "id": "roles",
+    "name": null,
+    "type": null,
+    "value": "",
+    "text": "",
+    "for": null
+  },
+  {
+    "tag": "INPUT",
+    "id": "",
+    "name": "locations",
+    "type": "hidden",
+    "value": "1692",
+    "text": "",
+    "for": null
+  },
+  {
+    "tag": "INPUT",
+    "id": "locations",
+    "name": null,
+    "type": null,
+    "value": "",
+    "text": "",
+    "for": null
+  },
+  {
+    "tag": "INPUT",
+    "id": "distributedTeamOk",
+    "name": "distributedTeamOk",
+    "type": "checkbox",
+    "value": "on",
+    "text": "",
+    "for": null
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": null,
+    "type": null,
+    "text": "I'm open to working remotely",
+    "for": "distributedTeamOk"
+  },
+  {
+    "tag": "INPUT",
+    "id": "usAuthorized-1",
+    "name": null,
+    "type": "radio",
+    "value": "on",
+    "text": "",
+    "for": null
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": null,
+    "type": null,
+    "text": "Yes",
+    "for": "usAuthorized-1"
+  },
+  {
+    "tag": "INPUT",
+    "id": "usAuthorized-0",
+    "name": null,
+    "type": "radio",
+    "value": "on",
+    "text": "",
+    "for": null
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": null,
+    "type": null,
+    "text": "No",
+    "for": "usAuthorized-0"
+  },
+  {
+    "tag": "INPUT",
+    "id": "requireSponsorship-1",
+    "name": null,
+    "type": "radio",
+    "value": "on",
+    "text": "",
+    "for": null
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": null,
+    "type": null,
+    "text": "Yes",
+    "for": "requireSponsorship-1"
+  },
+  {
+    "tag": "INPUT",
+    "id": "requireSponsorship-0",
+    "name": null,
+    "type": "radio",
+    "value": "on",
+    "text": "",
+    "for": null
+  },
+  {
+    "tag": "LABEL",
+    "id": "",
+    "name": null,
+    "type": null,
+    "text": "No",
+    "for": "requireSponsorship-0"
+  },
+  {
+    "tag": "BUTTON",
+    "id": "",
+    "name": null,
+    "type": "button",
+    "value": "",
+    "text": "Ideal",
+    "for": null
+  },
+  {
+    "tag": "BUTTON",
+    "id": "",
+    "name": null,
+    "type": "button",
+    "value": "",
+    "text": "Yes",
+    "for": null
+  },
+  {
+    "tag": "BUTTON",
+    "id": "",
+    "name": null,
+    "type": "button",
+    "value": "",
+    "text": "No",
+    "for": null
+  },
+  {
+    "tag": "BUTTON",
+    "id": "",
+    "name": null,
+    "type": "button",
+    "value": "",
+    "text": "Ideal",
+    "for": null
+  },
+  {
+    "tag": "BUTTON",
+    "id": "",
+    "name": null,
+    "type": "button",
+    "value": "",
+    "text": "Yes",
+    "for": null
+  },
+  {
+    "tag": "BUTTON",
+    "id": "",
+    "name": null,
+    "type": "button",
+    "value": "",
+    "text": "No",
+    "for": null
+  },
+  {
+    "tag": "BUTTON",
+    "id": "",
+    "name": null,
+    "type": "button",
+    "value": "",
+    "text": "Ideal",
+    "for": null
+  },
+  {
+    "tag": "BUTTON",
+    "id": "",
+    "name": null,
+    "type": "button",
+    "value": "",
+    "text": "Yes",
+    "for": null
+  },
+  {
+    "tag": "BUTTON",
+    "id": "",
+    "name": null,
+    "type": "button",
+    "value": "",
+    "text": "No",
+    "for": null
+  },
+  {
+    "tag": "BUTTON",
+    "id": "",
+    "name": null,
+    "type": "button",
+    "value": "",
+    "text": "Ideal",
+    "for": null
+  },
+  {
+    "tag": "BUTTON",
+    "id": "",
+    "name": null,
+    "type": "button",
+    "value": "",
+    "text": "Yes",
+    "for": null
+  },
+  {
+    "tag": "BUTTON",
+    "id": "",
+    "name": null,
+    "type": "button",
+    "value": "",
+    "text": "No",
+    "for": null
+  },
+  {
+    "tag": "BUTTON",
+    "id": "",
+    "name": null,
+    "type": "button",
+    "value": "",
+    "text": "Ideal",
+    "for": null
+  },
+  {
+    "tag": "BUTTON",
+    "id": "",
+    "name": null,
+    "type": "button",
+    "value": "",
+    "text": "Yes",
+    "for": null
+  },
+  {
+    "tag": "BUTTON",
+    "id": "",
+    "name": null,
+    "type": "button",
+    "value": "",
+    "text": "No",
+    "for": null
+  },
+  {
+    "tag": "BUTTON",
+    "id": "",
+    "name": null,
+    "type": "button",
+    "value": "",
+    "text": "Ideal",
+    "for": null
+  },
+  {
+    "tag": "BUTTON",
+    "id": "",
+    "name": null,
+    "type": "button",
+    "value": "",
+    "text": "Yes",
+    "for": null
+  },
+  {
+    "tag": "BUTTON",
+    "id": "",
+    "name": null,
+    "type": "button",
+    "value": "",
+    "text": "No",
+    "for": null
+  },
+  {
+    "tag": "BUTTON",
+    "id": "",
+    "name": null,
+    "type": "submit",
+    "value": "",
+    "text": "Save and continue",
+    "for": null
+  }
+]
