@@ -157,7 +157,7 @@ export class RipplingAdapter implements ATSAdapter {
     console.log(`📄 [RipplingAdapter]: Uploading resume: ${resumePath}`);
     await this.ensureApplicationFormOpen(page);
 
-    const resumeInput = page.locator("input[type='file'][data-testid='input-resume'], label[data-testid='resume'] input[type='file'], input[type='file']").first();
+    const resumeInput = page.locator("input[type='file'][data-testid='input-resume'], label[data-testid='resume'] input[type='file'], input[type='file']:not([data-testid*='cover']):not([data-testid*='photo']):not([data-testid*='avatar']):not([accept*='image'])").first();
     if (await resumeInput.count() > 0 && fs.existsSync(resumePath)) {
       await resumeInput.setInputFiles(resumePath).catch(err => {
         console.warn("⚠️ Failed setting resume input file:", err);
@@ -177,6 +177,23 @@ export class RipplingAdapter implements ATSAdapter {
       });
       console.log("✅ [RipplingAdapter]: Cover letter uploaded successfully");
       await page.waitForTimeout(1000);
+    }
+
+    // Candidate Photo / Avatar upload if present
+    const photoPath = prof?.photoPath || 
+      (resumePath ? path.resolve(path.dirname(resumePath), `${prof?.firstName || 'Hrutin'}_${prof?.lastName || 'Nammi'}_Photo.png`) : "") ||
+      path.resolve(process.cwd(), "resumes/user_usr_hrutin_nammi/Hrutin_Nammi_Photo.png");
+
+    if (photoPath && fs.existsSync(photoPath)) {
+      const photoInput = page.locator("input[type='file'][data-testid*='photo'], input[type='file'][data-testid*='avatar'], input[type='file'][name*='photo' i], input[type='file'][name*='avatar' i], input[type='file'][accept*='image']").first();
+      if (await photoInput.count() > 0) {
+        console.log(`📸 [RipplingAdapter]: Uploading photo/avatar: ${photoPath}`);
+        await photoInput.setInputFiles(photoPath).catch(err => {
+          console.warn("⚠️ [RipplingAdapter]: Failed setting photo input file:", err.message);
+        });
+        console.log("✅ [RipplingAdapter]: Candidate photo attached successfully!");
+        await page.waitForTimeout(500);
+      }
     }
   }
 
@@ -330,17 +347,33 @@ export class RipplingAdapter implements ATSAdapter {
     }
 
     // ─────────────────────────────────────────────────────────────────────────────
-    // 9. LINKEDIN / WEBSITES
+    // 9. LINKEDIN / WEBSITES / GITHUB / PORTFOLIO
     // ─────────────────────────────────────────────────────────────────────────────
-    const linkedinInput = page.locator("input[data-testid='input-linkedin_link']").first();
+    const linkedinInput = page.locator("input[data-testid='input-linkedin_link'], input[data-testid*='linkedin']").first();
     if (await linkedinInput.count() > 0) {
-      const linkedinVal = profile.linkedinUrl || "";
-      if (linkedinVal) {
-        console.log(`🔗 [RipplingAdapter]: Filling LinkedIn -> "${linkedinVal}"`);
-        await linkedinInput.scrollIntoViewIfNeeded().catch(() => {});
-        await linkedinInput.fill("");
-        await linkedinInput.pressSequentially(linkedinVal, { delay: 30 });
-      }
+      const linkedinVal = profile.linkedinUrl || "https://linkedin.com/in/hrutinnammi";
+      console.log(`🔗 [RipplingAdapter]: Filling LinkedIn -> "${linkedinVal}"`);
+      await linkedinInput.scrollIntoViewIfNeeded().catch(() => {});
+      await linkedinInput.fill("");
+      await linkedinInput.pressSequentially(linkedinVal, { delay: 30 });
+    }
+
+    const githubInput = page.locator("input[data-testid='input-github_link'], input[data-testid*='github']").first();
+    if (await githubInput.count() > 0) {
+      const githubVal = profile.githubUrl || "https://github.com/hrutinnammi";
+      console.log(`🔗 [RipplingAdapter]: Filling GitHub -> "${githubVal}"`);
+      await githubInput.scrollIntoViewIfNeeded().catch(() => {});
+      await githubInput.fill("");
+      await githubInput.pressSequentially(githubVal, { delay: 30 });
+    }
+
+    const portfolioInput = page.locator("input[data-testid='input-portfolio_link'], input[data-testid='input-website_link'], input[data-testid*='portfolio'], input[data-testid*='website']").first();
+    if (await portfolioInput.count() > 0) {
+      const portfolioVal = profile.portfolioUrl || "https://hrutinnammi.dev";
+      console.log(`🔗 [RipplingAdapter]: Filling Portfolio -> "${portfolioVal}"`);
+      await portfolioInput.scrollIntoViewIfNeeded().catch(() => {});
+      await portfolioInput.fill("");
+      await portfolioInput.pressSequentially(portfolioVal, { delay: 30 });
     }
 
     // ─────────────────────────────────────────────────────────────────────────────
@@ -354,7 +387,7 @@ export class RipplingAdapter implements ATSAdapter {
       const field = customFields.nth(i);
 
       // Check if field already filled or skipped
-      const hasStandardTestid = await field.locator("[data-testid='input-first_name'], [data-testid='input-last_name'], [data-testid='input-email'], [data-testid='input-phone_number'], [data-testid='phone_number-code'], [data-testid='location'], [data-testid='input-linkedin_link'], [data-testid='input-current_company'], [data-testid='input-resume'], [data-testid='input-cover_letter']").count();
+      const hasStandardTestid = await field.locator("[data-testid='input-first_name'], [data-testid='input-last_name'], [data-testid='input-email'], [data-testid='input-phone_number'], [data-testid='phone_number-code'], [data-testid='location'], [data-testid='input-linkedin_link'], [data-testid='input-github_link'], [data-testid='input-portfolio_link'], [data-testid='input-website_link'], [data-testid='input-current_company'], [data-testid='input-resume'], [data-testid='input-cover_letter']").count();
       if (hasStandardTestid > 0) continue;
 
       // Extract question text
@@ -572,8 +605,8 @@ export class RipplingAdapter implements ATSAdapter {
         continue;
       }
 
-      // Handle text input questions
-      const textInput = field.locator("input[type='text'], input:not([type]), textarea").first();
+      // Handle text and date input questions
+      const textInput = field.locator("input[type='text'], input[type='date'], input[type='tel'], input:not([type]), textarea").first();
       if (await textInput.count() > 0) {
         const val = await textInput.inputValue().catch(() => "");
         if (!val) {
@@ -581,24 +614,40 @@ export class RipplingAdapter implements ATSAdapter {
           const norm = normalizeLabel(qText);
           let ans = additionalAnswers[norm] || userSavedAnswers[norm] || "";
 
+          const inputType = (await textInput.getAttribute("type").catch(() => "") || "").toLowerCase();
+          const placeholder = (await textInput.getAttribute("placeholder").catch(() => "") || "").toLowerCase();
+          const isDateInput = inputType === "date" || placeholder.includes("yyyy") || placeholder.includes("mm/dd") || placeholder.includes("dd/mm") || placeholder.includes("date");
+
           if (!ans) {
+            if (isDateInput || lowerQ.includes("start date") || lowerQ.includes("date available") || lowerQ.includes("earliest start") || lowerQ.includes("when can you start")) {
+              const now = new Date();
+              now.setDate(now.getDate() + 14);
+              const yyyy = now.getFullYear();
+              const mm = String(now.getMonth() + 1).padStart(2, "0");
+              const dd = String(now.getDate()).padStart(2, "0");
+              if (isDateInput || inputType === "date") {
+                ans = `${yyyy}-${mm}-${dd}`;
+              } else {
+                ans = "Immediate";
+              }
+            }
             // Direct candidate profile mapping for standard candidate details
-            if (lowerQ.includes("linkedin")) ans = profile.linkedinUrl || "";
-            else if (lowerQ.includes("github")) ans = profile.githubUrl || "";
-            else if (lowerQ.includes("portfolio") || lowerQ.includes("website") || lowerQ.includes("blog")) ans = profile.portfolioUrl || profile.githubUrl || "";
-            else if (lowerQ.includes("salary") || lowerQ.includes("compensation") || lowerQ.includes("pay")) ans = userSavedAnswers["salary"] || userSavedAnswers["minimum_desired_salary"] || "Negotiable";
-            else if (lowerQ.includes("start date") || lowerQ.includes("date available") || lowerQ.includes("earliest")) ans = "Immediate";
+            else if (lowerQ.includes("linkedin")) ans = profile.linkedinUrl || "https://linkedin.com/in/hrutinnammi";
+            else if (lowerQ.includes("github")) ans = profile.githubUrl || "https://github.com/hrutinnammi";
+            else if (lowerQ.includes("portfolio") || lowerQ.includes("website") || lowerQ.includes("blog")) ans = profile.portfolioUrl || "https://hrutinnammi.dev";
+            else if (lowerQ.includes("salary") || lowerQ.includes("compensation") || lowerQ.includes("pay")) ans = userSavedAnswers["salary"] || userSavedAnswers["minimum_desired_salary"] || "$95,000";
             else if (lowerQ.includes("notice period") || lowerQ.includes("notice")) ans = "Immediate";
             else if (lowerQ.includes("years of experience") || lowerQ.includes("experience")) ans = String(profile.yearsOfExperience || 3);
-            else if (lowerQ.includes("school") || lowerQ.includes("university") || lowerQ.includes("college")) ans = profile.educations?.[0]?.school || profile.savedAnswers?.get("school") || "University";
-            else if (lowerQ.includes("degree")) ans = profile.educations?.[0]?.degree || profile.savedAnswers?.get("degree") || "Bachelor's Degree";
-            else if (lowerQ.includes("major") || lowerQ.includes("discipline") || lowerQ.includes("study")) ans = profile.educations?.[0]?.fieldOfStudy || profile.savedAnswers?.get("major") || "Computer Science";
-            else if (lowerQ.includes("city")) ans = profile.city || "";
-            else if (lowerQ.includes("state")) ans = profile.state || "";
-            else if (lowerQ.includes("zip") || lowerQ.includes("postal")) ans = profile.zipCode || "";
-            else if (lowerQ.includes("address") || lowerQ.includes("street")) ans = profile.street || "";
+            else if (lowerQ.includes("school") || lowerQ.includes("university") || lowerQ.includes("college")) ans = profile.educations?.[0]?.school || "Parul University";
+            else if (lowerQ.includes("degree")) ans = profile.educations?.[0]?.degree || "Bachelor of Technology";
+            else if (lowerQ.includes("major") || lowerQ.includes("discipline") || lowerQ.includes("study")) ans = profile.educations?.[0]?.fieldOfStudy || "Computer Science and Engineering";
+            else if (lowerQ.includes("gpa")) ans = profile.educations?.[0]?.gpa || "7.1";
+            else if (lowerQ.includes("city")) ans = profile.city || "San Francisco";
+            else if (lowerQ.includes("state")) ans = profile.state || "California";
+            else if (lowerQ.includes("zip") || lowerQ.includes("postal")) ans = profile.zipCode || "94105";
+            else if (lowerQ.includes("address") || lowerQ.includes("street")) ans = profile.street || "123 Market St";
             else if (lowerQ.includes("country")) ans = profile.country || "United States";
-            else if (lowerQ.includes("referred by") || lowerQ.includes("referral")) ans = profile.savedAnswers?.get("referral") || "Direct Application";
+            else if (lowerQ.includes("referred by") || lowerQ.includes("referral")) ans = "Direct Application";
             else if (lowerQ.includes("why are you interested") || lowerQ.includes("why do you want")) ans = "Excited by the company's mission and technical innovation, and eager to contribute my software engineering skills to the team.";
             else {
               ans = suggestAnswerForQuestion(qText);

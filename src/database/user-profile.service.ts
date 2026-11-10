@@ -103,6 +103,7 @@ export const HRUTIN_BLUEPRINT_PROFILE: UserProfile = {
   yearsOfExperience: 3,
   resumePath: resolveLocalResumePath("resumes/user_usr_hrutin_nammi/Hrutin_Nammi_Resume.pdf") || "resumes/user_usr_hrutin_nammi/Hrutin_Nammi_Resume.pdf",
   coverLetterPath: resolveLocalResumePath("resumes/user_usr_hrutin_nammi/Hrutin_Nammi_Cover_Letter.pdf") || "resumes/user_usr_hrutin_nammi/Hrutin_Nammi_Cover_Letter.pdf",
+  photoPath: resolveLocalResumePath("resumes/user_usr_hrutin_nammi/Hrutin_Nammi_Photo.png") || "resumes/user_usr_hrutin_nammi/Hrutin_Nammi_Photo.png",
   websites: [
     "https://linkedin.com/in/hrutinnammi",
     "https://github.com/hrutinnammi"
@@ -276,12 +277,20 @@ export async function getAllUserProfiles(): Promise<UserProfile[]> {
 
     const resumePath = resumeMap.get(userId) || "";
     let coverLetterPath = coverLetterMap.get(userId) || "";
+    let photoPath = "";
 
     // If cover letter not in DB resumes table, check if sibling PDF exists in user's resume directory
     if (!coverLetterPath && resumePath) {
       const candidateCover = path.join(path.dirname(resumePath), `${u.first_name || "Candidate"}_${u.last_name || "User"}_Cover_Letter.pdf`);
       if (fs.existsSync(candidateCover)) {
         coverLetterPath = candidateCover;
+      }
+    }
+
+    if (resumePath) {
+      const candidatePhoto = path.join(path.dirname(resumePath), `${u.first_name || "Candidate"}_${u.last_name || "User"}_Photo.png`);
+      if (fs.existsSync(candidatePhoto)) {
+        photoPath = candidatePhoto;
       }
     }
 
@@ -352,6 +361,7 @@ export async function getAllUserProfiles(): Promise<UserProfile[]> {
       summary: isHrutin ? HRUTIN_BLUEPRINT_PROFILE.summary : summary,
       resumePath: isHrutin ? (resolveLocalResumePath("resumes/user_usr_hrutin_nammi/Hrutin_Nammi_Resume.pdf") || resumePath) : resumePath,
       coverLetterPath: isHrutin ? (resolveLocalResumePath("resumes/user_usr_hrutin_nammi/Hrutin_Nammi_Cover_Letter.pdf") || coverLetterPath) : coverLetterPath,
+      photoPath: isHrutin ? (resolveLocalResumePath("resumes/user_usr_hrutin_nammi/Hrutin_Nammi_Photo.png") || "resumes/user_usr_hrutin_nammi/Hrutin_Nammi_Photo.png") : (photoPath || undefined),
       educations: isHrutin ? HRUTIN_BLUEPRINT_PROFILE.educations : educations,
       experiences: isHrutin ? HRUTIN_BLUEPRINT_PROFILE.experiences : experiences,
       savedAnswers: userAnswers,

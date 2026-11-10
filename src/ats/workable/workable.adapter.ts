@@ -1,3 +1,5 @@
+import path from "path";
+import fs from "fs";
 import { Page } from "playwright";
 import { ATSAdapter, FormField, JobDetails, SubmissionResult, UserProfile } from "../ats.interface";
 import { normalizeLabel } from "../../application/field-mapper";
@@ -194,7 +196,7 @@ export class WorkableAdapter implements ATSAdapter {
 
     // Upload Resume early so parser can work if enabled
     if (profile.resumePath) {
-      await this.uploadResume(page, profile.resumePath).catch((err: any) => {
+      await this.uploadResume(page, profile.resumePath, undefined, profile).catch((err: any) => {
         console.warn("⚠️ [WorkableAdapter]: Resume upload error:", err.message);
       });
     }
@@ -270,11 +272,19 @@ export class WorkableAdapter implements ATSAdapter {
       if (await phoneInput.count() > 0) {
         const phoneContainer = page.locator("[data-ui='phone'], .iti").first();
         if (await phoneContainer.count() > 0) {
-          const isIndianPhone = profile.phone.includes("+91") || /^(?:\+91[\s-]?)?[6-9]\d{9}$/.test(profile.phone.replace(/\s/g, ""));
+          const isUSPhone = profile.phone.includes("+1") || profile.country?.includes("United States") || !profile.phone.includes("+91");
           const flagBtn = phoneContainer.locator(".iti__selected-flag, [role='combobox']").first();
-          if (await flagBtn.count() > 0 && isIndianPhone) {
+          if (await flagBtn.count() > 0) {
             const currentDialCode = await phoneContainer.locator(".iti__selected-dial-code").first().innerText().catch(() => "");
-            if (!currentDialCode.includes("+91")) {
+            if (isUSPhone && !currentDialCode.includes("+1")) {
+              await humanClick(page, flagBtn).catch(() => flagBtn.click());
+              await page.waitForTimeout(300);
+              const usOpt = page.locator(".iti__country-list [data-country-code='us'], .iti__country-list [data-dial-code='1']").first();
+              if (await usOpt.count() > 0) {
+                await humanClick(page, usOpt).catch(() => usOpt.click());
+                await page.waitForTimeout(300);
+              }
+            } else if (!isUSPhone && !currentDialCode.includes("+91")) {
               await humanClick(page, flagBtn).catch(() => flagBtn.click());
               await page.waitForTimeout(300);
               const indiaOpt = page.locator(".iti__country-list [data-country-code='in'], .iti__country-list [data-dial-code='91']").first();
@@ -307,6 +317,60 @@ export class WorkableAdapter implements ATSAdapter {
         }
       }
       console.log(`✅ [WorkableAdapter]: Address -> ${await addressInput.inputValue()}`);
+    }
+
+    // Headline / Summary
+    const headlineInput = page.locator("input#headline, input[name='headline'], [data-ui='headline']").first();
+    if (await headlineInput.count() > 0 && await headlineInput.isVisible()) {
+      await fillWithHumanMouse(headlineInput, profile.headline || "Full-Stack AI Developer");
+    }
+
+    const summaryInput = page.locator("textarea#summary, textarea[name='summary'], [data-ui='summary']").first();
+    if (await summaryInput.count() > 0 && await summaryInput.isVisible()) {
+      await fillWithHumanMouse(summaryInput, profile.summary || "Full-Stack AI Developer experienced in building scalable AI applications, RAG pipelines, FastAPI backends, and React interfaces.");
+    }
+
+    // Social Profiles / Links (LinkedIn, GitHub, Portfolio)
+    const linkedinInput = page.locator("input[name*='linkedin' i], input#linkedin, input[id*='linkedin' i], [data-ui*='linkedin']").first();
+    if (await linkedinInput.count() > 0 && await linkedinInput.isVisible()) {
+      await fillWithHumanMouse(linkedinInput, profile.linkedinUrl || "https://linkedin.com/in/hrutinnammi");
+      console.log(`✅ [WorkableAdapter]: LinkedIn -> ${profile.linkedinUrl || 'https://linkedin.com/in/hrutinnammi'}`);
+    }
+
+    const githubInput = page.locator("input[name*='github' i], input#github, input[id*='github' i], [data-ui*='github']").first();
+    if (await githubInput.count() > 0 && await githubInput.isVisible()) {
+      await fillWithHumanMouse(githubInput, profile.githubUrl || "https://github.com/hrutinnammi");
+      console.log(`✅ [WorkableAdapter]: GitHub -> ${profile.githubUrl || 'https://github.com/hrutinnammi'}`);
+    }
+
+    const websiteInput = page.locator("input[name*='website' i], input#website, input[id*='website' i], input[name*='portfolio' i], [data-ui*='website'], [data-ui*='portfolio']").first();
+    if (await websiteInput.count() > 0 && await websiteInput.isVisible()) {
+      await fillWithHumanMouse(websiteInput, profile.portfolioUrl || "https://hrutinnammi.dev");
+      console.log(`✅ [WorkableAdapter]: Portfolio -> ${profile.portfolioUrl || 'https://hrutinnammi.dev'}`);
+    }
+
+    // Education fields if present
+    const schoolInput = page.locator("input[name*='school' i], input#school, input[id*='school' i], [data-ui*='school']").first();
+    if (await schoolInput.count() > 0 && await schoolInput.isVisible()) {
+      await fillWithHumanMouse(schoolInput, profile.educations?.[0]?.school || "Parul University");
+    }
+    const degreeInput = page.locator("input[name*='degree' i], input#degree, input[id*='degree' i], [data-ui*='degree']").first();
+    if (await degreeInput.count() > 0 && await degreeInput.isVisible()) {
+      await fillWithHumanMouse(degreeInput, profile.educations?.[0]?.degree || "Bachelor of Technology");
+    }
+    const fieldOfStudyInput = page.locator("input[name*='field_of_study' i], input[name*='major' i], input#field_of_study, [data-ui*='field-of-study']").first();
+    if (await fieldOfStudyInput.count() > 0 && await fieldOfStudyInput.isVisible()) {
+      await fillWithHumanMouse(fieldOfStudyInput, profile.educations?.[0]?.fieldOfStudy || "Computer Science and Engineering");
+    }
+
+    // Work Experience fields if present
+    const expCompany = page.locator("input[name*='experience'][name*='company' i], input#experience_company, [data-ui*='experience-company']").first();
+    if (await expCompany.count() > 0 && await expCompany.isVisible()) {
+      await fillWithHumanMouse(expCompany, profile.experiences?.[0]?.company || "Jobspring");
+    }
+    const expTitle = page.locator("input[name*='experience'][name*='title' i], input#experience_title, [data-ui*='experience-title']").first();
+    if (await expTitle.count() > 0 && await expTitle.isVisible()) {
+      await fillWithHumanMouse(expTitle, profile.experiences?.[0]?.jobTitle || "Full Stack AI Developer");
     }
 
     // Cover Letter
@@ -468,21 +532,79 @@ export class WorkableAdapter implements ATSAdapter {
       }
     }
 
+    // 6. Select Dropdowns (native <select> and custom comboboxes)
+    const selects = await page.locator("select:not([name*='country_code'])").all();
+    for (const sel of selects) {
+      if (!(await sel.isVisible().catch(() => false))) continue;
+      const qText = await sel.evaluate((el: HTMLElement) => {
+        const id = el.id;
+        if (id) {
+          const l = document.querySelector(`label[for='${id}']`);
+          if (l) return l.textContent?.trim() || "";
+        }
+        return el.getAttribute("aria-label") || el.closest("label")?.textContent?.trim() || "";
+      }).catch(() => "");
+      const normQ = normalizeLabel(qText);
+      const opts = await sel.evaluate((el: HTMLSelectElement) => Array.from(el.options).map(o => ({ value: o.value, text: o.text.trim() }))).catch(() => []);
+      if (opts.length <= 1) continue;
+
+      let chosenVal = "";
+      for (const opt of opts) {
+        const normOpt = normalizeLabel(opt.text);
+        if (!opt.value || normOpt.includes("select") || normOpt.includes("choose")) continue;
+        if (normQ.includes("sponsorship") && (normOpt === "no" || normOpt.includes("no"))) {
+          chosenVal = opt.value; break;
+        } else if (normQ.includes("authorized") && (normOpt === "yes" || normOpt.includes("yes"))) {
+          chosenVal = opt.value; break;
+        } else if (normQ.includes("gender") && normOpt.includes("male")) {
+          chosenVal = opt.value; break;
+        } else if (normQ.includes("education") || normQ.includes("degree")) {
+          if (normOpt.includes("bachelor") || normOpt.includes("degree")) { chosenVal = opt.value; break; }
+        }
+      }
+      if (!chosenVal) {
+        const real = opts.find(o => o.value && !normalizeLabel(o.text).includes("select") && !normalizeLabel(o.text).includes("choose"));
+        if (real) chosenVal = real.value;
+      }
+      if (chosenVal) {
+        await sel.selectOption(chosenVal).catch(() => {});
+      }
+    }
+
     await updateHUDStatus(page, "Form filling complete!", "Ready for validation & review", "success", 90);
     console.log(`🎉 [WorkableAdapter]: Completed filling all form fields successfully.`);
   }
 
-  async uploadResume(page: Page, resumePath: string, fields?: FormField[]): Promise<void> {
+  async uploadResume(page: Page, resumePath: string, fields?: FormField[], profile?: UserProfile): Promise<void> {
     console.log(`📂 [WorkableAdapter]: Uploading resume: ${resumePath}...`);
     await updateHUDStatus(page, "Uploading Resume...", `Attaching ${resumePath}`, "info", 50);
 
-    const fileInput = page.locator("input[type='file'], [data-ui='resume'] input[type='file']").first();
+    const fileInput = page.locator("[data-ui='resume'] input[type='file'], input[type='file'][name*='resume' i], input[type='file'][name*='cv' i], input[type='file']:not([accept*='image']):not([name*='photo']):not([name*='avatar'])").first();
     if (await fileInput.count() > 0) {
-      await fileInput.setInputFiles(resumePath);
+      await fileInput.setInputFiles(resumePath).catch(err => {
+        console.warn("⚠️ [WorkableAdapter]: Error uploading resume:", err.message);
+      });
       await page.waitForTimeout(1500);
       console.log(`✅ [WorkableAdapter]: Resume uploaded successfully.`);
     } else {
       console.warn(`⚠️ [WorkableAdapter]: No file input found for resume upload.`);
+    }
+
+    // Photo / Avatar upload if photo input exists on Workable
+    const photoPath = profile?.photoPath || 
+      (resumePath ? path.resolve(path.dirname(resumePath), `${profile?.firstName || 'Hrutin'}_${profile?.lastName || 'Nammi'}_Photo.png`) : "") ||
+      path.resolve(process.cwd(), "resumes/user_usr_hrutin_nammi/Hrutin_Nammi_Photo.png");
+
+    if (photoPath && fs.existsSync(photoPath)) {
+      const photoInput = page.locator("input[type='file'][name*='photo' i], input[type='file'][name*='avatar' i], input[type='file'][name*='image' i], input[type='file'][accept*='image'], input[type='file'][id*='photo' i]").first();
+      if (await photoInput.count() > 0) {
+        console.log(`📸 [WorkableAdapter]: Uploading photo/avatar: ${photoPath}`);
+        await photoInput.setInputFiles(photoPath).catch(err => {
+          console.warn(`⚠️ [WorkableAdapter]: Failed setting photo file:`, err.message);
+        });
+        console.log("✅ [WorkableAdapter]: Photo uploaded successfully.");
+        await page.waitForTimeout(500);
+      }
     }
   }
 

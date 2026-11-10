@@ -94,6 +94,7 @@ export interface UserProfile {
   websites?: string[];
   resumePath?: string;
   coverLetterPath?: string;
+  photoPath?: string;
   savedAnswers?: Map<string, string>;
 }
 

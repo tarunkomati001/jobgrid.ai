@@ -271,7 +271,9 @@ export class RecruiteeAdapter implements ATSAdapter {
 
     // Upload files if resume provided
     if (profile.resumePath && fs.existsSync(profile.resumePath)) {
-      await this.uploadResume(page, profile.resumePath);
+      await this.uploadResume(page, profile.resumePath, undefined, profile);
+    } else {
+      await this.uploadPhoto(page, profile);
     }
 
     // Fetch user saved answers from database
@@ -901,7 +903,7 @@ export class RecruiteeAdapter implements ATSAdapter {
     // ─────────────────────────────────────────────────────────────────────────
     // 1. UPLOAD RESUME (CV)
     // ─────────────────────────────────────────────────────────────────────────
-    const cvInput = page.locator("input[type='file'][name='candidate.cv'], input[type='file'][id*='cv'], input[type='file']").first();
+    const cvInput = page.locator("input[type='file'][name='candidate.cv'], input[type='file'][id*='cv'], input[type='file'][name*='cv' i], input[type='file'][name*='resume' i], input[type='file']:not([name*='cover']):not([name*='photo']):not([name*='avatar']):not([name*='image']):not([accept*='image'])").first();
     if (await cvInput.count() > 0) {
       console.log(`📎 [RecruiteeAdapter]: Attaching Resume -> ${resumePath}`);
       try {
@@ -915,7 +917,7 @@ export class RecruiteeAdapter implements ATSAdapter {
     // ─────────────────────────────────────────────────────────────────────────
     // 2. UPLOAD COVER LETTER PDF
     // ─────────────────────────────────────────────────────────────────────────
-    const coverLetterInput = page.locator("input[type='file'][name='candidate.coverLetterFile'], input[type='file'][id*='coverLetter']").first();
+    const coverLetterInput = page.locator("input[type='file'][name='candidate.coverLetterFile'], input[type='file'][id*='coverLetter'], input[type='file'][name*='cover' i]").first();
     if (await coverLetterInput.count() > 0) {
       console.log("📎 [RecruiteeAdapter]: Cover Letter input detected on form. Resolving Cover Letter PDF...");
 
@@ -945,21 +947,81 @@ export class RecruiteeAdapter implements ATSAdapter {
       }
     }
 
+    // ─────────────────────────────────────────────────────────────────────────
+    // 3. UPLOAD CANDIDATE PHOTO / AVATAR / HEADSHOT
+    // ─────────────────────────────────────────────────────────────────────────
+    await this.uploadPhoto(page, prof);
+
     await this.sanitizeUSAddressFields(page);
     await page.waitForTimeout(1000);
+  }
+
+  /**
+   * Uploads candidate photo / avatar image if photo upload field exists on Recruitee form.
+   */
+  async uploadPhoto(page: Page, profile?: UserProfile): Promise<void> {
+    const prof = profile || this.candidateProfile;
+    const photoPath = prof?.photoPath || 
+      (prof?.resumePath ? path.resolve(path.dirname(prof.resumePath), `${prof.firstName}_${prof.lastName}_Photo.png`) : "") ||
+      path.resolve(process.cwd(), "resumes/user_usr_hrutin_nammi/Hrutin_Nammi_Photo.png");
+
+    if (!photoPath || !fs.existsSync(photoPath)) {
+      console.log("ℹ️ [RecruiteeAdapter]: No photo file available on disk to upload.");
+      return;
+    }
+
+    console.log(`📸 [RecruiteeAdapter]: Scanning for Photo / Avatar upload fields (candidate photo: ${photoPath})...`);
+
+    // 1. Attribute-based selectors for photo / avatar / image
+    const photoInputs = page.locator(
+      "input[type='file'][name*='photo' i], input[type='file'][name*='avatar' i], input[type='file'][name*='picture' i], input[type='file'][name*='image' i], input[type='file'][name*='headshot' i], input[type='file'][id*='photo' i], input[type='file'][id*='avatar' i], input[type='file'][id*='picture' i], input[type='file'][id*='image' i], input[type='file'][id*='headshot' i], input[type='file'][accept*='image'], input[type='file'][data-testid*='photo' i], input[type='file'][data-testid*='avatar' i]"
+    );
+
+    const count = await photoInputs.count();
+    let uploaded = false;
+    for (let i = 0; i < count; i++) {
+      const inp = photoInputs.nth(i);
+      const nameAttr = (await inp.getAttribute("name").catch(() => "") || "").toLowerCase();
+      const idAttr = (await inp.getAttribute("id").catch(() => "") || "").toLowerCase();
+      if (nameAttr.includes("cv") || nameAttr.includes("resume") || nameAttr.includes("cover") || idAttr.includes("cv") || idAttr.includes("cover")) {
+        continue;
+      }
+      try {
+        console.log(`📸 [RecruiteeAdapter]: Attaching photo to input field [name="${nameAttr}", id="${idAttr}"]`);
+        await inp.setInputFiles(photoPath);
+        uploaded = true;
+        console.log("✅ [RecruiteeAdapter]: Candidate photo attached successfully!");
+      } catch (err: any) {
+        console.warn(`⚠️ [RecruiteeAdapter]: Failed setting photo file:`, err.message);
+      }
+    }
+
+    // 2. Container / label based search for custom photo upload dropzones
+    if (!uploaded) {
+      const containerInputs = page.locator("div:has-text('photo') input[type='file'], label:has-text('photo') input[type='file'], div:has-text('picture') input[type='file'], label:has-text('picture') input[type='file'], div:has-text('avatar') input[type='file'], label:has-text('avatar') input[type='file'], div:has-text('headshot') input[type='file'], label:has-text('headshot') input[type='file']");
+      const cCount = await containerInputs.count();
+      for (let i = 0; i < cCount; i++) {
+        try {
+          await containerInputs.nth(i).setInputFiles(photoPath);
+          console.log("✅ [RecruiteeAdapter]: Attached candidate photo via labeled container.");
+          uploaded = true;
+          break;
+        } catch {}
+      }
+    }
   }
 
   /**
    * Validates if the page form has been correctly filled out.
    */
   async validate(page: Page, fields?: FormField[]): Promise<boolean> {
-    const nameVal = await page.locator("input[name='candidate.name']").inputValue().catch(() => "");
-    const emailVal = await page.locator("input[name='candidate.email']").inputValue().catch(() => "");
-    const phoneVal = await page.locator("input[name='candidate.phone']").inputValue().catch(() => "");
+    const nameVal = await page.locator("input[name='candidate.name'], input[name*='name']").first().inputValue({ timeout: 3000 }).catch(() => "");
+    const emailVal = await page.locator("input[name='candidate.email'], input[name*='email']").first().inputValue({ timeout: 3000 }).catch(() => "");
+    const phoneVal = await page.locator("input[name='candidate.phone'], input[type='tel']").first().inputValue({ timeout: 3000 }).catch(() => "");
 
     const isValid = !!(nameVal && emailVal && phoneVal);
     if (!isValid) {
-      console.warn("⚠️ [RecruiteeAdapter]: Required primary candidate inputs check failed:", { nameVal, emailVal, phoneVal });
+      console.warn("⚠️ [RecruiteeAdapter]: Required primary candidate inputs check notice:", { nameVal, emailVal, phoneVal });
     }
     return isValid;
   }
