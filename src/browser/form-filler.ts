@@ -430,10 +430,14 @@ export async function fillCustomSelectDropdown(
     scopedSels.push(...optionItemSelectors.map(sel => sel));
 
     for (const sel of scopedSels) {
-      // Try scoped to container first, then page-wide for the "fallback" selectors
+      // Try scoped to container first, then page-wide for portaled menus (Ashby, Greenhouse, Radix)
       const isGlobalSel = optionItemSelectors.includes(sel);
-      const optionsList = isGlobalSel ? container.locator(sel) : page.locator(sel);
-      const count = await optionsList.count();
+      let optionsList = isGlobalSel ? container.locator(sel) : page.locator(sel);
+      let count = await optionsList.count();
+      if (count === 0 && isGlobalSel) {
+        optionsList = page.locator(sel);
+        count = await optionsList.count();
+      }
       if (count === 0) continue;
 
       for (let i = 0; i < count; i++) {
@@ -487,11 +491,13 @@ export async function fillCustomSelectDropdown(
           } else {
             isMatch = /^yes\b/i.test(optText) || oLower.includes("india");
           }
-        } else if (normLabel.includes("country") || normLabel.includes("location") || normLabel.includes("living in") || normLabel.includes("working from")) {
+        } else if (normLabel.includes("country") || normLabel.includes("location") || normLabel.includes("living in") || normLabel.includes("working from") || normLabel.includes("located")) {
           if (vLower.includes("united states") || vLower === "usa" || vLower === "us") {
-            isMatch = oLower === "united states" || oLower === "united states of america" || oLower === "usa";
+            isMatch = oLower.includes("united states") || oLower === "usa" || oLower.includes("san francisco") || oLower.includes("california");
+          } else if (vLower.includes("india")) {
+            isMatch = oLower.includes("india") || oLower.includes("vadodara") || oLower.includes("gujarat");
           } else {
-            isMatch = oLower === vLower || oLower.startsWith(vLower);
+            isMatch = oLower === vLower || oLower.startsWith(vLower) || oLower.includes(vLower);
           }
         } else {
           isMatch = oLower === vLower ||
@@ -561,12 +567,17 @@ export async function fillCustomSelectDropdown(
   }
 
   // 3. Fallback: Keyboard ArrowDown + Enter
-  console.log(`🔽 [CustomSelect]: Keyboard selection fallback (ArrowDown + Enter) for "${field.label}"`);
-  await trigger.focus().catch(() => {});
-  await pageObj.keyboard.press("ArrowDown");
-  await page.waitForTimeout(150);
-  await pageObj.keyboard.press("Enter");
-  await page.waitForTimeout(200);
+  const isLocSel = normLabel.includes("location") || normLabel.includes("located") || normLabel.includes("country") || normLabel.includes("address");
+  if (!isLocSel) {
+    console.log(`🔽 [CustomSelect]: Keyboard selection fallback (ArrowDown + Enter) for "${field.label}"`);
+    await trigger.focus().catch(() => {});
+    await pageObj.keyboard.press("ArrowDown");
+    await page.waitForTimeout(150);
+    await pageObj.keyboard.press("Enter");
+    await page.waitForTimeout(200);
+  } else {
+    console.log(`📍 [CustomSelect]: Preserving typed location without blind keyboard arrow selection for "${field.label}".`);
+  }
 
   await trigger.evaluate((el: HTMLElement) => {
     el.dispatchEvent(new Event('change', { bubbles: true }));

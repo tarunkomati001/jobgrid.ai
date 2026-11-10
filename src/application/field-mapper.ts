@@ -149,13 +149,29 @@ export function mapLabelToProfileKey(label: string): keyof UserProfile | null {
 
   // Gender mappings
   if (
-    norm === "gender" ||
-    norm.includes("gender identity") ||
-    norm.includes("what is your gender") ||
-    norm.includes("select your gender") ||
-    norm.includes("identify your gender")
+    norm.includes("gender") ||
+    norm.includes("sex")
   ) {
     return "gender";
+  }
+
+  // Race & Ethnicity mappings
+  if (
+    norm.includes("race") ||
+    norm.includes("ethnicity")
+  ) {
+    return "ethnicity";
+  }
+
+  // Location mappings
+  if (
+    norm.includes("currently located") ||
+    norm.includes("where are you located") ||
+    norm.includes("where are you currently located") ||
+    norm.includes("current location") ||
+    norm === "location"
+  ) {
+    return "location";
   }
 
   return null;

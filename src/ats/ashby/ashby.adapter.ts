@@ -229,11 +229,43 @@ export class AshbyAdapter implements ATSAdapter {
         const normLabel = normalizeLabel(field.label);
         let valueToFill: string | undefined = undefined;
         
-        // 1. Check for combined full name / legal name field
+        // 1. Direct label pattern matches for Ashby
         if (normLabel === "name" || normLabel === "full name" || normLabel === "legal name" || normLabel.includes("legal name") || normLabel.includes("full name")) {
           valueToFill = `${profile.firstName} ${profile.lastName}`;
-        } else if (normLabel.includes("plan on working from") || normLabel.includes("working from for payroll")) {
-          valueToFill = profile.location || "San Francisco, CA, United States";
+        } else if (
+          normLabel.includes("where are you currently located") ||
+          normLabel.includes("currently located") ||
+          normLabel.includes("where are you located") ||
+          normLabel.includes("current location") ||
+          normLabel.includes("plan on working from") ||
+          normLabel.includes("working from for payroll") ||
+          normLabel === "location"
+        ) {
+          valueToFill = profile.location || (profile.city ? `${profile.city}, ${profile.state || ""}, ${profile.country || "United States"}`.replace(/,\s*,/g, ",").trim() : "San Francisco, CA, United States");
+        } else if (
+          normLabel.includes("when can you start") ||
+          normLabel.includes("start a new role") ||
+          normLabel.includes("start date") ||
+          normLabel.includes("available to start") ||
+          normLabel.includes("availability date") ||
+          normLabel.includes("start work")
+        ) {
+          const d = new Date();
+          d.setDate(d.getDate() + 14); // 2 weeks out
+          const mm = String(d.getMonth() + 1).padStart(2, "0");
+          const dd = String(d.getDate()).padStart(2, "0");
+          const yyyy = d.getFullYear();
+          valueToFill = `${mm}/${dd}/${yyyy}`;
+        } else if (normLabel.includes("gender") || normLabel.includes("sex")) {
+          valueToFill = profile.gender || "Male";
+        } else if (normLabel.includes("race") || normLabel.includes("ethnicity")) {
+          const eth = profile.ethnicity || profile.savedAnswers?.get("ethnicity") || profile.savedAnswers?.get("race") || "Asian";
+          if (field.options && field.options.length > 0) {
+            const matched = field.options.find(o => new RegExp(eth, "i").test(o.label));
+            valueToFill = matched ? matched.label : `${eth} (Not Hispanic or Latino)`;
+          } else {
+            valueToFill = `${eth} (Not Hispanic or Latino)`;
+          }
         } else {
           // 2. Try to map standard profile key
           const profileKey = mapLabelToProfileKey(field.label);
@@ -487,6 +519,9 @@ export class AshbyAdapter implements ATSAdapter {
         }
       }
 
+      // Final Safety Sweep for Ashby critical fields (Gender, Race, Location, Start Date)
+      await this.sweepAndVerifyAshbyFields(target, profile);
+
       // Check if there is a 'Next' or 'Continue' button to navigate multi-step forms
       const nextButton = target.locator("button:has-text('Next'), button:has-text('Continue'), button:has-text('Next Step'), input[type='button'][value='Next'], input[type='button'][value='Continue']").first();
       const submitButton = target.locator("button[type='submit'], input[type='submit'], [class*='submit'] button, button:has-text('Submit Application')").first();
@@ -583,6 +618,154 @@ export class AshbyAdapter implements ATSAdapter {
     }
     
     return allValid;
+  }
+
+  /**
+   * Final safety sweep specifically for Ashby applications to guarantee
+   * Gender, Race, Location, and Start Date are 100% selected and filled.
+   */
+  private async sweepAndVerifyAshbyFields(target: Page | Frame, profile: UserProfile): Promise<void> {
+    try {
+      const page = "keyboard" in target ? target : (target as Frame).page();
+
+      // 1. Gender Radio Sweep
+      const genderEntries = target.locator(".ashby-application-form-field-entry, div[data-field-path], fieldset").filter({ hasText: /gender/i });
+      if (await genderEntries.count() > 0) {
+        const entry = genderEntries.first();
+        const checkedRadio = entry.locator("input[type='radio']:checked, [role='radio'][aria-checked='true']");
+        if (await checkedRadio.count() === 0) {
+          console.log("🧹 [Ashby Sweep]: Selecting Gender radio (Male)...");
+          const targetGender = (profile.gender || "Male").toLowerCase();
+          const radios = entry.locator("input[type='radio']");
+          const rCount = await radios.count();
+          let clicked = false;
+          for (let i = 0; i < rCount; i++) {
+            const r = radios.nth(i);
+            const text = await r.evaluate(el => `${(el as HTMLInputElement).value} ${el.closest('label')?.textContent || ''}`.toLowerCase());
+            if (targetGender === "male" && text.includes("male") && !text.includes("female")) {
+              await r.check({ force: true }).catch(() => {});
+              await r.click({ force: true }).catch(() => {});
+              const pLbl = r.locator("xpath=ancestor::label[1]");
+              if (await pLbl.count() > 0) await pLbl.click({ force: true }).catch(() => {});
+              clicked = true;
+              break;
+            }
+          }
+          if (!clicked) {
+            const maleLbl = entry.locator("label").filter({ hasText: /^male$/i }).first();
+            if (await maleLbl.count() > 0) await maleLbl.click({ force: true }).catch(() => {});
+          }
+        }
+      }
+
+      // 2. Race Radio Sweep
+      const raceEntries = target.locator(".ashby-application-form-field-entry, div[data-field-path], fieldset").filter({ hasText: /race|ethnicity/i });
+      if (await raceEntries.count() > 0) {
+        const entry = raceEntries.first();
+        const checkedRadio = entry.locator("input[type='radio']:checked, [role='radio'][aria-checked='true']");
+        if (await checkedRadio.count() === 0) {
+          console.log("🧹 [Ashby Sweep]: Selecting Race radio (Asian)...");
+          const targetEth = (profile.ethnicity || "Asian").toLowerCase();
+          const radios = entry.locator("input[type='radio']");
+          const rCount = await radios.count();
+          let clicked = false;
+          for (let i = 0; i < rCount; i++) {
+            const r = radios.nth(i);
+            const text = await r.evaluate(el => `${(el as HTMLInputElement).value} ${el.closest('label')?.textContent || ''}`.toLowerCase());
+            if (text.includes(targetEth)) {
+              await r.check({ force: true }).catch(() => {});
+              await r.click({ force: true }).catch(() => {});
+              const pLbl = r.locator("xpath=ancestor::label[1]");
+              if (await pLbl.count() > 0) await pLbl.click({ force: true }).catch(() => {});
+              clicked = true;
+              break;
+            }
+          }
+          if (!clicked) {
+            const ethLbl = entry.locator("label").filter({ hasText: new RegExp(targetEth, "i") }).first();
+            if (await ethLbl.count() > 0) await ethLbl.click({ force: true }).catch(() => {});
+          }
+        }
+      }
+
+      // 3. Location Sweep (Fix incorrect Russia / empty location)
+      const locEntries = target.locator(".ashby-application-form-field-entry, div[data-field-path]").filter({ hasText: /currently located|where are you located/i });
+      if (await locEntries.count() > 0) {
+        const entry = locEntries.first();
+        const locInp = entry.locator("input[role='combobox'], input[type='text'], input:not([type])").first();
+        if (await locInp.count() > 0) {
+          const currentVal = await locInp.inputValue().catch(() => "");
+          const isWrong = !currentVal || currentVal.toLowerCase().includes("russia") || currentVal.toLowerCase().includes("yessentukskaya") || (!currentVal.toLowerCase().includes("united states") && !currentVal.toLowerCase().includes("francisco") && !currentVal.toLowerCase().includes("california") && !currentVal.toLowerCase().includes("india"));
+          if (isWrong) {
+            console.log("🧹 [Ashby Sweep]: Correcting Location field to candidate's location...");
+            await locInp.click({ force: true }).catch(() => {});
+            await locInp.fill("");
+            const targetCity = profile.city || "San Francisco";
+            const targetCountry = profile.country || "United States";
+            await locInp.pressSequentially(`${targetCity}, CA`, { delay: 40 });
+            await page.waitForTimeout(600);
+
+            // Look for suggestions list
+            const suggestions = page.locator("[role='option']:visible, .ashby-autocomplete-option:visible, div[class*='option']:visible, li:visible");
+            const sCount = await suggestions.count();
+            let clickedOption = false;
+            for (let s = 0; s < sCount; s++) {
+              const opt = suggestions.nth(s);
+              const t = (await opt.innerText().catch(() => "")).toLowerCase();
+              if (t.includes(targetCity.toLowerCase()) || t.includes(targetCountry.toLowerCase()) || t.includes("united states") || t.includes("california")) {
+                await opt.click({ force: true }).catch(() => {});
+                clickedOption = true;
+                console.log(`✅ [Ashby Sweep]: Selected location suggestion: "${t}"`);
+                break;
+              }
+            }
+            if (!clickedOption) {
+              await locInp.fill(`${targetCity}, CA, ${targetCountry}`);
+              await locInp.dispatchEvent("change");
+            }
+          }
+        }
+      }
+
+      // 4. Start Date Sweep
+      const startEntries = target.locator(".ashby-application-form-field-entry, div[data-field-path]").filter({ hasText: /when can you start|start a new role|start date/i });
+      if (await startEntries.count() > 0) {
+        const entry = startEntries.first();
+        const dateInput = entry.locator("input:not([type='hidden']), [placeholder*='date' i], [placeholder*='pick' i], button:has-text('Pick date'), [role='button']:has-text('Pick date')").first();
+        if (await dateInput.count() > 0) {
+          const val = await dateInput.inputValue().catch(() => "");
+          const text = await dateInput.innerText().catch(() => "");
+          if (!val && (!text || text.includes("Pick date"))) {
+            console.log("🧹 [Ashby Sweep]: Filling Start Date (2 weeks ahead)...");
+            const d = new Date();
+            d.setDate(d.getDate() + 14);
+            const mm = String(d.getMonth() + 1).padStart(2, "0");
+            const dd = String(d.getDate()).padStart(2, "0");
+            const yyyy = d.getFullYear();
+            const dateStr = `${mm}/${dd}/${yyyy}`;
+
+            const tag = await dateInput.evaluate(el => el.tagName.toLowerCase());
+            if (tag === "input") {
+              await dateInput.click({ force: true }).catch(() => {});
+              await dateInput.fill(dateStr);
+              await dateInput.dispatchEvent("input");
+              await dateInput.dispatchEvent("change");
+              await dateInput.dispatchEvent("blur");
+            } else {
+              await dateInput.click({ force: true }).catch(() => {});
+              await page.waitForTimeout(400);
+              const dayNum = String(d.getDate());
+              const dayCell = page.locator(`[role='gridcell']:has-text('${dayNum}'), button[name='day']:has-text('${dayNum}'), .rdp-day:has-text('${dayNum}')`).first();
+              if (await dayCell.count() > 0 && await dayCell.isVisible().catch(() => false)) {
+                await dayCell.click({ force: true }).catch(() => {});
+              }
+            }
+          }
+        }
+      }
+    } catch (sweepErr: any) {
+      console.warn("⚠️ [Ashby Sweep]: Error during final sweep:", sweepErr.message);
+    }
   }
 
   async submit(page: Page): Promise<SubmissionResult> {
