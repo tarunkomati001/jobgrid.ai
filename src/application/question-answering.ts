@@ -361,8 +361,8 @@ async function callLLM(
   job: Partial<JobDetails>,
   profile: Partial<UserProfile>
 ): Promise<string | null> {
-  const firstName = profile.firstName || "Tharun";
-  const lastName = profile.lastName || "Komite";
+  const firstName = profile.firstName || "Hrutin";
+  const lastName = profile.lastName || "Nammi";
   const company = job.company && job.company !== "Startup" && job.company !== "Company" ? job.company : "your company";
   const title = job.title || "Software Engineer";
 
@@ -453,8 +453,8 @@ export async function callLLMForOption(
   if (!options || options.length === 0) return null;
   if (!process.env.GEMINI_API_KEY) return null;
 
-  const firstName = profile.firstName || "Tharun";
-  const lastName = profile.lastName || "Komite";
+  const firstName = profile.firstName || "Hrutin";
+  const lastName = profile.lastName || "Nammi";
   const company = job.company && job.company !== "Startup" && job.company !== "Company" ? job.company : "the company";
   const title = job.title || "Software Engineer";
 

@@ -404,8 +404,8 @@ export class TaleoAdapter implements ATSAdapter {
             else if (lbl.includes("title") || lbl.includes("position")) inp.value = "Full Stack AI Developer";
             else if (lbl.includes("city")) inp.value = prof.city || "Los Angeles";
             else if (lbl.includes("state")) inp.value = "CA";
-            else if (lbl.includes("supervisor")) inp.value = "Jane Doe";
-            else if (lbl.includes("phone")) inp.value = "4155552671";
+            else if (lbl.includes("supervisor")) inp.value = "Alex Morgan";
+            else if (lbl.includes("phone")) inp.value = prof.phone ? prof.phone.replace(/\D/g, "") : "2025550198";
             else if (lbl.includes("reason")) inp.value = "Career Growth";
             else if (lbl.includes("duties") || lbl.includes("description") || lbl.includes("responsibilit")) inp.value = "Engineered AI agent automation and full stack pipelines.";
             else if (inp.required || lbl.includes("*")) inp.value = "N/A";
