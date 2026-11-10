@@ -166,6 +166,23 @@ export class WorkableAdapter implements ATSAdapter {
     // Ensure Cloudflare Turnstile verification is cleared if present
     await handleCloudflareTurnstile(page);
 
+    // Ensure we are on the application form page
+    const formVisible = (await page.$("input#firstname, input[name='firstname'], [data-ui='application-form']")) !== null;
+    if (!formVisible) {
+      console.log("➡️ [WorkableAdapter]: Application form not yet visible. Looking for 'Apply' button...");
+      const applyBtn = page.locator("a[href*='/apply'], button:has-text('Apply for this job'), button:has-text('Apply'), a:has-text('Apply for this job'), a:has-text('Apply')").first();
+      if (await applyBtn.count() > 0) {
+        console.log("➡️ [WorkableAdapter]: Clicking 'Apply for this job'...");
+        await applyBtn.click().catch(() => {});
+        await page.waitForTimeout(2000);
+      } else if (!page.url().includes("/apply")) {
+        const applyUrl = page.url().replace(/\/$/, "") + "/apply";
+        console.log(`➡️ [WorkableAdapter]: Navigating to apply URL: ${applyUrl}`);
+        await page.goto(applyUrl, { waitUntil: "domcontentloaded", timeout: 20000 }).catch(() => {});
+      }
+      await page.waitForSelector("input#firstname, input[name='firstname'], [data-ui='application-form']", { timeout: 10000 }).catch(() => {});
+    }
+
     // 1. Accept cookies if present
     try {
       const cookieBtn = page.locator("button:has-text('Accept'), button:has-text('Allow all'), [data-ui='cookie-consent-accept']").first();
@@ -174,6 +191,13 @@ export class WorkableAdapter implements ATSAdapter {
         await page.waitForTimeout(500);
       }
     } catch (e) {}
+
+    // Upload Resume early so parser can work if enabled
+    if (profile.resumePath) {
+      await this.uploadResume(page, profile.resumePath).catch((err: any) => {
+        console.warn("⚠️ [WorkableAdapter]: Resume upload error:", err.message);
+      });
+    }
 
     // 2. Fetch saved database answers
     let userSavedAnswers: Record<string, string> = {};

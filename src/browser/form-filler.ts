@@ -487,6 +487,12 @@ export async function fillCustomSelectDropdown(
           } else {
             isMatch = /^yes\b/i.test(optText) || oLower.includes("india");
           }
+        } else if (normLabel.includes("country") || normLabel.includes("location") || normLabel.includes("living in") || normLabel.includes("working from")) {
+          if (vLower.includes("united states") || vLower === "usa" || vLower === "us") {
+            isMatch = oLower === "united states" || oLower === "united states of america" || oLower === "usa";
+          } else {
+            isMatch = oLower === vLower || oLower.startsWith(vLower);
+          }
         } else {
           isMatch = oLower === vLower ||
                     oLower.startsWith(vLower) ||

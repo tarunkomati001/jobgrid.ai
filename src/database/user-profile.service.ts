@@ -202,28 +202,34 @@ export async function getUserProfile(identifier?: string): Promise<UserProfile> 
  * Works seamlessly whether there are 4 users or 200+ users!
  */
 export async function getAllUserProfiles(): Promise<UserProfile[]> {
-  const usersRes = await db.query(`
-    SELECT 
-      u.id AS user_id,
-      u.email,
-      p.first_name,
-      p.last_name,
-      p.phone,
-      p.location,
-      p.linkedin_url,
-      p.github_url,
-      p.portfolio_url,
-      p.work_authorization,
-      p.willing_to_relocate,
-      p.years_of_experience,
-      p.gender
-    FROM users u
-    LEFT JOIN user_profiles p ON u.id = p.user_id
-    ORDER BY u.created_at ASC
-  `);
+  let usersRes: any;
+  try {
+    usersRes = await db.query(`
+      SELECT 
+        u.id AS user_id,
+        u.email,
+        p.first_name,
+        p.last_name,
+        p.phone,
+        p.location,
+        p.linkedin_url,
+        p.github_url,
+        p.portfolio_url,
+        p.work_authorization,
+        p.willing_to_relocate,
+        p.years_of_experience,
+        p.gender
+      FROM users u
+      LEFT JOIN user_profiles p ON u.id = p.user_id
+      ORDER BY u.created_at ASC
+    `);
+  } catch (dbErr: any) {
+    console.warn(`⚠️ [UserProfileService]: Database query failed (${dbErr.message || dbErr}). Falling back to blueprint profiles.`);
+    return [HRUTIN_BLUEPRINT_PROFILE];
+  }
 
-  if (!usersRes.rows || usersRes.rows.length === 0) {
-    return [];
+  if (!usersRes || !usersRes.rows || usersRes.rows.length === 0) {
+    return [HRUTIN_BLUEPRINT_PROFILE];
   }
 
   // Pre-load all active resumes

@@ -105,6 +105,13 @@ export class GreenhouseAdapter implements ATSAdapter {
     const fields = preExtractedFields || await this.extractFields(page);
     console.log(`📋 [GreenhouseAdapter]: Processing ${fields.length} form fields for candidate ${profile.firstName} ${profile.lastName}...`);
 
+    // Upload Resume early
+    if (profile.resumePath) {
+      await this.uploadResume(page, profile.resumePath).catch((err: any) => {
+        console.warn("⚠️ [GreenhouseAdapter]: Resume upload error:", err.message);
+      });
+    }
+
     // Extract job details for intelligent contextual answering
     const jobDetails = await this.extractJob(page);
 
@@ -429,6 +436,14 @@ export class GreenhouseAdapter implements ATSAdapter {
     }, comboboxId);
 
     await pageObj.waitForTimeout(300);
+
+    // Ensure flyout toggle button is clicked if menu not opened yet
+    const toggleBtn = combobox.locator("xpath=ancestor::*[contains(@class, 'select')]").locator("button[aria-label='Toggle flyout'], .select__indicators").first();
+    if (await toggleBtn.count() > 0) {
+      await toggleBtn.click({ force: true }).catch(() => {});
+      await pageObj.waitForTimeout(300);
+    }
+
     // Also click/focus the input itself
     await combobox.click({ force: true }).catch(() => {});
     await pageObj.waitForTimeout(200);
@@ -526,10 +541,10 @@ export class GreenhouseAdapter implements ATSAdapter {
         const wantsNo = targetValue.toLowerCase() === "no";
         searchTerm = wantsNo ? "No" : "Yes";
         matchFn = wantsNo ? (opt) => /^no$/i.test(opt.trim()) : (opt) => /^yes$/i.test(opt.trim());
-      } else if (normLabel.includes("privacy notice") || normLabel.includes("acknowledge") || normLabel.includes("privacy policy")) {
-        // Only option: "Acknowledge/Confirm" — no "Yes"
-        searchTerm = "Acknowledge";
-        matchFn = (opt) => /acknowledge|confirm/i.test(opt);
+      } else if (normLabel.includes("privacy notice") || normLabel.includes("acknowledge") || normLabel.includes("privacy policy") || normLabel.includes("i agree") || normLabel.includes("by selecting")) {
+        // Options: "I agree" or "Acknowledge/Confirm"
+        searchTerm = normLabel.includes("i agree") || normLabel.includes("agree") ? "I agree" : "Acknowledge";
+        matchFn = (opt) => /agree|acknowledge|confirm/i.test(opt);
       } else if (normLabel.includes("double") || normLabel.includes("ensuring accuracy") || normLabel.includes("double-check")) {
         // Only option: "I have reviewed and confirmed that all the information provided is accurate and complete."
         // Use "I have" as search (start of option text) so React-Select shows it

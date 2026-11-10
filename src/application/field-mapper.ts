@@ -113,12 +113,19 @@ export function mapLabelToProfileKey(label: string): keyof UserProfile | null {
     return "githubUrl";
   }
 
-  // Portfolio mappings
+  // Portfolio & General Links mappings
   if (
     norm.includes("portfolio") ||
     norm.includes("website") ||
     norm.includes("personal site") ||
-    norm.includes("personal link")
+    norm.includes("personal link") ||
+    norm === "links" ||
+    norm === "link" ||
+    norm === "social links" ||
+    norm.includes("social link") ||
+    norm.includes("profile link") ||
+    norm.includes("other link") ||
+    norm.includes("online profile")
   ) {
     return "portfolioUrl";
   }

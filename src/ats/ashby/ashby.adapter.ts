@@ -1,4 +1,5 @@
 import path from "path";
+import fs from "fs";
 import { Page, Frame } from "playwright";
 import { ATSAdapter, FormField, JobDetails, SubmissionResult, UserProfile } from "../ats.interface";
 import { mapLabelToProfileKey, normalizeLabel } from "../../application/field-mapper";
@@ -157,6 +158,26 @@ export class AshbyAdapter implements ATSAdapter {
           { timeout: 8000 }
         ).catch(() => console.warn("⚠️ [AshbyAdapter]: Timed out waiting for form elements to appear."));
         fields = await this.extractFields(page);
+      }
+
+      // Upload Resume on Step 1 if present
+      if (pageIndex === 1 && profile.resumePath) {
+        try {
+          const resolvedResume = resolveLocalResumePath(profile.resumePath) || profile.resumePath;
+          if (fs.existsSync(resolvedResume)) {
+            console.log(`📎 [AshbyAdapter]: Uploading resume: ${resolvedResume}`);
+            const fileInputs = target.locator("input[type='file']");
+            const fileCount = await fileInputs.count();
+            for (let i = 0; i < fileCount; i++) {
+              await fileInputs.nth(i).setInputFiles(resolvedResume).catch(() => {});
+              await fileInputs.nth(i).evaluate(el => el.dispatchEvent(new Event('change', { bubbles: true }))).catch(() => {});
+            }
+            console.log(`✅ [AshbyAdapter]: Resume uploaded successfully to ${fileCount} file input(s).`);
+            await page.waitForTimeout(1500);
+          }
+        } catch (upErr: any) {
+          console.warn("⚠️ [AshbyAdapter]: Error uploading resume:", upErr.message);
+        }
       }
 
       // 0. Fetch previously saved answers for this user

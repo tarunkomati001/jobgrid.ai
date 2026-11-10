@@ -106,7 +106,29 @@ export class LeverAdapter implements ATSAdapter {
     };
   }
 
+  private async ensureApplicationPage(page: Page): Promise<void> {
+    const formVisible = (await page.$(".application-form, #application-form, input[name='name']")) !== null;
+    if (!formVisible) {
+      console.log("➡️ [LeverAdapter]: Application form not yet visible. Looking for 'Apply' button...");
+      const applyBtn = page.locator("a[href*='/apply'], a:has-text('Apply for this job'), a:has-text('Apply'), button:has-text('Apply')").first();
+      if (await applyBtn.count() > 0) {
+        console.log("➡️ [LeverAdapter]: Clicking 'Apply for this job'...");
+        await applyBtn.click().catch(() => {});
+        await page.waitForTimeout(2000);
+      } else {
+        const curUrl = page.url();
+        if (!curUrl.includes("/apply")) {
+          const applyUrl = curUrl.replace(/\/$/, "") + "/apply";
+          console.log(`➡️ [LeverAdapter]: Navigating to apply URL: ${applyUrl}`);
+          await page.goto(applyUrl, { waitUntil: "domcontentloaded", timeout: 20000 }).catch(() => {});
+        }
+      }
+      await page.waitForSelector("input[name='name'], .application-form", { timeout: 10000 }).catch(() => {});
+    }
+  }
+
   async extractFields(page: Page): Promise<FormField[]> {
+    await this.ensureApplicationPage(page);
     return page.evaluate(() => {
       const results: FormField[] = [];
 
@@ -194,9 +216,17 @@ export class LeverAdapter implements ATSAdapter {
     _fields?: FormField[]
   ): Promise<void> {
     console.log("🚀 [LeverAdapter]: Initiating Lever Form Filling...");
+    await this.ensureApplicationPage(page);
     await injectCursorVisualizer(page).catch(() => {});
     await injectVisualHUD(page).catch(() => {});
     await updateHUDStatus(page, "Filling Lever Application...", "Setting candidate details", "info", 20).catch(() => {});
+
+    // Upload Resume early so parseResume can trigger if needed
+    if (profile.resumePath) {
+      await this.uploadResume(page, profile.resumePath).catch((err: any) => {
+        console.warn("⚠️ [LeverAdapter]: Resume upload error:", err.message);
+      });
+    }
 
     // Helper: humanType with natural inter-key delays and keystroke telemetry
     const fillTextInput = async (selector: string, value: string) => {

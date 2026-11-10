@@ -95,8 +95,20 @@ export function suggestAnswerForQuestion(
     return isUSBased ? "Yes" : "No";
   }
 
-  // Cover Letter / Statement of interest (Dynamic for candidate)
-  if (norm.includes("cover letter") || norm.includes("letter") || norm.includes("statement of interest") || norm.includes("tell us why you want") || norm.includes("join our team") || norm.includes("why join")) {
+  // Cover Letter / Statement of interest / Why company (Dynamic for candidate)
+  if (
+    norm.includes("cover letter") ||
+    norm.includes("letter") ||
+    norm.includes("statement of interest") ||
+    norm.includes("tell us why you want") ||
+    norm.includes("join our team") ||
+    norm.includes("why join") ||
+    norm.startsWith("why ") ||
+    norm.includes("why do you want to work")
+  ) {
+    if (job?.company && norm.startsWith("why ")) {
+      return `I have followed ${job.company}'s innovative product development with great admiration. My technical background in full-stack AI development aligns directly with your mission, and I am eager to contribute to building high-performance, user-centric software that makes a meaningful impact for your users.`;
+    }
     return profile ? generateCoverLetterText(profile, job) : "I am writing to express my strong interest in this position and contribute immediately with my technical expertise.";
   }
 
@@ -151,8 +163,17 @@ export function suggestAnswerForQuestion(
   if (norm.includes("github")) {
     return profile?.githubUrl || "https://github.com/hrutinnammi";
   }
-  if (norm.includes("portfolio") || norm.includes("website") || norm.includes("personal site")) {
-    return profile?.portfolioUrl || profile?.githubUrl || "https://hrutinnammi.dev";
+  if (
+    norm.includes("portfolio") ||
+    norm.includes("website") ||
+    norm.includes("personal site") ||
+    norm === "links" ||
+    norm === "link" ||
+    norm === "social links" ||
+    norm.includes("social link") ||
+    norm.includes("other link")
+  ) {
+    return profile?.portfolioUrl || profile?.linkedinUrl || "https://hrutinnammi.dev";
   }
 
   // Gender & Demographics
@@ -512,6 +533,24 @@ export async function generateAnswerForQuestion(
         return val;
       }
     } catch (e) {}
+  }
+
+  // Universal Screening Agreements & Privacy Notices
+  if (
+    normQ.includes("by selecting") ||
+    normQ.includes("i agree") ||
+    normQ.includes("privacy notice") ||
+    normQ.includes("privacy policy") ||
+    normQ.includes("consent") ||
+    normQ.includes("terms") ||
+    normQ.includes("acknowledge") ||
+    normQ.includes("understand that the info")
+  ) {
+    if (options && options.length > 0) {
+      const match = options.find(o => /agree|yes|confirm|acknowledge|consent/i.test(o));
+      if (match) return match;
+    }
+    return "I agree";
   }
 
   // Universal Deterministic US Work Authorization & Visa Sponsorship rules (Textarea, Input, Dropdown, Radio)

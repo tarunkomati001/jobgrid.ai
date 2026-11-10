@@ -276,15 +276,16 @@ async function main() {
     ];
   } else if (isWorkableOnly) {
     console.log("🎯 Filtering queued jobs strictly for WORKABLE ATS only...");
-    const jobsRes = await db.query("SELECT DISTINCT url FROM jobs WHERE (ats = 'WORKABLE' OR url LIKE '%workable.com%') ORDER BY url ASC");
-    urls = Array.from(new Set(jobsRes.rows.map((row: any) => row.url)));
-    if (urls.length === 0) {
-      urls = [
-        "https://apply.workable.com/rokt/j/7219AFDA7F/apply/",
-        "https://apply.workable.com/rokt/j/8C792C8AC9/apply/",
-        "https://apply.workable.com/rokt/j/33E0F9B588/apply/"
-      ];
-    }
+    let dbUrls: string[] = [];
+    try {
+      const jobsRes = await db.query("SELECT DISTINCT url FROM jobs WHERE (ats = 'WORKABLE' OR url LIKE '%workable.com%') ORDER BY url ASC");
+      dbUrls = Array.from(new Set(jobsRes.rows.map((row: any) => row.url)));
+    } catch (e) {}
+    urls = [
+      "https://apply.workable.com/multimediallc/j/24DBCDDF27/apply",
+      "https://apply.workable.com/rokt/j/7219AFDA7F/apply/",
+      ...dbUrls
+    ];
   } else if (isLeverOnly) {
     console.log("🎯 Filtering queued jobs strictly for LEVER ATS only...");
     let dbUrls: string[] = [];
@@ -293,9 +294,9 @@ async function main() {
       dbUrls = Array.from(new Set(jobsRes.rows.map((row: any) => row.url)));
     } catch (e) {}
     urls = [
+      "https://jobs.lever.co/leverdemo/ad208490-4052-4f91-a57e-433f2d1e484b",
+      "https://jobs.lever.co/palantir/10dfc8bc-99ad-4ca2-ab76-853cb90a92c2",
       "https://jobs.lever.co/gohighlevel/ce928065-f2cf-4412-a5e7-32677e6f4e4b/apply",
-      "https://jobs.lever.co/kinsta/44982157-55fc-42e7-b5ce-3f8bfc3f65c7/apply",
-      "https://jobs.lever.co/kinsta/caadac8e-381f-42a2-9801-202b351fff28/apply",
       ...dbUrls
     ];
   } else if (isWorkdayOnly) {
@@ -316,15 +317,22 @@ async function main() {
       dbUrls = Array.from(new Set(jobsRes.rows.map((row: any) => row.url)));
     } catch (e) {}
     urls = [
+      "https://job-boards.greenhouse.io/reddit/jobs/8275952",
+      "https://job-boards.greenhouse.io/reddit/jobs/8143677",
       "https://boards.greenhouse.io/cleo/jobs/4491104004",
-      "https://boards.greenhouse.io/smartsheet/jobs/5049377004",
-      "https://job-boards.greenhouse.io/reddit/jobs/8282760",
       ...dbUrls
     ];
   } else if (isAshbyOnly) {
     console.log("🎯 Filtering queued jobs strictly for ASHBY ATS only...");
-    const jobsRes = await db.query("SELECT DISTINCT url FROM jobs WHERE (ats = 'ASHBY' OR url LIKE '%ashbyhq.com%') AND url != 'https://ashbyhq.com/test-job' ORDER BY url ASC");
-    urls = Array.from(new Set(jobsRes.rows.map((row: any) => row.url)));
+    let dbUrls: string[] = [];
+    try {
+      const jobsRes = await db.query("SELECT DISTINCT url FROM jobs WHERE (ats = 'ASHBY' OR url LIKE '%ashbyhq.com%') AND url != 'https://ashbyhq.com/test-job' ORDER BY url ASC");
+      dbUrls = Array.from(new Set(jobsRes.rows.map((row: any) => row.url)));
+    } catch (e) {}
+    urls = [
+      "https://jobs.ashbyhq.com/whoop/d31312c2-236a-45f1-8da7-61a7ca8d1622/application",
+      ...dbUrls
+    ];
   } else if (isSmartRecruitersOnly) {
     console.log("🎯 Filtering queued jobs strictly for SMARTRECRUITERS ATS only...");
     const jobsRes = await db.query("SELECT DISTINCT url FROM jobs WHERE (ats = 'SMARTRECRUITERS' OR url LIKE '%smartrecruiters.com%') ORDER BY url ASC");
