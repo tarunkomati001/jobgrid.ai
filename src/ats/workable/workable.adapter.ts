@@ -185,13 +185,14 @@ export class WorkableAdapter implements ATSAdapter {
       await page.waitForSelector("input#firstname, input[name='firstname'], [data-ui='application-form']", { timeout: 10000 }).catch(() => {});
     }
 
-    // 1. Accept cookies if present
+    // 1. Accept cookies and remove any blocking modal backdrops
     try {
-      const cookieBtn = page.locator("button:has-text('Accept'), button:has-text('Allow all'), [data-ui='cookie-consent-accept']").first();
-      if (await cookieBtn.count() > 0 && await cookieBtn.isVisible()) {
-        await cookieBtn.click();
-        await page.waitForTimeout(500);
-      }
+      await page.evaluate(() => {
+        const btn = Array.from(document.querySelectorAll("button")).find(b => /accept|agree|allow|got it/i.test(b.textContent || ""));
+        if (btn) btn.click();
+        document.querySelectorAll("[data-ui='backdrop'], [data-ui='cookie-consent'], .modal-backdrop").forEach(el => el.remove());
+      });
+      await page.waitForTimeout(500);
     } catch (e) {}
 
     // Upload Resume early so parser can work if enabled
@@ -281,22 +282,20 @@ export class WorkableAdapter implements ATSAdapter {
 
           if (isUSPhone && !isCurrentUS) {
             console.log("🇺🇸 [WorkableAdapter]: Selecting United States (+1) phone country...");
-            // Must dispatch mouse events to open intl-tel-input popup
-            await flagBtn.evaluate(el => {
-              el.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
-              el.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
-              el.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-            }).catch(() => flagBtn.click({ force: true }));
-            await page.waitForTimeout(400);
+            await flagBtn.scrollIntoViewIfNeeded().catch(() => {});
+            await flagBtn.focus().catch(() => {});
+            await page.keyboard.press("Space").catch(() => {});
+            await page.waitForTimeout(350);
 
-            // Locate and select US item in dropdown list via dispatch
+            // Locate and select US item in dropdown list via mouse events & click
             await page.evaluate(() => {
-              const us = document.querySelector("#iti-0__item-us, li[data-iso2='us'], li[data-country-code='us'], li[data-dial-code='1']");
+              const us = document.querySelector("#iti-0__item-us, li[data-iso2='us'], li[data-country-code='us'], li[data-dial-code='1']") as HTMLElement | null;
               if (us) {
-                (us as HTMLElement).scrollIntoView?.();
-                us.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
-                us.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
-                us.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+                us.scrollIntoView?.();
+                us.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true }));
+                us.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, cancelable: true }));
+                us.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
+                us.click?.();
               }
             }).catch(() => {});
             await page.waitForTimeout(300);
@@ -1007,20 +1006,19 @@ export class WorkableAdapter implements ATSAdapter {
         const text = (await finalFlag.innerText().catch(() => "")) || "";
         if (!aria.includes("(+1)") && !aria.includes("United States") && !text.includes("+1")) {
           console.log("🧹 [Workable Sweep]: Correcting phone flag to United States (+1)...");
-          await finalFlag.evaluate(el => {
-            el.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
-            el.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
-            el.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-          }).catch(() => finalFlag.click({ force: true }));
-          await page.waitForTimeout(400);
+          await finalFlag.scrollIntoViewIfNeeded().catch(() => {});
+          await finalFlag.focus().catch(() => {});
+          await page.keyboard.press("Space").catch(() => {});
+          await page.waitForTimeout(350);
 
           await page.evaluate(() => {
-            const us = document.querySelector("#iti-0__item-us, li[data-iso2='us'], li[data-country-code='us'], li[data-dial-code='1']");
+            const us = document.querySelector("#iti-0__item-us, li[data-iso2='us'], li[data-country-code='us'], li[data-dial-code='1']") as HTMLElement | null;
             if (us) {
-              (us as HTMLElement).scrollIntoView?.();
-              us.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
-              us.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
-              us.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+              us.scrollIntoView?.();
+              us.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true }));
+              us.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, cancelable: true }));
+              us.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
+              us.click?.();
             }
           }).catch(() => {});
           await page.waitForTimeout(300);

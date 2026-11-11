@@ -293,19 +293,21 @@ export class WorkdayAdapter implements ATSAdapter {
     // 2. Primary user configured email: tarunkomati2@gmail.com
     // 3. Profile email and fallback
     const allKnownCreds = await getAllWorkdayCredentials(domain);
+    const primaryCandidateEmail = profile.email || "babufakemail@gmail.com";
     const candidateEmails = Array.from(new Set([
       ...allKnownCreds.map(c => c.email),
+      primaryCandidateEmail,
+      "babufakemail@gmail.com",
       defaultEmail,
       "tarunkomati2@gmail.com",
-      profile.email,
       "babu020106@gmail.com",
       "chetanmidde@gmail.com",
-      "komatitarun@yahoo.com",
-      "babufakemail@gmail.com"
+      "komatitarun@yahoo.com"
     ].filter(Boolean))) as string[];
 
     const candidatePasswords = Array.from(new Set([
       defaultPassword,
+      "ClucoPass@2026!Secure",
       "Tarun@143",
       ...allKnownCreds.map(c => c.password),
       "Tarun@2006",
@@ -357,15 +359,16 @@ export class WorkdayAdapter implements ATSAdapter {
       }
       await page.waitForSelector("input[data-automation-id='verifyPassword']", { timeout: 15000 }).catch(() => {});
 
-      const emailsToRegister = [
+      const emailsToRegister = Array.from(new Set([
+        primaryCandidateEmail,
+        "babufakemail@gmail.com",
         "babu020106@gmail.com",
         "chetanmidde@gmail.com",
-        "komatitarun@yahoo.com",
-        profile.email || "babufakemail@gmail.com"
-      ];
+        "komatitarun@yahoo.com"
+      ].filter(Boolean))) as string[];
 
       let registeredEmail: string | null = null;
-      const registeredPassword = defaultPassword;
+      const registeredPassword = defaultPassword || "Tarun@143";
 
       for (const regEmail of emailsToRegister) {
         console.log(`  Submitting candidate account registration (${regEmail})...`);
@@ -411,26 +414,52 @@ export class WorkdayAdapter implements ATSAdapter {
           await this.clickWorkdayButton(page, createSubmitBtn);
         }
 
-        await page.waitForTimeout(6000);
+        await page.waitForTimeout(5000);
 
+        // Check if account already exists on this tenant
         const alreadyExists = await page.evaluate(() => {
           const text = (document.body?.innerText || "").toLowerCase();
           return text.includes("already exists") || text.includes("please sign in");
         }).catch(() => false);
 
         if (alreadyExists) {
-          console.log(`  Notice: Account with ${regEmail} already exists. Trying next candidate email...`);
+          console.log(`  Notice: Account ${regEmail} already exists on this Workday tenant. Switching to Sign In...`);
+          const signInLink = page.locator("button[data-automation-id='signInLink'], a[data-automation-id='signInLink'], button:has-text('Sign In'), a:has-text('Sign In')").first();
+          if (await signInLink.count() > 0 && await signInLink.isVisible().catch(() => false)) {
+            await this.clickWorkdayButton(page, signInLink);
+            await page.waitForTimeout(2000);
+          }
+          const signedIn = await this.attemptSignInWithFallback(page, domain, regEmail, candidatePasswords);
+          if (signedIn) {
+            console.log(`🎉 [WorkdayAdapter]: Successfully signed in with existing account ${regEmail}!`);
+            authenticatedEmail = regEmail;
+            break;
+          }
           continue;
+        }
+
+        // Check if registration automatically transitioned into wizard
+        const autoLoggedIn = await page.evaluate(() => {
+          const url = window.location.href;
+          if (url.includes("/login")) return false;
+          return !!document.querySelector("input[type='file'], [data-automation-id='file-upload-drop-zone'], [data-automation-id='bottom-navigation-next-button'], [data-automation-id='pageHeader'], input[id*='firstName']");
+        }).catch(() => false);
+
+        if (autoLoggedIn) {
+          console.log(`🎉 [WorkdayAdapter]: Account ${regEmail} created and automatically loaded application wizard!`);
+          await saveWorkdayCredentials(domain, regEmail, registeredPassword);
+          authenticatedEmail = regEmail;
+          break;
         }
 
         registeredEmail = regEmail;
         break;
       }
 
-      if (!registeredEmail) {
+      if (!authenticatedEmail && !registeredEmail) {
         const tenantSlug = domain.split(".")[0];
         const aliasEmail = `babu020106+${tenantSlug}${Date.now().toString().slice(-4)}@gmail.com`;
-        console.log(`  All candidate emails registered. Creating tenant alias account: ${aliasEmail}...`);
+        console.log(`  Creating tenant alias account: ${aliasEmail}...`);
         const emailInp = page.locator("input[data-automation-id='email']:not([name='website'])").first();
         await emailInp.fill(aliasEmail).catch(() => {});
         const pwInp = page.locator("input[data-automation-id='password']:not([name='website'])").first();
@@ -447,47 +476,46 @@ export class WorkdayAdapter implements ATSAdapter {
         registeredEmail = aliasEmail;
       }
 
-      // User instruction: "once account created click on login or signin , but here its clicking create account , it should create account and login with the details only"
-      console.log(`\n🔑 Account created with ${registeredEmail}! Waiting for Sign In / Login form to mount on redirect...`);
-      await updateHUDStatus(page, "Signing In", `Logging in with created account (${registeredEmail})...`, "info", 30);
+      // If registered but not yet logged in, log in with the new credentials
+      if (!authenticatedEmail && registeredEmail) {
+        console.log(`\n🔑 Account created with ${registeredEmail}! Signing in with new credentials...`);
+        await updateHUDStatus(page, "Signing In", `Logging in with created account (${registeredEmail})...`, "info", 30);
 
-      // Wait up to 20s for the redirect or for the login elements to mount
-      await page.waitForSelector(
-        "input[data-automation-id='email'], input[data-automation-id='userName'], button[data-automation-id='signInSubmitButton'], [data-automation-id='signInLink']",
-        { timeout: 20000 }
-      ).catch(() => {});
-      await page.waitForTimeout(2000);
+        // Wait for redirect or login elements
+        await page.waitForTimeout(2000);
 
-      // If a Sign In link is visible, click it
-      const signInLoc = page.locator("[data-automation-id='signInLink'], a:has-text('Sign In'), button:has-text('Sign In')").first();
-      if (await signInLoc.count() > 0 && await signInLoc.isVisible().catch(() => false)) {
-        console.log("  Clicking Sign In link on redirected page...");
-        await signInLoc.click({ force: true }).catch(() => {});
-        await page.waitForTimeout(2500);
+        const signInLoc = page.locator("[data-automation-id='signInLink'], a:has-text('Sign In'), button:has-text('Sign In')").first();
+        if (await signInLoc.count() > 0 && await signInLoc.isVisible().catch(() => false)) {
+          console.log("  Clicking Sign In link on redirected page...");
+          await signInLoc.click({ force: true }).catch(() => {});
+          await page.waitForTimeout(2000);
+        }
+
+        const loginEmailInp = page.locator("input[data-automation-id='email']:not([name='website']), input[data-automation-id='userName']:not([name='website']), input[name='userName']").first();
+        if (await loginEmailInp.count() > 0 && await loginEmailInp.isVisible().catch(() => false)) {
+          console.log(`  Filling login form with created credentials (${registeredEmail} / ${registeredPassword})...`);
+          await loginEmailInp.focus().catch(() => {});
+          await loginEmailInp.fill(registeredEmail).catch(() => {});
+          await loginEmailInp.press("Tab").catch(() => {});
+
+          const loginPwInp = page.locator("input[data-automation-id='password']:not([name='website']), input[name='password']").first();
+          await loginPwInp.focus().catch(() => {});
+          await loginPwInp.fill(registeredPassword).catch(() => {});
+
+          const loginSubmitBtn = page.locator("button[data-automation-id='signInSubmitButton'], [data-automation-id='click_filter'][aria-label*='Sign In']").first();
+          console.log("  Clicking Sign In submit button...");
+          await this.clickWorkdayButton(page, loginSubmitBtn);
+          await page.waitForTimeout(6000);
+        }
+
+        await saveWorkdayCredentials(domain, registeredEmail, registeredPassword);
+        authenticatedEmail = registeredEmail;
       }
 
-      // Fill login inputs
-      const loginEmailInp = page.locator("input[data-automation-id='email']:not([name='website']), input[data-automation-id='userName']:not([name='website']), input[name='userName']").first();
-      await loginEmailInp.waitFor({ state: "visible", timeout: 15000 }).catch(() => {});
-
-      if (await loginEmailInp.count() > 0 && await loginEmailInp.isVisible().catch(() => false)) {
-        console.log(`  Filling login form with created credentials (${registeredEmail} / ${registeredPassword})...`);
-        await loginEmailInp.focus().catch(() => {});
-        await loginEmailInp.fill(registeredEmail).catch(() => {});
-        await loginEmailInp.press("Tab").catch(() => {});
-
-        const loginPwInp = page.locator("input[data-automation-id='password']:not([name='website']), input[name='password']").first();
-        await loginPwInp.focus().catch(() => {});
-        await loginPwInp.fill(registeredPassword).catch(() => {});
-
-        const loginSubmitBtn = page.locator("button[data-automation-id='signInSubmitButton'], [data-automation-id='click_filter'][aria-label*='Sign In']").first();
-        console.log("  Clicking Sign In submit button...");
-        await this.clickWorkdayButton(page, loginSubmitBtn);
-        await page.waitForTimeout(6000);
+      if (registeredEmail) {
+        await saveWorkdayCredentials(domain, registeredEmail, registeredPassword);
+        authenticatedEmail = registeredEmail;
       }
-
-      await saveWorkdayCredentials(domain, registeredEmail, registeredPassword);
-      authenticatedEmail = registeredEmail;
     }
 
     // Check if redirected to job details page after authentication (Workday redirect behavior)
@@ -1907,28 +1935,40 @@ export class WorkdayAdapter implements ATSAdapter {
     const clickedInDom = await page.evaluate((headingText) => {
       const headings = Array.from(document.querySelectorAll("h1, h2, h3, h4, h5, [role='heading']"));
       const h = headings.find(el => el.textContent?.trim().toLowerCase().includes(headingText.toLowerCase()));
-      if (!h) return false;
+      if (h) {
+        // Look in next siblings
+        let next = h.nextElementSibling;
+        while (next) {
+          const btn = next.querySelector("button") || (next.tagName === "BUTTON" ? next : null);
+          if (btn && (btn.textContent?.trim().includes("Add") || btn.getAttribute("data-automation-id") === "add-button" || btn.getAttribute("data-automation-id") === "Add" || btn.getAttribute("data-automation-id") === "Add Another")) {
+            (btn as HTMLButtonElement).click();
+            return true;
+          }
+          next = next.nextElementSibling;
+        }
 
-      // Look in next siblings
-      let next = h.nextElementSibling;
-      while (next) {
-        const btn = next.querySelector("button") || (next.tagName === "BUTTON" ? next : null);
-        if (btn && (btn.textContent?.trim().includes("Add") || btn.getAttribute("data-automation-id") === "add-button" || btn.getAttribute("data-automation-id") === "Add")) {
+        // Look in parent container
+        const parent = h.closest("section, fieldset, div[data-automation-id*='Section'], div");
+        if (parent) {
+          const btn = parent.querySelector("button[data-automation-id='add-button'], button[data-automation-id='Add'], button[data-automation-id='Add Another'], button[data-automation-id*='add'], button");
+          if (btn && (btn.textContent?.trim().includes("Add") || btn.getAttribute("data-automation-id")?.includes("add") || btn.getAttribute("data-automation-id") === "Add")) {
+            (btn as HTMLButtonElement).click();
+            return true;
+          }
+        }
+      }
+
+      // Check section containers directly by automation ID
+      const slug = headingText.toLowerCase().includes("work") ? "workExperience" : (headingText.toLowerCase().includes("edu") ? "education" : "website");
+      const section = document.querySelector(`div[data-automation-id*='${slug}'], section[data-automation-id*='${slug}']`);
+      if (section) {
+        const btn = section.querySelector("button[data-automation-id='Add'], button[data-automation-id='Add Another'], button[data-automation-id*='add'], button");
+        if (btn && (btn.textContent?.trim().includes("Add") || btn.getAttribute("data-automation-id")?.includes("Add"))) {
           (btn as HTMLButtonElement).click();
           return true;
         }
-        next = next.nextElementSibling;
       }
 
-      // Look in parent container
-      const parent = h.closest("section, fieldset, div");
-      if (parent) {
-        const btn = parent.querySelector("button[data-automation-id='add-button'], button[data-automation-id='Add'], button[data-automation-id*='add'], button");
-        if (btn && (btn.textContent?.trim().includes("Add") || btn.getAttribute("data-automation-id") === "add-button")) {
-          (btn as HTMLButtonElement).click();
-          return true;
-        }
-      }
       return false;
     }, sectionHeading).catch(() => false);
 
@@ -1937,7 +1977,7 @@ export class WorkdayAdapter implements ATSAdapter {
     // Playwright fallback
     const slug = sectionHeading.toLowerCase().replace(/\s+/g, "-");
     const loc = page.locator(
-      `button[data-automation-id='add-${slug}'], button[data-automation-id='${slug}-add'], button[data-automation-id='add-button']`
+      `button[data-automation-id='add-${slug}'], button[data-automation-id='${slug}-add'], button[data-automation-id='Add'], button[data-automation-id='Add Another'], button[data-automation-id='add-button'], button:has-text('Add ${sectionHeading}'), button:has-text('Add')`
     ).first();
     if (await loc.count() > 0 && await loc.isVisible().catch(() => false)) {
       await this.clickWorkdayButton(page, loc);
