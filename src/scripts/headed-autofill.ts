@@ -624,22 +624,22 @@ async function main() {
       }
 
       let targetUrl = url;
-      // If Jobvite URL has /job/ without /apply, append /apply to go directly to application form
-      if (targetUrl.includes("jobvite.com") && targetUrl.includes("/job/") && !targetUrl.includes("/apply")) {
-        targetUrl = targetUrl.replace(/\/?$/, "/apply");
-      }
-      // If Breezy HR URL has /p/ without /apply, append /apply to go directly to application form
-      if (targetUrl.includes("breezy.hr") && targetUrl.includes("/p/") && !targetUrl.includes("/apply")) {
-        targetUrl = targetUrl.replace(/\/?$/, "/apply");
-      }
-      // If Lever URL without /apply, append /apply to go directly to the application form
-      if (targetUrl.includes("lever.co") && !targetUrl.includes("/apply")) {
-        targetUrl = targetUrl.replace(/\/?$/, "/apply");
-      }
-      // If Recruitee URL without /c/new, append /c/new to go directly to the application form
-      if ((targetUrl.includes("recruitee.com") || targetUrl.includes("/o/")) && !targetUrl.includes("/c/new")) {
-        targetUrl = targetUrl.replace(/\/?$/, "/c/new");
-      }
+      try {
+        const parsed = new URL(targetUrl);
+        if (targetUrl.includes("jobvite.com") && parsed.pathname.includes("/job/") && !parsed.pathname.includes("/apply")) {
+          parsed.pathname = parsed.pathname.replace(/\/+$/, "") + "/apply";
+          targetUrl = parsed.toString();
+        } else if (targetUrl.includes("breezy.hr") && parsed.pathname.includes("/p/") && !parsed.pathname.includes("/apply")) {
+          parsed.pathname = parsed.pathname.replace(/\/+$/, "") + "/apply";
+          targetUrl = parsed.toString();
+        } else if (targetUrl.includes("lever.co") && !parsed.pathname.includes("/apply")) {
+          parsed.pathname = parsed.pathname.replace(/\/+$/, "") + "/apply";
+          targetUrl = parsed.toString();
+        } else if ((targetUrl.includes("recruitee.com") || parsed.pathname.includes("/o/")) && !parsed.pathname.includes("/c/new")) {
+          parsed.pathname = parsed.pathname.replace(/\/+$/, "") + "/c/new";
+          targetUrl = parsed.toString();
+        }
+      } catch (e) {}
       // If Paylocity Details URL, convert directly to Apply URL for fast direct loading
       if (targetUrl.toLowerCase().includes("paylocity.com") && targetUrl.toLowerCase().includes("/details/")) {
         const paylocityMatch = targetUrl.match(/details\/(\d+)/i);

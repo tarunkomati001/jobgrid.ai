@@ -196,18 +196,22 @@ export class BreezyHRAdapter implements ATSAdapter {
 
         let label = "";
         if (id) {
-          const l = document.querySelector(`label[for="${id}"]`);
+          const l = document.querySelector(`label[for="${CSS.escape(id)}"]`);
           if (l) label = l.textContent?.trim() || "";
         }
         if (!label) {
+          const qContainer = inp.closest(".question, li.question, li.experience, li.education, li, .form-group, fieldset");
+          const headingEl = qContainer?.querySelector("h1, h2, h3, h4, legend, label");
+          if (headingEl) label = headingEl.textContent?.trim() || "";
+        }
+        if (!label) {
           label = inp.closest("label")?.textContent?.trim() ||
-                  inp.closest(".form-group, .question, div")?.querySelector("label, h3, h4")?.textContent?.trim() ||
                   inp.getAttribute("placeholder") ||
                   name || id || `field_${idx}`;
         }
 
         // Clean label
-        label = label.replace(/\s+/g, " ").trim();
+        label = label.replace(/\s+/g, " ").replace(/\*$/, "").trim();
 
         let type: FormField["type"] = "text";
         if (typeAttr === "textarea" || inp.tagName.toLowerCase() === "textarea") type = "textarea";
@@ -655,13 +659,18 @@ export class BreezyHRAdapter implements ATSAdapter {
       if (currentVal && currentVal.trim()) continue;
 
       const label = await inp.evaluate((el: HTMLElement) => {
-        return (el.closest(".question, .form-group, div")?.querySelector("h3, h4, label")?.textContent || "").replace(/\s+/g, " ").trim();
+        const q = el.closest(".question, li.question, li, .form-group, fieldset");
+        return (q?.querySelector("h1, h2, h3, h4, legend, label")?.textContent || "").replace(/\s+/g, " ").replace(/\*$/, "").trim();
       }).catch(() => "");
 
       const normLabel = label.toLowerCase();
       let answer = "";
 
-      if (normLabel.includes("gpa")) {
+      if (normLabel.includes("referred") && (normLabel.includes("none") || normLabel.includes("name here"))) {
+        answer = "NONE";
+      } else if (normLabel.includes("graduation date") || normLabel.includes("graduation")) {
+        answer = "2027";
+      } else if (normLabel.includes("gpa")) {
         answer = "3.8";
       } else if (normLabel.includes("username") || normLabel.includes("handle")) {
         answer = `${profile.firstName.toLowerCase()}${profile.lastName.toLowerCase()}`;
@@ -680,7 +689,7 @@ export class BreezyHRAdapter implements ATSAdapter {
     }
 
     // 3. Process Questionnaire Selects (e.g. How did you hear, start date, experience level, phone type, etc.)
-    const questionSelects = page.locator("select[name^='section_'], select[ng-model*='questionnaire'], select");
+    const questionSelects = page.locator("select[name^='section_'], select[ng-model*='questionnaire'], select.options-dropdown");
     const sCount = await questionSelects.count().catch(() => 0);
 
     for (let i = 0; i < sCount; i++) {
@@ -692,45 +701,50 @@ export class BreezyHRAdapter implements ATSAdapter {
       if (currentVal && !currentVal.includes("undefined") && currentVal.trim() !== "") continue;
 
       const label = await sel.evaluate((el: HTMLElement) => {
-        return (el.closest(".question, .form-group, div")?.querySelector("h3, h4, label")?.textContent || "").replace(/\s+/g, " ").trim();
+        const q = el.closest(".question, li.question, li, .form-group, fieldset");
+        return (q?.querySelector("h1, h2, h3, h4, legend, label")?.textContent || "").replace(/\s+/g, " ").replace(/\*$/, "").trim();
       }).catch(() => "");
 
       const normLabel = label.toLowerCase();
       const options = await sel.evaluate((el: HTMLSelectElement) => {
-        return Array.from(el.options).map(o => ({ text: o.text.trim(), value: o.value })).filter(o => o.text && !o.value.includes("undefined"));
+        return Array.from(el.options)
+          .map(o => ({ text: o.text.trim(), value: o.value }))
+          .filter(o => o.text && !o.value.includes("undefined"));
       }).catch(() => []);
 
       if (options.length === 0) continue;
 
-      let chosenVal = options[0].value;
+      let chosenOpt = options[0];
 
-      if (normLabel.includes("hear") || normLabel.includes("source") || normLabel.includes("referred")) {
-        const match = options.find(o => /job site|indeed|linkedin|online/i.test(o.text)) || options[0];
-        chosenVal = match.value;
-      } else if (normLabel.includes("start") || normLabel.includes("notice") || normLabel.includes("immediately")) {
-        const match = options.find(o => /immediately|2-week|two week|soon/i.test(o.text)) || options[0];
-        chosenVal = match.value;
-      } else if (normLabel.includes("full-time") || normLabel.includes("schedule") || normLabel.includes("type")) {
-        const match = options.find(o => /full-time|year-round|regular/i.test(o.text)) || options[0];
-        chosenVal = match.value;
-      } else if (normLabel.includes("experience") || normLabel.includes("years")) {
-        const match = options.find(o => /1-3|3-5|2-4/i.test(o.text)) || options[0];
-        chosenVal = match.value;
-      } else if (normLabel.includes("phone") || normLabel.includes("device") || normLabel.includes("mobile")) {
-        const match = options.find(o => /iphone|android/i.test(o.text)) || options[0];
-        chosenVal = match.value;
+      if (normLabel.includes("hear") || normLabel.includes("source")) {
+        chosenOpt = options.find(o => /job site|indeed|glassdoor|online|social media/i.test(o.text)) || options[0];
+      } else if (normLabel.includes("start work") || normLabel.includes("start")) {
+        chosenOpt = options.find(o => /immediately|2-week/i.test(o.text)) || options[0];
+      } else if (normLabel.includes("type of work") || normLabel.includes("full-time") || normLabel.includes("schedule")) {
+        chosenOpt = options.find(o => /full-time|year-round/i.test(o.text)) || options[0];
+      } else if (normLabel.includes("sales experience") || normLabel.includes("experience")) {
+        chosenOpt = options.find(o => /1-3|no previous/i.test(o.text)) || options[0];
+      } else if (normLabel.includes("phone")) {
+        chosenOpt = options.find(o => /iphone.*recent|android.*recent|iphone|android/i.test(o.text)) || options[0];
+      } else if (normLabel.includes("authorized") || normLabel.includes("background check") || normLabel.includes("drug") || normLabel.includes("english")) {
+        chosenOpt = options.find(o => /^yes$/i.test(o.text)) || options[0];
       } else {
-        const match = options.find(o => /^yes$/i.test(o.text)) || options[0];
-        chosenVal = match.value;
+        const yesMatch = options.find(o => /^yes$/i.test(o.text));
+        chosenOpt = yesMatch || options[0];
       }
 
-      await sel.selectOption(chosenVal).catch(() => {});
+      await sel.selectOption({ label: chosenOpt.text }).catch(async () => {
+        await sel.selectOption(chosenOpt.value).catch(() => {});
+      });
+
       await sel.evaluate((el: HTMLSelectElement, val: string) => {
         el.value = val;
         el.dispatchEvent(new Event('input', { bubbles: true }));
         el.dispatchEvent(new Event('change', { bubbles: true }));
-      }, chosenVal).catch(() => {});
-      console.log(`🔽 [BreezyHRAdapter]: Questionnaire select "${label.slice(0, 35)}" -> "${chosenVal}"`);
+        el.dispatchEvent(new Event('blur', { bubbles: true }));
+      }, chosenOpt.value).catch(() => {});
+
+      console.log(`🔽 [BreezyHRAdapter]: Questionnaire select "${label.slice(0, 40)}" -> "${chosenOpt.text}"`);
     }
   }
 

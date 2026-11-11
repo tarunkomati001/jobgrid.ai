@@ -922,3 +922,4 @@ export class IcimsAdapter implements ATSAdapter {
     };
   }
 }
+
