@@ -410,28 +410,210 @@ export class WorkableAdapter implements ATSAdapter {
       console.log(`✅ [WorkableAdapter]: Portfolio -> ${profile.portfolioUrl || 'https://hrutinnammi.dev'}`);
     }
 
-    // Education fields if present
-    const schoolInput = page.locator("input[name*='school' i], input#school, input[id*='school' i], [data-ui*='school']").first();
-    if (await schoolInput.count() > 0 && await schoolInput.isVisible()) {
-      await fillWithHumanMouse(schoolInput, profile.educations?.[0]?.school || "Parul University");
-    }
-    const degreeInput = page.locator("input[name*='degree' i], input#degree, input[id*='degree' i], [data-ui*='degree']").first();
-    if (await degreeInput.count() > 0 && await degreeInput.isVisible()) {
-      await fillWithHumanMouse(degreeInput, profile.educations?.[0]?.degree || "Bachelor of Technology");
-    }
-    const fieldOfStudyInput = page.locator("input[name*='field_of_study' i], input[name*='major' i], input#field_of_study, [data-ui*='field-of-study']").first();
-    if (await fieldOfStudyInput.count() > 0 && await fieldOfStudyInput.isVisible()) {
-      await fillWithHumanMouse(fieldOfStudyInput, profile.educations?.[0]?.fieldOfStudy || "Computer Science and Engineering");
+    // 3a. Work Experience Section (Structured cards or flat inputs)
+    try {
+      const expSection = page.locator("[data-ui='experience']").first();
+      if (await expSection.count() > 0 && await expSection.isVisible()) {
+        const experiences = profile.experiences && profile.experiences.length > 0 
+          ? profile.experiences 
+          : [{
+              jobTitle: "Full Stack AI Developer",
+              company: "Jobspring",
+              currentlyWorkHere: true,
+              startDate: "2024-01-01",
+              startMonth: "01",
+              startYear: "2024",
+              endDate: "2026-01-01",
+              endMonth: "01",
+              endYear: "2026",
+              description: "Designed and built scalable AI applications and full-stack solutions."
+            }];
+
+        // Check if there is already an open editor or if cards are present
+        const hasExistingCard = await expSection.locator("[data-ui='entry-item'], [data-ui='section-item'], .styles--item").count() > 0;
+        let isEditorOpen = await expSection.locator("input#title, input[name='title']").count() > 0 && await expSection.locator("input#title, input[name='title']").first().isVisible();
+
+        if (!hasExistingCard && !isEditorOpen) {
+          const addExpBtn = expSection.locator("button[data-ui='add-section'], button[aria-label*='Add Experience' i], button:has-text('Add Experience'), button:has-text('Add')").first();
+          if (await addExpBtn.count() > 0 && await addExpBtn.isVisible()) {
+            console.log("💼 [WorkableAdapter]: Clicking + Add Experience button...");
+            await addExpBtn.evaluate(b => {
+              b.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+              b.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
+              b.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+            }).catch(() => addExpBtn.click({ force: true }));
+            await page.waitForTimeout(500);
+            isEditorOpen = true;
+          }
+        }
+
+        if (isEditorOpen) {
+          const exp = experiences[0];
+          console.log(`💼 [WorkableAdapter]: Filling Experience -> ${exp.jobTitle} at ${exp.company}...`);
+
+          const titleInp = expSection.locator("input#title, input[name='title']").first();
+          if (await titleInp.count() > 0 && await titleInp.isVisible()) {
+            await fillWithHumanMouse(titleInp, exp.jobTitle);
+          }
+
+          const companyInp = expSection.locator("input#company, input[name='company']").first();
+          if (await companyInp.count() > 0 && await companyInp.isVisible()) {
+            await fillWithHumanMouse(companyInp, exp.company);
+          }
+
+          const industryInp = expSection.locator("input#industry, input[name='industry']").first();
+          if (await industryInp.count() > 0 && await industryInp.isVisible()) {
+            await fillWithHumanMouse(industryInp, "Technology");
+          }
+
+          const startDateInp = expSection.locator("input[name='start_date']").first();
+          if (await startDateInp.count() > 0 && await startDateInp.isVisible()) {
+            const startVal = exp.startMonth && exp.startYear ? `${exp.startMonth}/${exp.startYear}` : "01/2024";
+            await fillWithHumanMouse(startDateInp, startVal);
+          }
+
+          const endDateInp = expSection.locator("input[name='end_date']").first();
+          if (await endDateInp.count() > 0 && await endDateInp.isVisible()) {
+            const endVal = exp.endMonth && exp.endYear ? `${exp.endMonth}/${exp.endYear}` : "01/2026";
+            await fillWithHumanMouse(endDateInp, endVal);
+          }
+
+          if (exp.currentlyWorkHere) {
+            const currentCheckbox = expSection.locator("input[name='current']").first();
+            if (await currentCheckbox.count() > 0) {
+              await currentCheckbox.evaluate((el: HTMLInputElement) => {
+                el.checked = true;
+                el.dispatchEvent(new Event('input', { bubbles: true }));
+                el.dispatchEvent(new Event('change', { bubbles: true }));
+              }).catch(() => {});
+            }
+          }
+
+          const summaryInp = expSection.locator("textarea#summary, textarea[name='summary']").first();
+          if (await summaryInp.count() > 0 && await summaryInp.isVisible()) {
+            await fillWithHumanMouse(summaryInp, exp.description || "Designed and built scalable AI applications and full-stack solutions.");
+          }
+
+          // Save experience item
+          const saveExpBtn = expSection.locator("button[data-ui='save-section'], button:has-text('Update'), button:has-text('Save')").first();
+          if (await saveExpBtn.count() > 0 && await saveExpBtn.isVisible()) {
+            await saveExpBtn.evaluate(b => {
+              b.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+              b.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
+              b.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+            }).catch(() => saveExpBtn.click({ force: true }));
+            await page.waitForTimeout(500);
+            console.log("✅ [WorkableAdapter]: Experience card saved successfully.");
+          }
+        }
+      } else {
+        // Fallback for flat experience inputs without structured section
+        const expCompany = page.locator("input[name*='experience'][name*='company' i], input#experience_company, [data-ui='experience-company']").first();
+        if (await expCompany.count() > 0 && await expCompany.isVisible()) {
+          await fillWithHumanMouse(expCompany, profile.experiences?.[0]?.company || "Jobspring");
+        }
+        const expTitle = page.locator("input[name*='experience'][name*='title' i], input#experience_title, [data-ui='experience-title']").first();
+        if (await expTitle.count() > 0 && await expTitle.isVisible()) {
+          await fillWithHumanMouse(expTitle, profile.experiences?.[0]?.jobTitle || "Full Stack AI Developer");
+        }
+      }
+    } catch (expErr: any) {
+      console.warn("⚠️ [WorkableAdapter]: Experience section handling warning:", expErr.message);
     }
 
-    // Work Experience fields if present
-    const expCompany = page.locator("input[name*='experience'][name*='company' i], input#experience_company, [data-ui*='experience-company']").first();
-    if (await expCompany.count() > 0 && await expCompany.isVisible()) {
-      await fillWithHumanMouse(expCompany, profile.experiences?.[0]?.company || "Jobspring");
-    }
-    const expTitle = page.locator("input[name*='experience'][name*='title' i], input#experience_title, [data-ui*='experience-title']").first();
-    if (await expTitle.count() > 0 && await expTitle.isVisible()) {
-      await fillWithHumanMouse(expTitle, profile.experiences?.[0]?.jobTitle || "Full Stack AI Developer");
+    // 3b. Education Section (Structured cards or flat inputs)
+    try {
+      const eduSection = page.locator("[data-ui='education']").first();
+      if (await eduSection.count() > 0 && await eduSection.isVisible()) {
+        const educations = profile.educations && profile.educations.length > 0 
+          ? profile.educations 
+          : [{
+              school: "Parul University",
+              degree: "Bachelor of Technology",
+              fieldOfStudy: "Computer Science and Engineering",
+              startMonth: "08",
+              startYear: "2023",
+              endMonth: "06",
+              endYear: "2027"
+            }];
+
+        const hasExistingCard = await eduSection.locator("[data-ui='entry-item'], [data-ui='section-item'], .styles--item").count() > 0;
+        let isEditorOpen = await eduSection.locator("input#school, input[name='school']").count() > 0 && await eduSection.locator("input#school, input[name='school']").first().isVisible();
+
+        if (!hasExistingCard && !isEditorOpen) {
+          const addEduBtn = eduSection.locator("button[data-ui='add-section'], button[aria-label*='Add Education' i], button:has-text('Add Education'), button:has-text('Add')").first();
+          if (await addEduBtn.count() > 0 && await addEduBtn.isVisible()) {
+            console.log("🎓 [WorkableAdapter]: Clicking + Add Education button...");
+            await addEduBtn.evaluate(b => {
+              b.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+              b.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
+              b.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+            }).catch(() => addEduBtn.click({ force: true }));
+            await page.waitForTimeout(500);
+            isEditorOpen = true;
+          }
+        }
+
+        if (isEditorOpen) {
+          const edu = educations[0];
+          console.log(`🎓 [WorkableAdapter]: Filling Education -> ${edu.degree} in ${edu.fieldOfStudy} from ${edu.school}...`);
+
+          const schoolInp = eduSection.locator("input#school, input[name='school']").first();
+          if (await schoolInp.count() > 0 && await schoolInp.isVisible()) {
+            await fillWithHumanMouse(schoolInp, edu.school || "Parul University");
+          }
+
+          const fieldInp = eduSection.locator("input#field_of_study, input[name='field_of_study']").first();
+          if (await fieldInp.count() > 0 && await fieldInp.isVisible()) {
+            await fillWithHumanMouse(fieldInp, edu.fieldOfStudy || "Computer Science and Engineering");
+          }
+
+          const degreeInp = eduSection.locator("input#degree, input[name='degree']").first();
+          if (await degreeInp.count() > 0 && await degreeInp.isVisible()) {
+            await fillWithHumanMouse(degreeInp, edu.degree || "Bachelor of Technology");
+          }
+
+          const startEduInp = eduSection.locator("input[name='start_date']").first();
+          if (await startEduInp.count() > 0 && await startEduInp.isVisible()) {
+            const startVal = edu.startMonth && edu.startYear ? `${edu.startMonth}/${edu.startYear}` : "08/2023";
+            await fillWithHumanMouse(startEduInp, startVal);
+          }
+
+          const endEduInp = eduSection.locator("input[name='end_date']").first();
+          if (await endEduInp.count() > 0 && await endEduInp.isVisible()) {
+            const endVal = edu.endMonth && edu.endYear ? `${edu.endMonth}/${edu.endYear}` : "06/2027";
+            await fillWithHumanMouse(endEduInp, endVal);
+          }
+
+          // Save education item
+          const saveEduBtn = eduSection.locator("button[data-ui='save-section'], button:has-text('Update'), button:has-text('Save')").first();
+          if (await saveEduBtn.count() > 0 && await saveEduBtn.isVisible()) {
+            await saveEduBtn.evaluate(b => {
+              b.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+              b.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
+              b.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+            }).catch(() => saveEduBtn.click({ force: true }));
+            await page.waitForTimeout(500);
+            console.log("✅ [WorkableAdapter]: Education card saved successfully.");
+          }
+        }
+      } else {
+        // Fallback for flat education inputs without structured section
+        const schoolInput = page.locator("input[name*='school' i], input#school, input[id*='school' i], [data-ui*='school']").first();
+        if (await schoolInput.count() > 0 && await schoolInput.isVisible()) {
+          await fillWithHumanMouse(schoolInput, profile.educations?.[0]?.school || "Parul University");
+        }
+        const degreeInput = page.locator("input[name*='degree' i], input#degree, input[id*='degree' i], [data-ui*='degree']").first();
+        if (await degreeInput.count() > 0 && await degreeInput.isVisible()) {
+          await fillWithHumanMouse(degreeInput, profile.educations?.[0]?.degree || "Bachelor of Technology");
+        }
+        const fieldOfStudyInput = page.locator("input[name*='field_of_study' i], input[name*='major' i], input#field_of_study, [data-ui*='field-of-study']").first();
+        if (await fieldOfStudyInput.count() > 0 && await fieldOfStudyInput.isVisible()) {
+          await fillWithHumanMouse(fieldOfStudyInput, profile.educations?.[0]?.fieldOfStudy || "Computer Science and Engineering");
+        }
+      }
+    } catch (eduErr: any) {
+      console.warn("⚠️ [WorkableAdapter]: Education section handling warning:", eduErr.message);
     }
 
     // Cover Letter
