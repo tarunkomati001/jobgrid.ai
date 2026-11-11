@@ -337,30 +337,45 @@ export class AshbyAdapter implements ATSAdapter {
 
         // 4. Fallback to database saved answers (user_saved_answers)
         if (valueToFill === undefined) {
-          valueToFill = savedAnswers[normLabel];
-          if (valueToFill === undefined) {
-            let bestMatchVal = undefined;
-            let bestRatio = 0;
-            for (const [key, val] of Object.entries(savedAnswers)) {
-              const wordsKey = key.split(/\s+/).filter(Boolean);
-              const wordsLabel = normLabel.split(/\s+/).filter(Boolean);
-              if (wordsKey.length === 0 || wordsLabel.length === 0) continue;
-              
-              const setKey = new Set(wordsKey);
-              const setLabel = new Set(wordsLabel);
-              let intersect = 0;
-              setKey.forEach(w => {
-                if (setLabel.has(w)) intersect++;
-              });
-              const ratio = intersect / Math.min(setKey.size, setLabel.size);
-              if (ratio > bestRatio && ratio >= 0.6) {
-                bestRatio = ratio;
-                bestMatchVal = val;
+          const isLocationStringQuestion = 
+            normLabel.includes("where are you") ||
+            normLabel.includes("currently located") ||
+            normLabel.includes("current location") ||
+            normLabel.includes("present address") ||
+            normLabel.includes("working from for payroll");
+
+          if (isLocationStringQuestion) {
+            valueToFill = profile.location || (profile.city ? `${profile.city}, ${profile.state || ""}, ${profile.country || "United States"}`.replace(/,\s*,/g, ", ").trim() : "San Francisco, CA, United States");
+          } else {
+            valueToFill = savedAnswers[normLabel];
+            if (valueToFill === undefined) {
+              let bestMatchVal = undefined;
+              let bestRatio = 0;
+              for (const [key, val] of Object.entries(savedAnswers)) {
+                // If fuzzy candidate is a boolean Yes/No, ensure question is actually a Yes/No question
+                if ((val === "Yes" || val === "No") && (normLabel.includes("where") || normLabel.includes("location") || normLabel.includes("address") || normLabel.includes("date"))) {
+                  continue;
+                }
+                const wordsKey = key.split(/\s+/).filter(Boolean);
+                const wordsLabel = normLabel.split(/\s+/).filter(Boolean);
+                if (wordsKey.length === 0 || wordsLabel.length === 0) continue;
+                
+                const setKey = new Set(wordsKey);
+                const setLabel = new Set(wordsLabel);
+                let intersect = 0;
+                setKey.forEach(w => {
+                  if (setLabel.has(w)) intersect++;
+                });
+                const ratio = intersect / Math.min(setKey.size, setLabel.size);
+                if (ratio > bestRatio && ratio >= 0.6) {
+                  bestRatio = ratio;
+                  bestMatchVal = val;
+                }
               }
-            }
-            if (bestMatchVal !== undefined) {
-              valueToFill = bestMatchVal;
-              console.log(`🎯 [Fuzzy Match DB]: Matched "${field.label.substring(0, 40)}..." to database question key with ratio ${(bestRatio * 100).toFixed(1)}%`);
+              if (bestMatchVal !== undefined) {
+                valueToFill = bestMatchVal;
+                console.log(`🎯 [Fuzzy Match DB]: Matched "${field.label.substring(0, 40)}..." to database question key with ratio ${(bestRatio * 100).toFixed(1)}%`);
+              }
             }
           }
         }
@@ -629,7 +644,7 @@ export class AshbyAdapter implements ATSAdapter {
       const page = "keyboard" in target ? target : (target as Frame).page();
 
       // 1. Gender Radio Sweep
-      const genderEntries = target.locator(".ashby-application-form-field-entry, div[data-field-path], fieldset").filter({ hasText: /gender/i });
+      const genderEntries = target.locator("[data-field-path*='gender' i], .ashby-application-form-field-entry, div[data-field-path], fieldset").filter({ hasText: /gender/i });
       if (await genderEntries.count() > 0) {
         const entry = genderEntries.first();
         const checkedRadio = entry.locator("input[type='radio']:checked, [role='radio'][aria-checked='true']");
@@ -641,12 +656,25 @@ export class AshbyAdapter implements ATSAdapter {
           let clicked = false;
           for (let i = 0; i < rCount; i++) {
             const r = radios.nth(i);
-            const text = await r.evaluate(el => `${(el as HTMLInputElement).value} ${el.closest('label')?.textContent || ''}`.toLowerCase());
-            if (targetGender === "male" && text.includes("male") && !text.includes("female")) {
+            const labelText = await r.evaluate(el => {
+              const lbl = document.querySelector(`label[for="${el.id}"]`) || el.closest('div, [class*="option"]')?.querySelector('label') || el.closest('label');
+              return lbl?.textContent?.trim().toLowerCase() || (el as HTMLInputElement).value.toLowerCase();
+            });
+            if (targetGender === "male" && labelText.includes("male") && !labelText.includes("female")) {
+              await r.evaluate((el: HTMLInputElement) => {
+                el.checked = true;
+                el.dispatchEvent(new Event('input', { bubbles: true }));
+                el.dispatchEvent(new Event('change', { bubbles: true }));
+              });
               await r.check({ force: true }).catch(() => {});
               await r.click({ force: true }).catch(() => {});
-              const pLbl = r.locator("xpath=ancestor::label[1]");
-              if (await pLbl.count() > 0) await pLbl.click({ force: true }).catch(() => {});
+              const rId = await r.getAttribute("id");
+              if (rId) {
+                const associatedLabel = entry.locator(`label[for="${rId}"]`);
+                if (await associatedLabel.count() > 0) {
+                  await associatedLabel.click({ force: true }).catch(() => {});
+                }
+              }
               clicked = true;
               break;
             }
@@ -659,7 +687,7 @@ export class AshbyAdapter implements ATSAdapter {
       }
 
       // 2. Race Radio Sweep
-      const raceEntries = target.locator(".ashby-application-form-field-entry, div[data-field-path], fieldset").filter({ hasText: /race|ethnicity/i });
+      const raceEntries = target.locator("[data-field-path*='race' i], .ashby-application-form-field-entry, div[data-field-path], fieldset").filter({ hasText: /race|ethnicity/i });
       if (await raceEntries.count() > 0) {
         const entry = raceEntries.first();
         const checkedRadio = entry.locator("input[type='radio']:checked, [role='radio'][aria-checked='true']");
@@ -671,12 +699,25 @@ export class AshbyAdapter implements ATSAdapter {
           let clicked = false;
           for (let i = 0; i < rCount; i++) {
             const r = radios.nth(i);
-            const text = await r.evaluate(el => `${(el as HTMLInputElement).value} ${el.closest('label')?.textContent || ''}`.toLowerCase());
-            if (text.includes(targetEth)) {
+            const labelText = await r.evaluate(el => {
+              const lbl = document.querySelector(`label[for="${el.id}"]`) || el.closest('div, [class*="option"]')?.querySelector('label') || el.closest('label');
+              return lbl?.textContent?.trim().toLowerCase() || (el as HTMLInputElement).value.toLowerCase();
+            });
+            if (labelText.includes(targetEth) || (targetEth === "asian" && labelText.includes("asian"))) {
+              await r.evaluate((el: HTMLInputElement) => {
+                el.checked = true;
+                el.dispatchEvent(new Event('input', { bubbles: true }));
+                el.dispatchEvent(new Event('change', { bubbles: true }));
+              });
               await r.check({ force: true }).catch(() => {});
               await r.click({ force: true }).catch(() => {});
-              const pLbl = r.locator("xpath=ancestor::label[1]");
-              if (await pLbl.count() > 0) await pLbl.click({ force: true }).catch(() => {});
+              const rId = await r.getAttribute("id");
+              if (rId) {
+                const associatedLabel = entry.locator(`label[for="${rId}"]`);
+                if (await associatedLabel.count() > 0) {
+                  await associatedLabel.click({ force: true }).catch(() => {});
+                }
+              }
               clicked = true;
               break;
             }
@@ -688,21 +729,33 @@ export class AshbyAdapter implements ATSAdapter {
         }
       }
 
-      // 3. Location Sweep (Fix incorrect Russia / empty location)
-      const locEntries = target.locator(".ashby-application-form-field-entry, div[data-field-path]").filter({ hasText: /currently located|where are you located/i });
+      // 3. Location Sweep (Fix incorrect Russia / empty location and set to candidate's present address)
+      const locEntries = target.locator(".ashby-application-form-field-entry, div[data-field-path]").filter({ hasText: /currently located|where are you located|current location/i });
       if (await locEntries.count() > 0) {
         const entry = locEntries.first();
         const locInp = entry.locator("input[role='combobox'], input[type='text'], input:not([type])").first();
         if (await locInp.count() > 0) {
           const currentVal = await locInp.inputValue().catch(() => "");
-          const isWrong = !currentVal || currentVal.toLowerCase().includes("russia") || currentVal.toLowerCase().includes("yessentukskaya") || (!currentVal.toLowerCase().includes("united states") && !currentVal.toLowerCase().includes("francisco") && !currentVal.toLowerCase().includes("california") && !currentVal.toLowerCase().includes("india"));
+          const targetCity = profile.city || "San Francisco";
+          const targetState = profile.state || "California";
+          const targetCountry = profile.country || "United States";
+          const candidateAddress = profile.location || `${targetCity}, ${targetState}, ${targetCountry}`;
+
+          const isWrong = !currentVal || 
+            currentVal.toLowerCase().includes("russia") || 
+            currentVal.toLowerCase().includes("yessentukskaya") || 
+            currentVal.toLowerCase() === "yes" || 
+            currentVal.toLowerCase() === "no" ||
+            (!currentVal.toLowerCase().includes(targetCity.toLowerCase()) && 
+             !currentVal.toLowerCase().includes(targetCountry.toLowerCase()) && 
+             !currentVal.toLowerCase().includes("united states") &&
+             !currentVal.toLowerCase().includes("california"));
+
           if (isWrong) {
-            console.log("🧹 [Ashby Sweep]: Correcting Location field to candidate's location...");
+            console.log(`🧹 [Ashby Sweep]: Correcting Location field to candidate's present address: "${candidateAddress}"...`);
             await locInp.click({ force: true }).catch(() => {});
             await locInp.fill("");
-            const targetCity = profile.city || "San Francisco";
-            const targetCountry = profile.country || "United States";
-            await locInp.pressSequentially(`${targetCity}, CA`, { delay: 40 });
+            await locInp.pressSequentially(`${targetCity}, ${targetState}`, { delay: 40 });
             await page.waitForTimeout(600);
 
             // Look for suggestions list
@@ -712,7 +765,7 @@ export class AshbyAdapter implements ATSAdapter {
             for (let s = 0; s < sCount; s++) {
               const opt = suggestions.nth(s);
               const t = (await opt.innerText().catch(() => "")).toLowerCase();
-              if (t.includes(targetCity.toLowerCase()) || t.includes(targetCountry.toLowerCase()) || t.includes("united states") || t.includes("california")) {
+              if (t.includes(targetCity.toLowerCase()) || (t.includes(targetCountry.toLowerCase()) && !t.includes("russia"))) {
                 await opt.click({ force: true }).catch(() => {});
                 clickedOption = true;
                 console.log(`✅ [Ashby Sweep]: Selected location suggestion: "${t}"`);
@@ -720,22 +773,27 @@ export class AshbyAdapter implements ATSAdapter {
               }
             }
             if (!clickedOption) {
-              await locInp.fill(`${targetCity}, CA, ${targetCountry}`);
-              await locInp.dispatchEvent("change");
+              await locInp.fill(candidateAddress);
+              await locInp.evaluate((el: HTMLElement, val: string) => {
+                (el as HTMLInputElement).value = val;
+                el.dispatchEvent(new Event('input', { bubbles: true }));
+                el.dispatchEvent(new Event('change', { bubbles: true }));
+                el.dispatchEvent(new Event('blur', { bubbles: true }));
+              }, candidateAddress);
             }
           }
         }
       }
 
       // 4. Start Date Sweep
-      const startEntries = target.locator(".ashby-application-form-field-entry, div[data-field-path]").filter({ hasText: /when can you start|start a new role|start date/i });
+      const startEntries = target.locator(".ashby-application-form-field-entry, div[data-field-path]").filter({ hasText: /when can you start|start a new role|start date|available to start/i });
       if (await startEntries.count() > 0) {
         const entry = startEntries.first();
-        const dateInput = entry.locator("input:not([type='hidden']), [placeholder*='date' i], [placeholder*='pick' i], button:has-text('Pick date'), [role='button']:has-text('Pick date')").first();
+        const dateInput = entry.locator("input:not([type='hidden']), [placeholder*='date' i], [placeholder*='pick' i], button:has-text('Pick date'), [role='button']:has-text('Pick date'), [class*='picker'], div[tabindex='0']").first();
         if (await dateInput.count() > 0) {
           const val = await dateInput.inputValue().catch(() => "");
-          const text = await dateInput.innerText().catch(() => "");
-          if (!val && (!text || text.includes("Pick date"))) {
+          const text = (await dateInput.innerText().catch(() => "")) || (await dateInput.getAttribute("placeholder").catch(() => "")) || "";
+          if (!val && (!text || text.includes("Pick date") || text.includes("date"))) {
             console.log("🧹 [Ashby Sweep]: Filling Start Date (2 weeks ahead)...");
             const d = new Date();
             d.setDate(d.getDate() + 14);
@@ -743,21 +801,37 @@ export class AshbyAdapter implements ATSAdapter {
             const dd = String(d.getDate()).padStart(2, "0");
             const yyyy = d.getFullYear();
             const dateStr = `${mm}/${dd}/${yyyy}`;
+            const dayNum = String(d.getDate());
 
             const tag = await dateInput.evaluate(el => el.tagName.toLowerCase());
             if (tag === "input") {
               await dateInput.click({ force: true }).catch(() => {});
               await dateInput.fill(dateStr);
-              await dateInput.dispatchEvent("input");
-              await dateInput.dispatchEvent("change");
-              await dateInput.dispatchEvent("blur");
+              await dateInput.evaluate((el: HTMLElement, v: string) => {
+                (el as HTMLInputElement).value = v;
+                el.dispatchEvent(new Event('input', { bubbles: true }));
+                el.dispatchEvent(new Event('change', { bubbles: true }));
+                el.dispatchEvent(new Event('blur', { bubbles: true }));
+              }, dateStr);
             } else {
               await dateInput.click({ force: true }).catch(() => {});
               await page.waitForTimeout(400);
-              const dayNum = String(d.getDate());
-              const dayCell = page.locator(`[role='gridcell']:has-text('${dayNum}'), button[name='day']:has-text('${dayNum}'), .rdp-day:has-text('${dayNum}')`).first();
-              if (await dayCell.count() > 0 && await dayCell.isVisible().catch(() => false)) {
-                await dayCell.click({ force: true }).catch(() => {});
+
+              const daySelectors = [
+                `[role='gridcell']:has-text('${dayNum}')`,
+                `button[name='day']:has-text('${dayNum}')`,
+                `.rdp-day:has-text('${dayNum}')`,
+                `button:has-text('${dayNum}')`,
+                `div[class*='day']:has-text('${dayNum}')`
+              ];
+
+              for (const sel of daySelectors) {
+                const dayCell = page.locator(sel).first();
+                if (await dayCell.count() > 0 && await dayCell.isVisible().catch(() => false)) {
+                  await dayCell.click({ force: true }).catch(() => {});
+                  console.log(`✅ [Ashby Sweep]: Clicked day ${dayNum} in calendar popover.`);
+                  break;
+                }
               }
             }
           }

@@ -16,6 +16,7 @@ export type FormFieldType =
   | "file" 
   | "checkbox" 
   | "radio" 
+  | "date"
   | "unknown";
 
 export interface FormFieldOption {

@@ -132,7 +132,15 @@ export class BreezyHRAdapter implements ATSAdapter {
 
     // If on /p/<id> without /apply, directly navigate to /apply
     if (url.includes("/p/")) {
-      const applyUrl = url.replace(/\/+$/, "") + "/apply";
+      let applyUrl = "";
+      try {
+        const parsed = new URL(url);
+        const cleanPath = parsed.pathname.replace(/\/+$/, "");
+        applyUrl = `${parsed.origin}${cleanPath.endsWith("/apply") ? cleanPath : cleanPath + "/apply"}`;
+      } catch {
+        const clean = url.split("?")[0].replace(/\/+$/, "");
+        applyUrl = clean.endsWith("/apply") ? clean : clean + "/apply";
+      }
       console.log(`🌐 [BreezyHRAdapter]: Direct navigating to apply URL: ${applyUrl}...`);
       await page.goto(applyUrl, { waitUntil: "domcontentloaded", timeout: 30000 });
       await page.waitForSelector("input[name='cName'], input[name='cEmail'], form[name='form'], #main-attachment", { timeout: 15000 }).catch(() => {});
@@ -669,6 +677,60 @@ export class BreezyHRAdapter implements ATSAdapter {
 
       await typeLikeHuman(page, inp, answer);
       console.log(`✍️ [BreezyHRAdapter]: Questionnaire input "${label.slice(0, 35)}" -> "${answer}"`);
+    }
+
+    // 3. Process Questionnaire Selects (e.g. How did you hear, start date, experience level, phone type, etc.)
+    const questionSelects = page.locator("select[name^='section_'], select[ng-model*='questionnaire'], select");
+    const sCount = await questionSelects.count().catch(() => 0);
+
+    for (let i = 0; i < sCount; i++) {
+      const sel = questionSelects.nth(i);
+      const name = (await sel.getAttribute("name").catch(() => "")) || "";
+      if (name.startsWith("hp_")) continue;
+
+      const currentVal = await sel.inputValue().catch(() => "");
+      if (currentVal && !currentVal.includes("undefined") && currentVal.trim() !== "") continue;
+
+      const label = await sel.evaluate((el: HTMLElement) => {
+        return (el.closest(".question, .form-group, div")?.querySelector("h3, h4, label")?.textContent || "").replace(/\s+/g, " ").trim();
+      }).catch(() => "");
+
+      const normLabel = label.toLowerCase();
+      const options = await sel.evaluate((el: HTMLSelectElement) => {
+        return Array.from(el.options).map(o => ({ text: o.text.trim(), value: o.value })).filter(o => o.text && !o.value.includes("undefined"));
+      }).catch(() => []);
+
+      if (options.length === 0) continue;
+
+      let chosenVal = options[0].value;
+
+      if (normLabel.includes("hear") || normLabel.includes("source") || normLabel.includes("referred")) {
+        const match = options.find(o => /job site|indeed|linkedin|online/i.test(o.text)) || options[0];
+        chosenVal = match.value;
+      } else if (normLabel.includes("start") || normLabel.includes("notice") || normLabel.includes("immediately")) {
+        const match = options.find(o => /immediately|2-week|two week|soon/i.test(o.text)) || options[0];
+        chosenVal = match.value;
+      } else if (normLabel.includes("full-time") || normLabel.includes("schedule") || normLabel.includes("type")) {
+        const match = options.find(o => /full-time|year-round|regular/i.test(o.text)) || options[0];
+        chosenVal = match.value;
+      } else if (normLabel.includes("experience") || normLabel.includes("years")) {
+        const match = options.find(o => /1-3|3-5|2-4/i.test(o.text)) || options[0];
+        chosenVal = match.value;
+      } else if (normLabel.includes("phone") || normLabel.includes("device") || normLabel.includes("mobile")) {
+        const match = options.find(o => /iphone|android/i.test(o.text)) || options[0];
+        chosenVal = match.value;
+      } else {
+        const match = options.find(o => /^yes$/i.test(o.text)) || options[0];
+        chosenVal = match.value;
+      }
+
+      await sel.selectOption(chosenVal).catch(() => {});
+      await sel.evaluate((el: HTMLSelectElement, val: string) => {
+        el.value = val;
+        el.dispatchEvent(new Event('input', { bubbles: true }));
+        el.dispatchEvent(new Event('change', { bubbles: true }));
+      }, chosenVal).catch(() => {});
+      console.log(`🔽 [BreezyHRAdapter]: Questionnaire select "${label.slice(0, 35)}" -> "${chosenVal}"`);
     }
   }
 

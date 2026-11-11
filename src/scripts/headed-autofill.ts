@@ -127,6 +127,12 @@ async function main() {
     (args.includes("--ats") && args[args.indexOf("--ats") + 1]?.toLowerCase() === "wellfound") ||
     process.env.WELLFOUND_ONLY === "true" ||
     process.env.ATS_FILTER?.toUpperCase() === "WELLFOUND";
+  const isIcimsOnly =
+    args.includes("--icims") ||
+    args.includes("--icims-only") ||
+    (args.includes("--ats") && args[args.indexOf("--ats") + 1]?.toLowerCase() === "icims") ||
+    process.env.ICIMS_ONLY === "true" ||
+    process.env.ATS_FILTER?.toUpperCase() === "ICIMS";
   const isBambooHROnly =
     args.includes("--bamboohr") ||
     args.includes("--bamboohr-only") ||
@@ -168,6 +174,13 @@ async function main() {
   
   if (urlArgs.length > 0) {
     urls = urlArgs;
+  } else if (isIcimsOnly) {
+    console.log("🎯 Filtering queued jobs strictly for ICIMS ATS (Active jobs)...");
+    urls = [
+      "https://careers-beyondsoft.icims.com/jobs/11011/senior-customer-engineer-%28ce%29-%e2%80%93-ai-business-solutions/job",
+      "https://careers-quantumsky.icims.com/jobs/2290/network-specialist/job",
+      "https://careers-teksystems.icims.com/jobs/13846/technical-staffing-recruiter---austin/job"
+    ];
   } else if (isAvatureOnly) {
     console.log("🎯 Filtering queued jobs strictly for AVATURE ATS (5 requested jobs)...");
     urls = [
@@ -552,7 +565,9 @@ async function main() {
       // Ensure Job and Application exist in DB so any new link automatically gets registered & tracked
       let jobId: string;
       const jobCheck = await db.query("SELECT id FROM jobs WHERE url = $1", [url]);
-      const detectedAtsFallback = url.includes("avature.net")
+      const detectedAtsFallback = url.includes("icims.com")
+        ? "ICIMS"
+        : url.includes("avature.net")
         ? "AVATURE"
         : url.includes("jobvite.com")
         ? "JOBVITE"
@@ -700,8 +715,9 @@ async function main() {
       const isAshbyJob = ats === "ASHBY" || targetUrl.toLowerCase().includes("ashbyhq.com");
       const isSmartRecruitersJob = ats === "SMARTRECRUITERS" || targetUrl.toLowerCase().includes("smartrecruiters.com");
       const isTaleoJob = ats === "TALEO" || targetUrl.toLowerCase().includes("taleo.net");
+      const isIcimsJob = ats === "ICIMS" || targetUrl.toLowerCase().includes("icims.com");
       const isOracleJob = ats === "ORACLE" || targetUrl.toLowerCase().includes("oracle");
-      const shouldAutoSubmitThisJob = (isOracleJob || isAvatureJob || isLeverJob || isGreenhouseJob || isWorkableJob || isPaylocityJob || isWellfoundJob || isBambooHRJob || isJazzHRJob || isBreezyHRJob || isJobviteJob || isAshbyJob || isSmartRecruitersJob || isTaleoJob || isForceAllAutoSubmit || process.env.AUTO_SUBMIT === "true") && !isManualOnly;
+      const shouldAutoSubmitThisJob = (isIcimsJob || isOracleJob || isAvatureJob || isLeverJob || isGreenhouseJob || isWorkableJob || isPaylocityJob || isWellfoundJob || isBambooHRJob || isJazzHRJob || isBreezyHRJob || isJobviteJob || isAshbyJob || isSmartRecruitersJob || isTaleoJob || isForceAllAutoSubmit || process.env.AUTO_SUBMIT === "true") && !isManualOnly;
 
       if (shouldAutoSubmitThisJob) {
         process.env.AUTO_SUBMIT = "true";

@@ -18,9 +18,12 @@ import { JazzHRAdapter } from "./jazzhr/jazzhr.adapter";
 import { BreezyHRAdapter } from "./breezyhr/breezyhr.adapter";
 import { JobviteAdapter } from "./jobvite/jobvite.adapter";
 import { AvatureAdapter } from "./avature/avature.adapter";
+import { IcimsAdapter } from "./icims/icims.adapter";
 
 export function getAdapterForATS(atsType: ATSType): ATSAdapter {
   switch (atsType) {
+    case "ICIMS":
+      return new IcimsAdapter();
     case "AVATURE":
       return new AvatureAdapter();
     case "JOBVITE":

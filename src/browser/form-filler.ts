@@ -665,7 +665,7 @@ export async function fillLogicalField(
     "input[role='combobox'], [role='combobox'], [aria-haspopup='listbox'], select, .ashby-application-form-field-entry-select, div[class*='select']"
   ).count() > 0;
 
-  if (field.type === "select" || field.options !== undefined || isLocationField || hasCombobox) {
+  if (field.type !== "radio" && field.type !== "checkbox" && (field.type === "select" || isLocationField || hasCombobox)) {
     const customSelectFilled = await fillCustomSelectDropdown(page, container, field, value);
     if (customSelectFilled) return true;
   }
@@ -693,8 +693,16 @@ export async function fillLogicalField(
         const isMaleO = oLower === "male" || oLower === "man" || oLower.includes("male") || oLower.includes("man");
         const isFemaleV = vLower === "female" || vLower === "woman" || vLower.includes("female") || vLower.includes("woman");
         const isFemaleO = oLower === "female" || oLower === "woman" || oLower.includes("female") || oLower.includes("woman");
+        const isAsianV = vLower.includes("asian");
+        const isAsianO = oLower.includes("asian");
+        const isWhiteV = (vLower.includes("white") || vLower.includes("caucasian")) && !vLower.includes("black") && !vLower.includes("asian");
+        const isWhiteO = oLower.includes("white") && !oLower.includes("black") && !oLower.includes("asian");
+        const isBlackV = (vLower.includes("black") || vLower.includes("african")) && !vLower.includes("white");
+        const isBlackO = (oLower.includes("black") || oLower.includes("african")) && !oLower.includes("white");
+        const isHispV = (vLower.startsWith("hispanic") || vLower.startsWith("latino") || /^hispanic/i.test(vLower) || (vLower.includes("hispanic") && !vLower.includes("not hispanic")));
+        const isHispO = (oLower.startsWith("hispanic") || oLower.startsWith("latino") || /^hispanic/i.test(oLower) || (oLower.includes("hispanic") && !oLower.includes("not hispanic")));
 
-        if (oLower.includes(vLower) || vLower.includes(oLower) || (isMaleV && isMaleO) || (isFemaleV && isFemaleO)) {
+        if ((isAsianV && isAsianO) || (isWhiteV && isWhiteO) || (isBlackV && isBlackO) || (isHispV && isHispO) || (isMaleV && isMaleO) || (isFemaleV && isFemaleO) || oLower === vLower) {
           bestMatch = opt;
           break;
         }
@@ -722,6 +730,20 @@ export async function fillLogicalField(
       if (await locator.count() > 0 && await locator.isVisible().catch(() => true)) {
         await locator.hover().catch(() => {});
         await locator.click().catch(() => locator.click({ force: true }));
+
+        // Also check native radio input if associated via for attribute or sibling
+        const forAttr = await locator.getAttribute("for").catch(() => null);
+        if (forAttr) {
+          const radioInput = page.locator(`input[id="${forAttr}"]`);
+          if (await radioInput.count() > 0) {
+            await radioInput.check({ force: true }).catch(() => {});
+            await radioInput.evaluate((el: HTMLInputElement) => {
+              el.checked = true;
+              el.dispatchEvent(new Event('input', { bubbles: true }));
+              el.dispatchEvent(new Event('change', { bubbles: true }));
+            }).catch(() => {});
+          }
+        }
         console.log(`🔘 [FormFiller]: Checked radio option "${matchedOption}"`);
         return true;
       }
@@ -797,6 +819,83 @@ export async function fillLogicalField(
       return true;
     }
   }
+
+  // 7. Handle Date pickers and Date Inputs
+  const isDateField = 
+    field.type === "date" ||
+    normLabel.includes("start date") ||
+    normLabel.includes("start a new role") ||
+    normLabel.includes("when can you start") ||
+    normLabel.includes("available to start") ||
+    normLabel.includes("availability date") ||
+    normLabel.includes("pick date");
+
+  if (isDateField) {
+    console.log(`📅 [FormFiller]: Handling date field "${field.label}" with value "${value}"...`);
+    let dateStr = value;
+    if (!dateStr || dateStr.toLowerCase().includes("immediate") || dateStr.toLowerCase().includes("soon")) {
+      const d = new Date();
+      d.setDate(d.getDate() + 14); // 2 weeks ahead
+      const mm = String(d.getMonth() + 1).padStart(2, "0");
+      const dd = String(d.getDate()).padStart(2, "0");
+      const yyyy = d.getFullYear();
+      dateStr = `${mm}/${dd}/${yyyy}`;
+    }
+
+    // Try standard date or text input inside container
+    const dateInput = container.locator("input[type='date'], input[type='text'], input:not([type]), [placeholder*='date' i], [placeholder*='pick' i], [placeholder*='mm/dd/yyyy' i]").first();
+    if (await dateInput.count() > 0 && await dateInput.isVisible().catch(() => false)) {
+      await dateInput.click({ force: true }).catch(() => {});
+      await dateInput.fill("");
+      await dateInput.pressSequentially(dateStr, { delay: 30 }).catch(() => {});
+      await dateInput.evaluate((el: HTMLElement, val: string) => {
+        (el as HTMLInputElement).value = val;
+        el.dispatchEvent(new Event('input', { bubbles: true }));
+        el.dispatchEvent(new Event('change', { bubbles: true }));
+        el.dispatchEvent(new Event('blur', { bubbles: true }));
+      }, dateStr).catch(() => {});
+      await dateInput.blur().catch(() => {});
+      
+      const currentVal = await dateInput.inputValue().catch(() => "");
+      if (currentVal && currentVal.length >= 8) {
+        console.log(`📅 [FormFiller]: Successfully filled date input with "${dateStr}"`);
+        return true;
+      }
+    }
+
+    // Custom Date Picker button / interactive element (e.g. Radix / React DayPicker / Ashby / Breezy)
+    const dateBtn = container.locator("button:has-text('Pick date'), [role='button']:has-text('Pick date'), button[aria-haspopup='dialog'], [role='button'], button, div[tabindex='0']").first();
+    if (await dateBtn.count() > 0) {
+      await dateBtn.click({ force: true }).catch(() => {});
+      await page.waitForTimeout(400);
+
+      // Extract day number to click in calendar popover
+      const parts = dateStr.split(/[\/\-]/);
+      let targetDay = "15";
+      if (parts.length === 3) {
+        targetDay = parts[0].length === 4 ? String(parseInt(parts[2], 10)) : String(parseInt(parts[1], 10));
+      }
+
+      const daySelectors = [
+        `[role='gridcell']:has-text('${targetDay}')`,
+        `button[name='day']:has-text('${targetDay}')`,
+        `.rdp-day:has-text('${targetDay}')`,
+        `div[class*='day']:has-text('${targetDay}')`,
+        `button:has-text('${targetDay}')`
+      ];
+
+      for (const sel of daySelectors) {
+        const dayCell = page.locator(sel).first();
+        if (await dayCell.count() > 0 && await dayCell.isVisible().catch(() => false)) {
+          await dayCell.click({ force: true }).catch(() => {});
+          console.log(`📅 [FormFiller]: Selected day "${targetDay}" in calendar popover for "${field.label}"`);
+          await page.waitForTimeout(300);
+          return true;
+        }
+      }
+    }
+  }
+
   let textInput = page.locator(`input[id="${field.id}"], textarea[id="${field.id}"]`).first();
   if (await textInput.count() === 0) {
     textInput = container.locator("input[type='text'], input[type='email'], input[type='tel'], textarea, input:not([type])").first();

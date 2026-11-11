@@ -1,6 +1,6 @@
 import { Page } from "playwright";
 
-export type ATSType = "ASHBY" | "GREENHOUSE" | "LEVER" | "WORKDAY" | "SMARTRECRUITERS" | "WORKABLE" | "TALEO" | "ORACLE" | "RECRUITEE" | "RIPPLING" | "PAYLOCITY" | "WELLFOUND" | "BAMBOOHR" | "JAZZHR" | "BREEZYHR" | "JOBVITE" | "AVATURE" | "UNKNOWN";
+export type ATSType = "ASHBY" | "GREENHOUSE" | "LEVER" | "WORKDAY" | "SMARTRECRUITERS" | "WORKABLE" | "TALEO" | "ORACLE" | "RECRUITEE" | "RIPPLING" | "PAYLOCITY" | "WELLFOUND" | "BAMBOOHR" | "JAZZHR" | "BREEZYHR" | "JOBVITE" | "AVATURE" | "ICIMS" | "UNKNOWN";
 
 /**
  * Detects the ATS from a URL string (fast initial check).
@@ -9,6 +9,9 @@ export function detectATSByUrl(urlStr: string): ATSType {
   try {
     const hostname = new URL(urlStr).hostname.toLowerCase();
     
+    if (hostname.includes("icims.com") || urlStr.includes(".icims.com")) {
+      return "ICIMS";
+    }
     if (hostname.includes("avature.net") || urlStr.includes(".avature.net")) {
       return "AVATURE";
     }
@@ -90,6 +93,14 @@ export async function detectATSByPage(page: Page): Promise<ATSType> {
   // Fallback: check DOM elements and scripts for signature markers
   const content = await page.content();
   const lowerContent = content.toLowerCase();
+
+  if (
+    lowerContent.includes("icims.com") ||
+    lowerContent.includes("icims") ||
+    (await page.$("iframe#icims_content_iframe, [class*='iCIMS_'], [id*='icims'], a[href*='mode=apply']")) !== null
+  ) {
+    return "ICIMS";
+  }
 
   if (
     lowerContent.includes("avature.net") ||
