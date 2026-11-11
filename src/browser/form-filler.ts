@@ -149,7 +149,7 @@ export async function extractLogicalFields(page: Page | Frame): Promise<FormFiel
     if (!cleanLabel) continue;
 
     // Find interactive elements inside this container
-    const inputs = await container.$$("input, textarea, select, [role='combobox'], [role='radio'], [role='checkbox']");
+    const inputs = await container.$$("input, textarea, select, [role='combobox'], [role='radio'], [role='checkbox'], button:has-text('Pick date'), [role='button']:has-text('Pick date')");
     if (inputs.length === 0) continue;
 
     // Mark inputs inside this container as processed
@@ -715,6 +715,71 @@ export async function fillLogicalField(
         }
       }
       if (bestMatch) matchedOption = bestMatch;
+    }
+
+    // Direct check: examine radio inputs and their associated labels
+    const radioInputs = await container.locator("input[type='radio'], [role='radio']").all();
+    for (const r of radioInputs) {
+      const rId = await r.getAttribute("id").catch(() => "");
+      let labelText = "";
+      let labelLoc = null;
+      if (rId) {
+        const potentialLabel = page.locator(`label[for="${rId}"]`).first();
+        if (await potentialLabel.count() > 0) {
+          labelLoc = potentialLabel;
+          labelText = (await potentialLabel.innerText().catch(() => "")).trim();
+        }
+      }
+      if (!labelText) {
+        const parentLabel = r.locator("xpath=..").locator("label").first();
+        if (await parentLabel.count() > 0) {
+          labelLoc = parentLabel;
+          labelText = (await parentLabel.innerText().catch(() => "")).trim();
+        }
+      }
+      if (!labelText) {
+        labelText = await r.evaluate((el: HTMLElement) => {
+          const l = el.closest('label') || el.parentElement?.querySelector('label') || el.parentElement;
+          return l?.textContent?.trim() || "";
+        }).catch(() => "");
+      }
+
+      const normLbl = labelText.toLowerCase();
+      const normMatch = matchedOption.toLowerCase();
+      let isDirectMatch = normLbl === normMatch;
+      if (!isDirectMatch) {
+        if (normMatch.includes("asian")) {
+          isDirectMatch = normLbl.includes("asian");
+        } else if (normMatch.includes("white")) {
+          isDirectMatch = normLbl.includes("white") && !normLbl.includes("black") && !normLbl.includes("asian");
+        } else if (normMatch.includes("black") || normMatch.includes("african")) {
+          isDirectMatch = (normLbl.includes("black") || normLbl.includes("african")) && !normLbl.includes("white");
+        } else if (normMatch.startsWith("hispanic") || (normMatch.includes("hispanic") && !normMatch.includes("not hispanic"))) {
+          isDirectMatch = (normLbl.startsWith("hispanic") || normLbl.startsWith("latino")) && !normLbl.includes("not hispanic");
+        } else if (normMatch === "male" || normMatch === "man") {
+          isDirectMatch = (normLbl === "male" || normLbl === "man" || (normLbl.includes("male") && !normLbl.includes("female")));
+        } else if (normMatch === "female" || normMatch === "woman") {
+          isDirectMatch = normLbl === "female" || normLbl === "woman" || normLbl.includes("female");
+        } else {
+          isDirectMatch = normLbl.includes(normMatch);
+        }
+      }
+
+      if (isDirectMatch) {
+        if (labelLoc && await labelLoc.count() > 0 && await labelLoc.isVisible().catch(() => false)) {
+          await labelLoc.click({ force: true }).catch(() => {});
+        } else {
+          await r.click({ force: true }).catch(() => {});
+        }
+        await r.check({ force: true }).catch(() => {});
+        await r.evaluate((el: HTMLInputElement) => {
+          el.checked = true;
+          el.dispatchEvent(new Event('input', { bubbles: true }));
+          el.dispatchEvent(new Event('change', { bubbles: true }));
+        }).catch(() => {});
+        console.log(`🔘 [FormFiller]: Checked direct radio option "${labelText || matchedOption}"`);
+        return true;
+      }
     }
 
     // Try multiple locator approaches inside container and page-wide

@@ -268,34 +268,39 @@ export class WorkableAdapter implements ATSAdapter {
 
     // Phone & Country Flag Selector
     try {
-      const phoneInput = page.locator("input[type='tel'], input[name='phone']").first();
+      const phoneInput = page.locator("input[type='tel'], input[name='phone'], input#phone, input#input_phone").first();
       if (await phoneInput.count() > 0) {
-        const phoneContainer = page.locator("[data-ui='phone'], .iti").first();
-        if (await phoneContainer.count() > 0) {
-          const isUSPhone = profile.phone.includes("+1") || profile.country?.includes("United States") || !profile.phone.includes("+91");
-          const flagBtn = phoneContainer.locator("button.iti__selected-country, [data-ui='phone'] button, .iti button, .iti__selected-flag, [role='combobox']").first();
-          if (await flagBtn.count() > 0) {
-            const currentDialCode = await phoneContainer.locator(".iti__selected-dial-code").first().innerText().catch(() => "");
-            if (isUSPhone && !currentDialCode.includes("+1")) {
-              await humanClick(page, flagBtn).catch(() => flagBtn.click({ force: true }));
-              await page.waitForTimeout(350);
-              const usOpt = page.locator(".iti__country-list li[data-iso2='us'], .iti__country-list li#iti-0__item-us, .iti__country-list li[data-dial-code='1'], .iti__country-list li:has-text('United States')").first();
-              if (await usOpt.count() > 0) {
-                await humanClick(page, usOpt).catch(() => usOpt.click({ force: true }));
-                await page.waitForTimeout(300);
-              }
-            } else if (!isUSPhone && !currentDialCode.includes("+91")) {
-              await humanClick(page, flagBtn).catch(() => flagBtn.click({ force: true }));
-              await page.waitForTimeout(350);
-              const indiaOpt = page.locator(".iti__country-list li[data-iso2='in'], .iti__country-list li#iti-0__item-in, .iti__country-list li[data-dial-code='91'], .iti__country-list li:has-text('India')").first();
-              if (await indiaOpt.count() > 0) {
-                await humanClick(page, indiaOpt).catch(() => indiaOpt.click({ force: true }));
-                await page.waitForTimeout(300);
-              }
+        const isUSPhone = profile.phone.includes("+1") || profile.country?.includes("United States") || !profile.phone.includes("+91");
+        
+        // 1. Check flag button and switch to US (+1) if needed
+        const flagBtn = page.locator("button.iti__selected-country, [data-ui='phone'] button, .iti button, .iti__selected-flag, [role='combobox']").first();
+        if (await flagBtn.count() > 0) {
+          const btnAria = (await flagBtn.getAttribute("aria-label").catch(() => "")) || "";
+          const btnText = (await flagBtn.innerText().catch(() => "")) || "";
+          const isCurrentUS = btnAria.includes("(+1)") || btnAria.includes("United States") || btnText.includes("+1");
+
+          if (isUSPhone && !isCurrentUS) {
+            console.log("🇺🇸 [WorkableAdapter]: Selecting United States (+1) phone country...");
+            await flagBtn.click({ force: true }).catch(() => {});
+            await page.waitForTimeout(400);
+
+            // Locate US item in iti dropdown list
+            const usOpt = page.locator("li[data-country-code='us'], li#iti-0__item-us, li[data-dial-code='1'], [role='option'][data-country-code='us'], li:has-text('United States (+1)'), li:has-text('United States')").first();
+            if (await usOpt.count() > 0 && await usOpt.isVisible().catch(() => true)) {
+              await usOpt.click({ force: true }).catch(() => {});
+              await page.waitForTimeout(300);
+            } else {
+              // DOM evaluate fallback
+              await page.evaluate(() => {
+                const li = document.querySelector("li[data-country-code='us'], li[data-dial-code='1'], #iti-0__item-us") as HTMLElement;
+                if (li) li.click();
+              }).catch(() => {});
             }
           }
         }
-        const cleanPhone = profile.phone.replace(/^\+91[\s-]?/, "").replace(/^\+1[\s-]?/, "").replace(/\s/g, "");
+
+        // Clean phone digits for US: remove +1, spaces, hyphens
+        const cleanPhone = profile.phone.replace(/^\+1[\s-]?/, "").replace(/^\+91[\s-]?/, "").replace(/\D/g, "");
         await fillWithHumanMouse(phoneInput, cleanPhone || profile.phone);
         console.log(`✅ [WorkableAdapter]: Phone -> ${profile.phone}`);
       }
@@ -314,19 +319,38 @@ export class WorkableAdapter implements ATSAdapter {
       const isIncorrectLocation = !curVal || /india|jaggampeta|vadodara/i.test(curVal) || (!curVal.toLowerCase().includes("san francisco") && !curVal.toLowerCase().includes("california") && !curVal.toLowerCase().includes("united states"));
 
       if (isIncorrectLocation) {
-        await fillWithHumanMouse(addressInput, targetAddress);
-        await page.waitForTimeout(400);
-        // If autocomplete dropdown appears, select the matching US option or first option
-        const autoOpt = page.locator("[role='listbox'] [role='option'], .styles--option, .pac-item, ul[data-ui*='option'] li").first();
-        if (await autoOpt.count() > 0 && await autoOpt.isVisible()) {
-          await humanClick(page, autoOpt).catch(() => autoOpt.click({ force: true }));
+        console.log(`📍 [WorkableAdapter]: Overwriting address from "${curVal}" to US address: "${targetAddress}"`);
+        await addressInput.focus().catch(() => {});
+        await addressInput.click({ force: true }).catch(() => {});
+        await page.keyboard.press("Control+A").catch(() => {});
+        await page.keyboard.press("Backspace").catch(() => {});
+        await addressInput.fill("");
+        await addressInput.pressSequentially("123 Market St, San Francisco, CA", { delay: 35 });
+        await page.waitForTimeout(600);
+
+        // If Google Places autocomplete dropdown appears, select the matching US option or first option
+        const autoOpt = page.locator(".pac-container:visible .pac-item, [role='listbox'] [role='option']:visible, .styles--option:visible, ul[data-ui*='option'] li:visible").first();
+        if (await autoOpt.count() > 0) {
+          await autoOpt.click({ force: true }).catch(() => {});
           await page.waitForTimeout(300);
+        } else {
+          await page.keyboard.press("ArrowDown").catch(() => {});
+          await page.keyboard.press("Enter").catch(() => {});
         }
+
+        // Direct React value setter to guarantee value cannot revert to Jaggampeta
+        await addressInput.evaluate((el: HTMLInputElement, val: string) => {
+          el.value = val;
+          el.dispatchEvent(new Event("input", { bubbles: true }));
+          el.dispatchEvent(new Event("change", { bubbles: true }));
+          el.dispatchEvent(new Event("blur", { bubbles: true }));
+        }, targetAddress);
       }
 
       // Also ensure companion city, postcode, and country fields are synced
-      await page.evaluate(({ city, zip, country }: { city: string; zip: string; country: string }) => {
+      await page.evaluate(({ city, zip, country, address }: { city: string; zip: string; country: string; address: string }) => {
         const list = [
+          { sel: "input#address, input[name='address'], [data-ui='address']", val: address },
           { sel: "input#city, input[name='city']", val: city },
           { sel: "input#postcode, input[name='postcode']", val: zip },
           { sel: "input#country, input[name='country']", val: country }
@@ -340,6 +364,7 @@ export class WorkableAdapter implements ATSAdapter {
           }
         }
       }, {
+        address: targetAddress,
         city: profile.city || "San Francisco",
         zip: profile.zipCode || "94105",
         country: profile.country || "United States"
@@ -758,6 +783,37 @@ export class WorkableAdapter implements ATSAdapter {
         await sel.selectOption(chosenVal).catch(() => {});
       }
     }
+
+    // Final verification sweep for Phone Flag and Address in Workable
+    try {
+      const finalFlag = page.locator("button.iti__selected-country, [data-ui='phone'] button, .iti button").first();
+      if (await finalFlag.count() > 0) {
+        const aria = (await finalFlag.getAttribute("aria-label").catch(() => "")) || "";
+        const text = (await finalFlag.innerText().catch(() => "")) || "";
+        if (!aria.includes("(+1)") && !aria.includes("United States") && !text.includes("+1")) {
+          console.log("🧹 [Workable Sweep]: Correcting phone flag to United States (+1)...");
+          await finalFlag.click({ force: true }).catch(() => {});
+          await page.waitForTimeout(300);
+          const usOpt = page.locator("li[data-country-code='us'], li#iti-0__item-us, li[data-dial-code='1']").first();
+          if (await usOpt.count() > 0) await usOpt.click({ force: true }).catch(() => {});
+        }
+      }
+
+      const finalAddr = page.locator("input#address, [data-ui='address'], input[name='address']").first();
+      if (await finalAddr.count() > 0) {
+        const val = await finalAddr.inputValue().catch(() => "");
+        if (!val || /india|jaggampeta|vadodara/i.test(val) || !val.toLowerCase().includes("san francisco")) {
+          const usAddr = profile.street ? `${profile.street}, ${profile.city || "San Francisco"}, CA` : "123 Market St, San Francisco, CA 94105, United States";
+          console.log(`🧹 [Workable Sweep]: Correcting address from "${val}" to "${usAddr}"...`);
+          await finalAddr.evaluate((el: HTMLInputElement, v: string) => {
+            el.value = v;
+            el.dispatchEvent(new Event("input", { bubbles: true }));
+            el.dispatchEvent(new Event("change", { bubbles: true }));
+            el.dispatchEvent(new Event("blur", { bubbles: true }));
+          }, usAddr);
+        }
+      }
+    } catch (e: any) {}
 
     await updateHUDStatus(page, "Form filling complete!", "Ready for validation & review", "success", 90);
     console.log(`🎉 [WorkableAdapter]: Completed filling all form fields successfully.`);

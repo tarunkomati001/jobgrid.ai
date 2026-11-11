@@ -650,38 +650,37 @@ export class AshbyAdapter implements ATSAdapter {
         const checkedRadio = entry.locator("input[type='radio']:checked, [role='radio'][aria-checked='true']");
         if (await checkedRadio.count() === 0) {
           console.log("🧹 [Ashby Sweep]: Selecting Gender radio (Male)...");
-          const targetGender = (profile.gender || "Male").toLowerCase();
-          const radios = entry.locator("input[type='radio']");
-          const rCount = await radios.count();
-          let clicked = false;
-          for (let i = 0; i < rCount; i++) {
-            const r = radios.nth(i);
-            const labelText = await r.evaluate(el => {
-              const lbl = document.querySelector(`label[for="${el.id}"]`) || el.closest('div, [class*="option"]')?.querySelector('label') || el.closest('label');
-              return lbl?.textContent?.trim().toLowerCase() || (el as HTMLInputElement).value.toLowerCase();
-            });
-            if (targetGender === "male" && labelText.includes("male") && !labelText.includes("female")) {
-              await r.evaluate((el: HTMLInputElement) => {
-                el.checked = true;
-                el.dispatchEvent(new Event('input', { bubbles: true }));
-                el.dispatchEvent(new Event('change', { bubbles: true }));
-              });
-              await r.check({ force: true }).catch(() => {});
-              await r.click({ force: true }).catch(() => {});
-              const rId = await r.getAttribute("id");
-              if (rId) {
-                const associatedLabel = entry.locator(`label[for="${rId}"]`);
-                if (await associatedLabel.count() > 0) {
-                  await associatedLabel.click({ force: true }).catch(() => {});
-                }
-              }
-              clicked = true;
-              break;
+          const maleLabel = entry.locator("label").filter({ hasText: /^male$/i }).first();
+          if (await maleLabel.count() > 0 && await maleLabel.isVisible().catch(() => true)) {
+            await maleLabel.click({ force: true }).catch(() => {});
+          } else {
+            const pageMaleLabel = page.locator("label").filter({ hasText: /^male$/i }).first();
+            if (await pageMaleLabel.count() > 0) {
+              await pageMaleLabel.click({ force: true }).catch(() => {});
             }
           }
-          if (!clicked) {
-            const maleLbl = entry.locator("label").filter({ hasText: /^male$/i }).first();
-            if (await maleLbl.count() > 0) await maleLbl.click({ force: true }).catch(() => {});
+          await page.waitForTimeout(200);
+
+          // Verify radio checked
+          const isNowChecked = await entry.locator("input[type='radio']:checked, [role='radio'][aria-checked='true']").count() > 0;
+          if (!isNowChecked) {
+            const radios = entry.locator("input[type='radio']");
+            const rCount = await radios.count();
+            for (let i = 0; i < rCount; i++) {
+              const r = radios.nth(i);
+              const rId = await r.getAttribute("id");
+              const lbl = rId ? entry.locator(`label[for="${rId}"]`) : null;
+              const lblText = lbl && await lbl.count() > 0 ? (await lbl.innerText().catch(() => "")).toLowerCase() : "";
+              if (lblText.includes("male") && !lblText.includes("female")) {
+                await r.check({ force: true }).catch(() => {});
+                await r.evaluate((el: HTMLInputElement) => {
+                  el.checked = true;
+                  el.dispatchEvent(new Event('input', { bubbles: true }));
+                  el.dispatchEvent(new Event('change', { bubbles: true }));
+                }).catch(() => {});
+                break;
+              }
+            }
           }
         }
       }
@@ -693,38 +692,37 @@ export class AshbyAdapter implements ATSAdapter {
         const checkedRadio = entry.locator("input[type='radio']:checked, [role='radio'][aria-checked='true']");
         if (await checkedRadio.count() === 0) {
           console.log("🧹 [Ashby Sweep]: Selecting Race radio (Asian)...");
-          const targetEth = (profile.ethnicity || "Asian").toLowerCase();
-          const radios = entry.locator("input[type='radio']");
-          const rCount = await radios.count();
-          let clicked = false;
-          for (let i = 0; i < rCount; i++) {
-            const r = radios.nth(i);
-            const labelText = await r.evaluate(el => {
-              const lbl = document.querySelector(`label[for="${el.id}"]`) || el.closest('div, [class*="option"]')?.querySelector('label') || el.closest('label');
-              return lbl?.textContent?.trim().toLowerCase() || (el as HTMLInputElement).value.toLowerCase();
-            });
-            if (labelText.includes(targetEth) || (targetEth === "asian" && labelText.includes("asian"))) {
-              await r.evaluate((el: HTMLInputElement) => {
-                el.checked = true;
-                el.dispatchEvent(new Event('input', { bubbles: true }));
-                el.dispatchEvent(new Event('change', { bubbles: true }));
-              });
-              await r.check({ force: true }).catch(() => {});
-              await r.click({ force: true }).catch(() => {});
-              const rId = await r.getAttribute("id");
-              if (rId) {
-                const associatedLabel = entry.locator(`label[for="${rId}"]`);
-                if (await associatedLabel.count() > 0) {
-                  await associatedLabel.click({ force: true }).catch(() => {});
-                }
-              }
-              clicked = true;
-              break;
+          const asianLabel = entry.locator("label").filter({ hasText: /^asian/i }).first();
+          if (await asianLabel.count() > 0 && await asianLabel.isVisible().catch(() => true)) {
+            await asianLabel.click({ force: true }).catch(() => {});
+          } else {
+            const pageAsianLabel = page.locator("label").filter({ hasText: /^asian/i }).first();
+            if (await pageAsianLabel.count() > 0) {
+              await pageAsianLabel.click({ force: true }).catch(() => {});
             }
           }
-          if (!clicked) {
-            const ethLbl = entry.locator("label").filter({ hasText: new RegExp(targetEth, "i") }).first();
-            if (await ethLbl.count() > 0) await ethLbl.click({ force: true }).catch(() => {});
+          await page.waitForTimeout(200);
+
+          // Verify radio checked
+          const isNowChecked = await entry.locator("input[type='radio']:checked, [role='radio'][aria-checked='true']").count() > 0;
+          if (!isNowChecked) {
+            const radios = entry.locator("input[type='radio']");
+            const rCount = await radios.count();
+            for (let i = 0; i < rCount; i++) {
+              const r = radios.nth(i);
+              const rId = await r.getAttribute("id");
+              const lbl = rId ? entry.locator(`label[for="${rId}"]`) : null;
+              const lblText = lbl && await lbl.count() > 0 ? (await lbl.innerText().catch(() => "")).toLowerCase() : "";
+              if (lblText.includes("asian")) {
+                await r.check({ force: true }).catch(() => {});
+                await r.evaluate((el: HTMLInputElement) => {
+                  el.checked = true;
+                  el.dispatchEvent(new Event('input', { bubbles: true }));
+                  el.dispatchEvent(new Event('change', { bubbles: true }));
+                }).catch(() => {});
+                break;
+              }
+            }
           }
         }
       }
@@ -753,10 +751,13 @@ export class AshbyAdapter implements ATSAdapter {
 
           if (isWrong) {
             console.log(`🧹 [Ashby Sweep]: Correcting Location field to candidate's present address: "${candidateAddress}"...`);
+            await locInp.focus().catch(() => {});
             await locInp.click({ force: true }).catch(() => {});
+            await page.keyboard.press("Control+A").catch(() => {});
+            await page.keyboard.press("Backspace").catch(() => {});
             await locInp.fill("");
             await locInp.pressSequentially(`${targetCity}, ${targetState}`, { delay: 40 });
-            await page.waitForTimeout(600);
+            await page.waitForTimeout(800);
 
             // Look for suggestions list
             const suggestions = page.locator("[role='option']:visible, .ashby-autocomplete-option:visible, div[class*='option']:visible, li:visible");
@@ -765,7 +766,7 @@ export class AshbyAdapter implements ATSAdapter {
             for (let s = 0; s < sCount; s++) {
               const opt = suggestions.nth(s);
               const t = (await opt.innerText().catch(() => "")).toLowerCase();
-              if (t.includes(targetCity.toLowerCase()) || (t.includes(targetCountry.toLowerCase()) && !t.includes("russia"))) {
+              if ((t.includes(targetCity.toLowerCase()) || t.includes(targetCountry.toLowerCase())) && !t.includes("russia") && !t.includes("yessentukskaya")) {
                 await opt.click({ force: true }).catch(() => {});
                 clickedOption = true;
                 console.log(`✅ [Ashby Sweep]: Selected location suggestion: "${t}"`);
@@ -773,13 +774,14 @@ export class AshbyAdapter implements ATSAdapter {
               }
             }
             if (!clickedOption) {
-              await locInp.fill(candidateAddress);
+              await page.keyboard.press("ArrowDown").catch(() => {});
+              await page.keyboard.press("Enter").catch(() => {});
               await locInp.evaluate((el: HTMLElement, val: string) => {
                 (el as HTMLInputElement).value = val;
                 el.dispatchEvent(new Event('input', { bubbles: true }));
                 el.dispatchEvent(new Event('change', { bubbles: true }));
                 el.dispatchEvent(new Event('blur', { bubbles: true }));
-              }, candidateAddress);
+              }, candidateAddress).catch(() => {});
             }
           }
         }
