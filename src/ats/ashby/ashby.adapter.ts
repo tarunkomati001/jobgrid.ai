@@ -643,95 +643,61 @@ export class AshbyAdapter implements ATSAdapter {
     try {
       const page = "keyboard" in target ? target : (target as Frame).page();
 
-      // 1. Gender Radio Sweep
-      const genderEntries = target.locator("[data-field-path*='gender' i], .ashby-application-form-field-entry, div[data-field-path], fieldset").filter({ hasText: /gender/i });
-      if (await genderEntries.count() > 0) {
-        const entry = genderEntries.first();
-        const checkedRadio = entry.locator("input[type='radio']:checked, [role='radio'][aria-checked='true']");
-        if (await checkedRadio.count() === 0) {
-          console.log("🧹 [Ashby Sweep]: Selecting Gender radio (Male)...");
-          const maleLabel = entry.locator("label").filter({ hasText: /^male$/i }).first();
-          if (await maleLabel.count() > 0 && await maleLabel.isVisible().catch(() => true)) {
-            await maleLabel.click({ force: true }).catch(() => {});
-          } else {
-            const pageMaleLabel = page.locator("label").filter({ hasText: /^male$/i }).first();
-            if (await pageMaleLabel.count() > 0) {
-              await pageMaleLabel.click({ force: true }).catch(() => {});
-            }
+      // 1. Gender Radio Sweep (Direct native radio check, avoid label click toggle)
+      const genderRadios = target.locator("input[type='radio'][id*='gender' i], input[type='radio'][name*='gender' i]");
+      const gCount = await genderRadios.count();
+      if (gCount > 0) {
+        let isGenderChecked = false;
+        for (let i = 0; i < gCount; i++) {
+          if (await genderRadios.nth(i).isChecked().catch(() => false)) {
+            isGenderChecked = true;
+            break;
           }
-          await page.waitForTimeout(200);
-
-          // Verify radio checked
-          const isNowChecked = await entry.locator("input[type='radio']:checked, [role='radio'][aria-checked='true']").count() > 0;
-          if (!isNowChecked) {
-            const radios = entry.locator("input[type='radio']");
-            const rCount = await radios.count();
-            for (let i = 0; i < rCount; i++) {
-              const r = radios.nth(i);
-              const rId = await r.getAttribute("id");
-              const lbl = rId ? entry.locator(`label[for="${rId}"]`) : null;
-              const lblText = lbl && await lbl.count() > 0 ? (await lbl.innerText().catch(() => "")).toLowerCase() : "";
-              if (lblText.includes("male") && !lblText.includes("female")) {
-                await r.check({ force: true }).catch(() => {});
-                await r.evaluate((el: HTMLInputElement) => {
-                  el.checked = true;
-                  el.dispatchEvent(new Event('input', { bubbles: true }));
-                  el.dispatchEvent(new Event('change', { bubbles: true }));
-                }).catch(() => {});
-                break;
-              }
-            }
+        }
+        if (!isGenderChecked) {
+          console.log("🧹 [Ashby Sweep]: Selecting Gender radio (Male)...");
+          const maleRadio = target.locator("input[type='radio'][id*='gender-labeled-radio-0'], input[type='radio'][id*='gender'][value*='male' i], input[type='radio'][name*='gender']").first();
+          if (await maleRadio.count() > 0) {
+            await maleRadio.check({ force: true }).catch(() => {});
+            await maleRadio.evaluate((el: HTMLInputElement) => {
+              el.checked = true;
+              el.dispatchEvent(new Event('input', { bubbles: true }));
+              el.dispatchEvent(new Event('change', { bubbles: true }));
+            }).catch(() => {});
           }
         }
       }
 
-      // 2. Race Radio Sweep
-      const raceEntries = target.locator("[data-field-path*='race' i], .ashby-application-form-field-entry, div[data-field-path], fieldset").filter({ hasText: /race|ethnicity/i });
-      if (await raceEntries.count() > 0) {
-        const entry = raceEntries.first();
-        const checkedRadio = entry.locator("input[type='radio']:checked, [role='radio'][aria-checked='true']");
-        if (await checkedRadio.count() === 0) {
-          console.log("🧹 [Ashby Sweep]: Selecting Race radio (Asian)...");
-          const asianLabel = entry.locator("label").filter({ hasText: /^asian/i }).first();
-          if (await asianLabel.count() > 0 && await asianLabel.isVisible().catch(() => true)) {
-            await asianLabel.click({ force: true }).catch(() => {});
-          } else {
-            const pageAsianLabel = page.locator("label").filter({ hasText: /^asian/i }).first();
-            if (await pageAsianLabel.count() > 0) {
-              await pageAsianLabel.click({ force: true }).catch(() => {});
-            }
+      // 2. Race Radio Sweep (Direct native radio check, avoid label click toggle)
+      const raceRadios = target.locator("input[type='radio'][id*='race' i], input[type='radio'][name*='race' i]");
+      const rCount = await raceRadios.count();
+      if (rCount > 0) {
+        let isRaceChecked = false;
+        for (let i = 0; i < rCount; i++) {
+          if (await raceRadios.nth(i).isChecked().catch(() => false)) {
+            isRaceChecked = true;
+            break;
           }
-          await page.waitForTimeout(200);
-
-          // Verify radio checked
-          const isNowChecked = await entry.locator("input[type='radio']:checked, [role='radio'][aria-checked='true']").count() > 0;
-          if (!isNowChecked) {
-            const radios = entry.locator("input[type='radio']");
-            const rCount = await radios.count();
-            for (let i = 0; i < rCount; i++) {
-              const r = radios.nth(i);
-              const rId = await r.getAttribute("id");
-              const lbl = rId ? entry.locator(`label[for="${rId}"]`) : null;
-              const lblText = lbl && await lbl.count() > 0 ? (await lbl.innerText().catch(() => "")).toLowerCase() : "";
-              if (lblText.includes("asian")) {
-                await r.check({ force: true }).catch(() => {});
-                await r.evaluate((el: HTMLInputElement) => {
-                  el.checked = true;
-                  el.dispatchEvent(new Event('input', { bubbles: true }));
-                  el.dispatchEvent(new Event('change', { bubbles: true }));
-                }).catch(() => {});
-                break;
-              }
-            }
+        }
+        if (!isRaceChecked) {
+          console.log("🧹 [Ashby Sweep]: Selecting Race radio (Asian)...");
+          const asianRadio = target.locator("input[type='radio'][id*='race-labeled-radio-4'], input[type='radio'][id*='race'][value*='asian' i], input[type='radio'][name*='race'][id*='4']").first();
+          if (await asianRadio.count() > 0) {
+            await asianRadio.check({ force: true }).catch(() => {});
+            await asianRadio.evaluate((el: HTMLInputElement) => {
+              el.checked = true;
+              el.dispatchEvent(new Event('input', { bubbles: true }));
+              el.dispatchEvent(new Event('change', { bubbles: true }));
+            }).catch(() => {});
           }
         }
       }
 
       // 3. Location Sweep (Fix incorrect Russia / empty location and set to candidate's present address)
-      const locEntries = target.locator(".ashby-application-form-field-entry, div[data-field-path]").filter({ hasText: /currently located|where are you located|current location/i });
+      const locEntries = target.locator("[data-field-path='_systemfield_location'], [data-field-path*='location' i], .ashby-application-form-field-entry, div[data-field-path], fieldset").filter({ hasText: /location|currently located|where are you located|current location|where are you/i });
       if (await locEntries.count() > 0) {
         const entry = locEntries.first();
-        const locInp = entry.locator("input[role='combobox'], input[type='text'], input:not([type])").first();
+        const locInp = entry.locator("input[role='combobox'], input[aria-autocomplete='list'], input[class*='autocomplete'], input[placeholder*='typing'], input[type='text'], input:not([type])").first();
         if (await locInp.count() > 0) {
           const currentVal = await locInp.inputValue().catch(() => "");
           const targetCity = profile.city || "San Francisco";
@@ -760,7 +726,7 @@ export class AshbyAdapter implements ATSAdapter {
             await page.waitForTimeout(800);
 
             // Look for suggestions list
-            const suggestions = page.locator("[role='option']:visible, .ashby-autocomplete-option:visible, div[class*='option']:visible, li:visible");
+            const suggestions = page.locator(".ashby-application-form-input-autocomplete-popup-result:visible, [role='option']:visible, .ashby-autocomplete-option:visible, div[class*='option']:visible, li:visible");
             const sCount = await suggestions.count();
             let clickedOption = false;
             for (let s = 0; s < sCount; s++) {
@@ -777,7 +743,9 @@ export class AshbyAdapter implements ATSAdapter {
               await page.keyboard.press("ArrowDown").catch(() => {});
               await page.keyboard.press("Enter").catch(() => {});
               await locInp.evaluate((el: HTMLElement, val: string) => {
-                (el as HTMLInputElement).value = val;
+                const proto = window.HTMLInputElement.prototype;
+                const set = Object.getOwnPropertyDescriptor(proto, 'value')?.set;
+                set?.call(el, val);
                 el.dispatchEvent(new Event('input', { bubbles: true }));
                 el.dispatchEvent(new Event('change', { bubbles: true }));
                 el.dispatchEvent(new Event('blur', { bubbles: true }));
@@ -788,7 +756,7 @@ export class AshbyAdapter implements ATSAdapter {
       }
 
       // 4. Start Date Sweep
-      const startEntries = target.locator(".ashby-application-form-field-entry, div[data-field-path]").filter({ hasText: /when can you start|start a new role|start date|available to start/i });
+      const startEntries = target.locator("[data-field-path*='start' i], .ashby-application-form-field-entry, div[data-field-path], fieldset").filter({ hasText: /when can you start|start a new role|start date|available to start|start/i });
       if (await startEntries.count() > 0) {
         const entry = startEntries.first();
         const dateInput = entry.locator("input:not([type='hidden']), [placeholder*='date' i], [placeholder*='pick' i], button:has-text('Pick date'), [role='button']:has-text('Pick date'), [class*='picker'], div[tabindex='0']").first();
@@ -805,12 +773,14 @@ export class AshbyAdapter implements ATSAdapter {
             const dateStr = `${mm}/${dd}/${yyyy}`;
             const dayNum = String(d.getDate());
 
-            const tag = await dateInput.evaluate(el => el.tagName.toLowerCase());
+            const tag = await dateInput.evaluate(el => el.tagName.toLowerCase()).catch(() => "input");
             if (tag === "input") {
               await dateInput.click({ force: true }).catch(() => {});
               await dateInput.fill(dateStr);
               await dateInput.evaluate((el: HTMLElement, v: string) => {
-                (el as HTMLInputElement).value = v;
+                const proto = window.HTMLInputElement.prototype;
+                const set = Object.getOwnPropertyDescriptor(proto, 'value')?.set;
+                set?.call(el, v);
                 el.dispatchEvent(new Event('input', { bubbles: true }));
                 el.dispatchEvent(new Event('change', { bubbles: true }));
                 el.dispatchEvent(new Event('blur', { bubbles: true }));

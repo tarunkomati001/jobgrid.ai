@@ -281,21 +281,25 @@ export class WorkableAdapter implements ATSAdapter {
 
           if (isUSPhone && !isCurrentUS) {
             console.log("🇺🇸 [WorkableAdapter]: Selecting United States (+1) phone country...");
-            await flagBtn.click({ force: true }).catch(() => {});
+            // Must dispatch mouse events to open intl-tel-input popup
+            await flagBtn.evaluate(el => {
+              el.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+              el.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
+              el.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+            }).catch(() => flagBtn.click({ force: true }));
             await page.waitForTimeout(400);
 
-            // Locate US item in iti dropdown list
-            const usOpt = page.locator("li[data-country-code='us'], li#iti-0__item-us, li[data-dial-code='1'], [role='option'][data-country-code='us'], li:has-text('United States (+1)'), li:has-text('United States')").first();
-            if (await usOpt.count() > 0 && await usOpt.isVisible().catch(() => true)) {
-              await usOpt.click({ force: true }).catch(() => {});
-              await page.waitForTimeout(300);
-            } else {
-              // DOM evaluate fallback
-              await page.evaluate(() => {
-                const li = document.querySelector("li[data-country-code='us'], li[data-dial-code='1'], #iti-0__item-us") as HTMLElement;
-                if (li) li.click();
-              }).catch(() => {});
-            }
+            // Locate and select US item in dropdown list via dispatch
+            await page.evaluate(() => {
+              const us = document.querySelector("#iti-0__item-us, li[data-iso2='us'], li[data-country-code='us'], li[data-dial-code='1']");
+              if (us) {
+                (us as HTMLElement).scrollIntoView?.();
+                us.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+                us.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
+                us.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+              }
+            }).catch(() => {});
+            await page.waitForTimeout(300);
           }
         }
 
@@ -340,7 +344,9 @@ export class WorkableAdapter implements ATSAdapter {
 
         // Direct React value setter to guarantee value cannot revert to Jaggampeta
         await addressInput.evaluate((el: HTMLInputElement, val: string) => {
-          el.value = val;
+          const proto = window.HTMLInputElement.prototype;
+          const set = Object.getOwnPropertyDescriptor(proto, 'value')?.set;
+          set?.call(el, val);
           el.dispatchEvent(new Event("input", { bubbles: true }));
           el.dispatchEvent(new Event("change", { bubbles: true }));
           el.dispatchEvent(new Event("blur", { bubbles: true }));
@@ -349,20 +355,21 @@ export class WorkableAdapter implements ATSAdapter {
 
       // Also ensure companion city, postcode, and country fields are synced
       await page.evaluate(({ city, zip, country, address }: { city: string; zip: string; country: string; address: string }) => {
-        const list = [
-          { sel: "input#address, input[name='address'], [data-ui='address']", val: address },
-          { sel: "input#city, input[name='city']", val: city },
-          { sel: "input#postcode, input[name='postcode']", val: zip },
-          { sel: "input#country, input[name='country']", val: country }
-        ];
-        for (let i = 0; i < list.length; i++) {
-          const el = document.querySelector(list[i].sel) as HTMLInputElement | null;
+        const setVal = (sel: string, v: string) => {
+          const el = document.querySelector(sel) as HTMLInputElement | null;
           if (el) {
-            el.value = list[i].val;
+            const proto = window.HTMLInputElement.prototype;
+            const set = Object.getOwnPropertyDescriptor(proto, 'value')?.set;
+            set?.call(el, v);
             el.dispatchEvent(new Event("input", { bubbles: true }));
             el.dispatchEvent(new Event("change", { bubbles: true }));
+            el.dispatchEvent(new Event("blur", { bubbles: true }));
           }
-        }
+        };
+        setVal("input#address, input[name='address'], [data-ui='address']", address);
+        setVal("input#city, input[name='city']", city);
+        setVal("input#postcode, input[name='postcode']", zip);
+        setVal("input#country, input[name='country']", country);
       }, {
         address: targetAddress,
         city: profile.city || "San Francisco",
@@ -715,8 +722,34 @@ export class WorkableAdapter implements ATSAdapter {
         await opt.scrollIntoViewIfNeeded().catch(() => {});
         await page.waitForTimeout(180);
         await humanClick(page, opt).catch(() => opt.click({ force: true }));
+
+        // Also directly check the radio input within this option or fieldset to ensure state is registered
+        const rInp = opt.locator("input[type='radio']").first();
+        if (await rInp.count() > 0) {
+          await rInp.check({ force: true }).catch(() => {});
+          await rInp.evaluate((el: HTMLInputElement) => {
+            el.checked = true;
+            el.dispatchEvent(new Event('input', { bubbles: true }));
+            el.dispatchEvent(new Event('change', { bubbles: true }));
+          }).catch(() => {});
+        } else {
+          // Fallback: check matching radio in fieldset
+          const valBool = targetAnswer.toUpperCase() === "YES" ? "true" : (targetAnswer.toUpperCase() === "NO" ? "false" : "");
+          if (valBool) {
+            const fsRadio = fs.locator(`input[type='radio'][value='${valBool}']`).first();
+            if (await fsRadio.count() > 0) {
+              await fsRadio.check({ force: true }).catch(() => {});
+              await fsRadio.evaluate((el: HTMLInputElement) => {
+                el.checked = true;
+                el.dispatchEvent(new Event('input', { bubbles: true }));
+                el.dispatchEvent(new Event('change', { bubbles: true }));
+              }).catch(() => {});
+            }
+          }
+        }
+
         console.log(`✅ [WorkableAdapter]: [Radio] "${qText.slice(0, 45)}..." -> ${targetAnswer}`);
-        await page.waitForTimeout(300);
+        await page.waitForTimeout(200);
       }
     }
 
@@ -792,10 +825,34 @@ export class WorkableAdapter implements ATSAdapter {
         const text = (await finalFlag.innerText().catch(() => "")) || "";
         if (!aria.includes("(+1)") && !aria.includes("United States") && !text.includes("+1")) {
           console.log("🧹 [Workable Sweep]: Correcting phone flag to United States (+1)...");
-          await finalFlag.click({ force: true }).catch(() => {});
+          await finalFlag.evaluate(el => {
+            el.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+            el.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
+            el.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+          }).catch(() => finalFlag.click({ force: true }));
+          await page.waitForTimeout(400);
+
+          await page.evaluate(() => {
+            const us = document.querySelector("#iti-0__item-us, li[data-iso2='us'], li[data-country-code='us'], li[data-dial-code='1']");
+            if (us) {
+              (us as HTMLElement).scrollIntoView?.();
+              us.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+              us.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
+              us.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+            }
+          }).catch(() => {});
           await page.waitForTimeout(300);
-          const usOpt = page.locator("li[data-country-code='us'], li#iti-0__item-us, li[data-dial-code='1']").first();
-          if (await usOpt.count() > 0) await usOpt.click({ force: true }).catch(() => {});
+
+          // Re-fill phone input with clean US digits
+          const phoneInput = page.locator("input[type='tel'], input[name='phone'], input#phone, input#input_phone").first();
+          if (await phoneInput.count() > 0) {
+            const cleanPhone = profile.phone.replace(/^\+1[\s-]?/, "").replace(/^\+91[\s-]?/, "").replace(/\D/g, "");
+            await phoneInput.fill(cleanPhone || "2025550198");
+            await phoneInput.evaluate(el => {
+              el.dispatchEvent(new Event('input', { bubbles: true }));
+              el.dispatchEvent(new Event('change', { bubbles: true }));
+            });
+          }
         }
       }
 
@@ -803,14 +860,38 @@ export class WorkableAdapter implements ATSAdapter {
       if (await finalAddr.count() > 0) {
         const val = await finalAddr.inputValue().catch(() => "");
         if (!val || /india|jaggampeta|vadodara/i.test(val) || !val.toLowerCase().includes("san francisco")) {
-          const usAddr = profile.street ? `${profile.street}, ${profile.city || "San Francisco"}, CA` : "123 Market St, San Francisco, CA 94105, United States";
+          const usAddr = profile.street ? `${profile.street}, ${profile.city || "San Francisco"}, CA 94105, United States` : "123 Market St, San Francisco, CA 94105, United States";
           console.log(`🧹 [Workable Sweep]: Correcting address from "${val}" to "${usAddr}"...`);
           await finalAddr.evaluate((el: HTMLInputElement, v: string) => {
-            el.value = v;
+            const proto = window.HTMLInputElement.prototype;
+            const set = Object.getOwnPropertyDescriptor(proto, 'value')?.set;
+            set?.call(el, v);
             el.dispatchEvent(new Event("input", { bubbles: true }));
             el.dispatchEvent(new Event("change", { bubbles: true }));
             el.dispatchEvent(new Event("blur", { bubbles: true }));
           }, usAddr);
+        }
+      }
+
+      // Check all radio groups to ensure none are left unselected
+      const remainingUncheckedFieldsets = await page.locator("fieldset[role='radiogroup']").all();
+      for (const fs of remainingUncheckedFieldsets) {
+        const isAnyChecked = await fs.locator("input[type='radio']:checked, [role='radio'][aria-checked='true']").count() > 0;
+        if (!isAnyChecked) {
+          console.log("🧹 [Workable Sweep]: Selecting first radio option for unselected radio group...");
+          const firstOpt = fs.locator("label, [role='radio'], input[type='radio']").first();
+          if (await firstOpt.count() > 0) {
+            await firstOpt.click({ force: true }).catch(() => {});
+            const rInp = fs.locator("input[type='radio']").first();
+            if (await rInp.count() > 0) {
+              await rInp.check({ force: true }).catch(() => {});
+              await rInp.evaluate((el: HTMLInputElement) => {
+                el.checked = true;
+                el.dispatchEvent(new Event('input', { bubbles: true }));
+                el.dispatchEvent(new Event('change', { bubbles: true }));
+              }).catch(() => {});
+            }
+          }
         }
       }
     } catch (e: any) {}

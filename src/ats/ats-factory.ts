@@ -19,9 +19,12 @@ import { BreezyHRAdapter } from "./breezyhr/breezyhr.adapter";
 import { JobviteAdapter } from "./jobvite/jobvite.adapter";
 import { AvatureAdapter } from "./avature/avature.adapter";
 import { IcimsAdapter } from "./icims/icims.adapter";
+import { UltiproAdapter } from "./ultipro/ultipro.adapter";
 
 export function getAdapterForATS(atsType: ATSType): ATSAdapter {
   switch (atsType) {
+    case "ULTIPRO":
+      return new UltiproAdapter();
     case "ICIMS":
       return new IcimsAdapter();
     case "AVATURE":

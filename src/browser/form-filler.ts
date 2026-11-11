@@ -766,12 +766,15 @@ export async function fillLogicalField(
       }
 
       if (isDirectMatch) {
-        if (labelLoc && await labelLoc.count() > 0 && await labelLoc.isVisible().catch(() => false)) {
-          await labelLoc.click({ force: true }).catch(() => {});
-        } else {
-          await r.click({ force: true }).catch(() => {});
-        }
         await r.check({ force: true }).catch(() => {});
+        const alreadyChecked = await r.isChecked().catch(() => false);
+        if (!alreadyChecked) {
+          if (labelLoc && await labelLoc.count() > 0 && await labelLoc.isVisible().catch(() => false)) {
+            await labelLoc.click({ force: true }).catch(() => {});
+          } else {
+            await r.click({ force: true }).catch(() => {});
+          }
+        }
         await r.evaluate((el: HTMLInputElement) => {
           el.checked = true;
           el.dispatchEvent(new Event('input', { bubbles: true }));

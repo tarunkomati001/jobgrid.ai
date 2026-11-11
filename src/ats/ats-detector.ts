@@ -1,6 +1,6 @@
 import { Page } from "playwright";
 
-export type ATSType = "ASHBY" | "GREENHOUSE" | "LEVER" | "WORKDAY" | "SMARTRECRUITERS" | "WORKABLE" | "TALEO" | "ORACLE" | "RECRUITEE" | "RIPPLING" | "PAYLOCITY" | "WELLFOUND" | "BAMBOOHR" | "JAZZHR" | "BREEZYHR" | "JOBVITE" | "AVATURE" | "ICIMS" | "UNKNOWN";
+export type ATSType = "ASHBY" | "GREENHOUSE" | "LEVER" | "WORKDAY" | "SMARTRECRUITERS" | "WORKABLE" | "TALEO" | "ORACLE" | "RECRUITEE" | "RIPPLING" | "PAYLOCITY" | "WELLFOUND" | "BAMBOOHR" | "JAZZHR" | "BREEZYHR" | "JOBVITE" | "AVATURE" | "ICIMS" | "ULTIPRO" | "UNKNOWN";
 
 /**
  * Detects the ATS from a URL string (fast initial check).
@@ -9,6 +9,9 @@ export function detectATSByUrl(urlStr: string): ATSType {
   try {
     const hostname = new URL(urlStr).hostname.toLowerCase();
     
+    if (hostname.includes("ultipro.com") || urlStr.includes("recruiting.ultipro.com") || urlStr.includes("signin-us.ultipro.com")) {
+      return "ULTIPRO";
+    }
     if (hostname.includes("icims.com") || urlStr.includes(".icims.com")) {
       return "ICIMS";
     }
@@ -93,6 +96,14 @@ export async function detectATSByPage(page: Page): Promise<ATSType> {
   // Fallback: check DOM elements and scripts for signature markers
   const content = await page.content();
   const lowerContent = content.toLowerCase();
+
+  if (
+    lowerContent.includes("ultipro.com") ||
+    lowerContent.includes("ukg pro") ||
+    (await page.$("ukg-button, [data-automation='opportunity-title'], [data-automation='apply-now-button'], [data-automation='btn-submit']")) !== null
+  ) {
+    return "ULTIPRO";
+  }
 
   if (
     lowerContent.includes("icims.com") ||

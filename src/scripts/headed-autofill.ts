@@ -127,6 +127,13 @@ async function main() {
     (args.includes("--ats") && args[args.indexOf("--ats") + 1]?.toLowerCase() === "wellfound") ||
     process.env.WELLFOUND_ONLY === "true" ||
     process.env.ATS_FILTER?.toUpperCase() === "WELLFOUND";
+  const isUltiproOnly =
+    args.includes("--ultipro") ||
+    args.includes("--ultipro-only") ||
+    args.includes("--ukg") ||
+    (args.includes("--ats") && args[args.indexOf("--ats") + 1]?.toLowerCase() === "ultipro") ||
+    process.env.ULTIPRO_ONLY === "true" ||
+    process.env.ATS_FILTER?.toUpperCase() === "ULTIPRO";
   const isIcimsOnly =
     args.includes("--icims") ||
     args.includes("--icims-only") ||
@@ -174,6 +181,13 @@ async function main() {
   
   if (urlArgs.length > 0) {
     urls = urlArgs;
+  } else if (isUltiproOnly) {
+    console.log("🎯 Filtering queued jobs strictly for ULTIPRO ATS (3 requested jobs)...");
+    urls = [
+      "https://recruiting.ultipro.com/HOL1002HPHM/JobBoard/be27b89b-3cb9-491f-a1b0-42f8b077a9dd/OpportunityDetail?opportunityId=6c242ff6-61b8-4bb4-8888-9fa5862eba72",
+      "https://recruiting.ultipro.com/PAR1035PPTL/JobBoard/e104637a-c3c6-4682-96d2-d7cc2662dc13/OpportunityDetail?opportunityId=d0c54545-1437-44cf-8b3c-dfc607d2505d",
+      "https://recruiting.ultipro.com/BUI1004BMDI/JobBoard/6b442184-52a5-4635-8db5-5aa4bed2a563/OpportunityDetail?opportunityId=d04454f8-e144-4f2c-b7dc-aceb7da1b4aa"
+    ];
   } else if (isIcimsOnly) {
     console.log("🎯 Filtering queued jobs strictly for ICIMS ATS (Active jobs)...");
     urls = [
@@ -565,7 +579,9 @@ async function main() {
       // Ensure Job and Application exist in DB so any new link automatically gets registered & tracked
       let jobId: string;
       const jobCheck = await db.query("SELECT id FROM jobs WHERE url = $1", [url]);
-      const detectedAtsFallback = url.includes("icims.com")
+      const detectedAtsFallback = url.includes("ultipro.com")
+        ? "ULTIPRO"
+        : url.includes("icims.com")
         ? "ICIMS"
         : url.includes("avature.net")
         ? "AVATURE"
@@ -663,7 +679,7 @@ async function main() {
       }
 
       console.log(`🌐 Navigating to application page: ${targetUrl}...`);
-      const isFastNav = targetUrl.includes("avature.net") || targetUrl.includes("paylocity.com") || targetUrl.includes("oracle") || targetUrl.includes("rippling") || targetUrl.includes("recruitee") || targetUrl.includes("bamboohr.com") || targetUrl.includes("applytojob.com") || targetUrl.includes("breezy.hr") || targetUrl.includes("jobvite.com");
+      const isFastNav = targetUrl.includes("ultipro.com") || targetUrl.includes("avature.net") || targetUrl.includes("paylocity.com") || targetUrl.includes("oracle") || targetUrl.includes("rippling") || targetUrl.includes("recruitee") || targetUrl.includes("bamboohr.com") || targetUrl.includes("applytojob.com") || targetUrl.includes("breezy.hr") || targetUrl.includes("jobvite.com");
       await page.goto(targetUrl, { waitUntil: isFastNav ? "domcontentloaded" : "load", timeout: 45000 });
       
       // Auto-detect & resolve Cloudflare Turnstile if intercepted
