@@ -273,23 +273,23 @@ export class WorkableAdapter implements ATSAdapter {
         const phoneContainer = page.locator("[data-ui='phone'], .iti").first();
         if (await phoneContainer.count() > 0) {
           const isUSPhone = profile.phone.includes("+1") || profile.country?.includes("United States") || !profile.phone.includes("+91");
-          const flagBtn = phoneContainer.locator(".iti__selected-flag, [role='combobox']").first();
+          const flagBtn = phoneContainer.locator("button.iti__selected-country, [data-ui='phone'] button, .iti button, .iti__selected-flag, [role='combobox']").first();
           if (await flagBtn.count() > 0) {
             const currentDialCode = await phoneContainer.locator(".iti__selected-dial-code").first().innerText().catch(() => "");
             if (isUSPhone && !currentDialCode.includes("+1")) {
-              await humanClick(page, flagBtn).catch(() => flagBtn.click());
-              await page.waitForTimeout(300);
-              const usOpt = page.locator(".iti__country-list [data-country-code='us'], .iti__country-list [data-dial-code='1']").first();
+              await humanClick(page, flagBtn).catch(() => flagBtn.click({ force: true }));
+              await page.waitForTimeout(350);
+              const usOpt = page.locator(".iti__country-list li[data-iso2='us'], .iti__country-list li#iti-0__item-us, .iti__country-list li[data-dial-code='1'], .iti__country-list li:has-text('United States')").first();
               if (await usOpt.count() > 0) {
-                await humanClick(page, usOpt).catch(() => usOpt.click());
+                await humanClick(page, usOpt).catch(() => usOpt.click({ force: true }));
                 await page.waitForTimeout(300);
               }
             } else if (!isUSPhone && !currentDialCode.includes("+91")) {
-              await humanClick(page, flagBtn).catch(() => flagBtn.click());
-              await page.waitForTimeout(300);
-              const indiaOpt = page.locator(".iti__country-list [data-country-code='in'], .iti__country-list [data-dial-code='91']").first();
+              await humanClick(page, flagBtn).catch(() => flagBtn.click({ force: true }));
+              await page.waitForTimeout(350);
+              const indiaOpt = page.locator(".iti__country-list li[data-iso2='in'], .iti__country-list li#iti-0__item-in, .iti__country-list li[data-dial-code='91'], .iti__country-list li:has-text('India')").first();
               if (await indiaOpt.count() > 0) {
-                await humanClick(page, indiaOpt).catch(() => indiaOpt.click());
+                await humanClick(page, indiaOpt).catch(() => indiaOpt.click({ force: true }));
                 await page.waitForTimeout(300);
               }
             }
@@ -304,18 +304,47 @@ export class WorkableAdapter implements ATSAdapter {
     }
 
     // Address / Location
-    const addressInput = page.locator("input#address, [data-ui='address']").first();
+    const addressInput = page.locator("input#address, [data-ui='address'], input[name='address']").first();
     if (await addressInput.count() > 0 && await addressInput.isVisible()) {
+      const targetAddress = profile.street
+        ? `${profile.street}, ${profile.city || "San Francisco"}, ${profile.state || "California"} ${profile.zipCode || "94105"}, ${profile.country || "United States"}`
+        : (profile.location || "123 Market St, San Francisco, CA 94105, United States");
+
       const curVal = await addressInput.inputValue().catch(() => "");
-      if (!curVal) {
-        await fillWithHumanMouse(addressInput, profile.location || "San Francisco, CA, United States");
+      const isIncorrectLocation = !curVal || /india|jaggampeta|vadodara/i.test(curVal) || (!curVal.toLowerCase().includes("san francisco") && !curVal.toLowerCase().includes("california") && !curVal.toLowerCase().includes("united states"));
+
+      if (isIncorrectLocation) {
+        await fillWithHumanMouse(addressInput, targetAddress);
         await page.waitForTimeout(400);
-        // If autocomplete dropdown appears, select the first option
-        const autoOpt = page.locator("[role='listbox'] [role='option'], .styles--option, .pac-item").first();
+        // If autocomplete dropdown appears, select the matching US option or first option
+        const autoOpt = page.locator("[role='listbox'] [role='option'], .styles--option, .pac-item, ul[data-ui*='option'] li").first();
         if (await autoOpt.count() > 0 && await autoOpt.isVisible()) {
-          await humanClick(page, autoOpt).catch(() => autoOpt.click());
+          await humanClick(page, autoOpt).catch(() => autoOpt.click({ force: true }));
+          await page.waitForTimeout(300);
         }
       }
+
+      // Also ensure companion city, postcode, and country fields are synced
+      await page.evaluate(({ city, zip, country }: { city: string; zip: string; country: string }) => {
+        const list = [
+          { sel: "input#city, input[name='city']", val: city },
+          { sel: "input#postcode, input[name='postcode']", val: zip },
+          { sel: "input#country, input[name='country']", val: country }
+        ];
+        for (let i = 0; i < list.length; i++) {
+          const el = document.querySelector(list[i].sel) as HTMLInputElement | null;
+          if (el) {
+            el.value = list[i].val;
+            el.dispatchEvent(new Event("input", { bubbles: true }));
+            el.dispatchEvent(new Event("change", { bubbles: true }));
+          }
+        }
+      }, {
+        city: profile.city || "San Francisco",
+        zip: profile.zipCode || "94105",
+        country: profile.country || "United States"
+      }).catch(() => {});
+
       console.log(`✅ [WorkableAdapter]: Address -> ${await addressInput.inputValue()}`);
     }
 
@@ -383,45 +412,130 @@ export class WorkableAdapter implements ATSAdapter {
       console.log(`✅ [WorkableAdapter]: Cover Letter populated`);
     }
 
-    // 4. Fill Custom Text & Textarea Fields (e.g. Compensation expectations)
-    await updateHUDStatus(page, "Answering screening questions...", "Processing custom questions & compensation", "info", 60);
-    const customInputs = await page.locator("input:not([type='hidden']):not([type='file']):not([type='radio']):not([type='checkbox']):not(#firstname):not(#lastname):not(#email):not(#address):not([name='phone']):not(#city):not(#postcode):not(#country), textarea:not(#cover_letter)").all();
+    // 4. Fill Custom Combobox Dropdowns (Workable custom select menus)
+    await updateHUDStatus(page, "Answering custom dropdowns...", "Processing Workable select comboboxes", "info", 55);
+    try {
+      const comboboxWrappers = await page.locator("div[data-input-type='select']:not([data-ui='phone']), div:has(> label input[role='combobox']:not([name='phone']))").all();
+      for (const combo of comboboxWrappers) {
+        if (!(await combo.isVisible().catch(() => false))) continue;
+        const qText = await combo.evaluate((el: HTMLElement) => {
+          const lEl = el.closest("[data-ui*='field'], .styles--3aPac, div")?.querySelector("[id$='_label'], label, strong, span");
+          return lEl?.textContent?.trim() || "";
+        }).catch(() => "");
+
+        const normQ = normalizeLabel(qText);
+        const comboInput = combo.locator("input[role='combobox']").first();
+        if (await comboInput.count() === 0) continue;
+
+        // Open dropdown by clicking
+        await humanClick(page, comboInput).catch(() => comboInput.click({ force: true }));
+        await page.waitForTimeout(300);
+
+        const listboxId = await comboInput.getAttribute("aria-controls").catch(() => "") ||
+          await comboInput.getAttribute("aria-owns").catch(() => "");
+        
+        const listbox = listboxId ? page.locator(`#${listboxId}`) : page.locator("[role='listbox']");
+        const options = await listbox.locator("[role='option'], li").all();
+
+        if (options.length > 0) {
+          let chosenOpt: any = null;
+          let target = "";
+
+          // Check direct answers or database
+          for (const [k, v] of Object.entries(additionalAnswers)) {
+            if (normQ.includes(normalizeLabel(k))) { target = v; break; }
+          }
+          if (!target && userSavedAnswers[normQ]) target = userSavedAnswers[normQ];
+
+          if (!target) {
+            if (
+              normQ.includes("former employee") ||
+              normQ.includes("relative") ||
+              normQ.includes("felony") ||
+              normQ.includes("disciplinary") ||
+              normQ.includes("require sponsorship") ||
+              normQ.includes("visa sponsorship")
+            ) {
+              target = "no";
+            } else if (
+              normQ.includes("authorized") ||
+              normQ.includes("18 years") ||
+              normQ.includes("legally eligible") ||
+              normQ.includes("agree") ||
+              normQ.includes("hybrid")
+            ) {
+              target = "yes";
+            }
+          }
+
+          if (target) {
+            const lowerTarget = target.toLowerCase();
+            for (const opt of options) {
+              const optText = (await opt.innerText().catch(() => "")).toLowerCase().trim();
+              if (lowerTarget === "no" && optText === "no") { chosenOpt = opt; break; }
+              if (lowerTarget === "yes" && optText === "yes") { chosenOpt = opt; break; }
+              if (optText.includes(lowerTarget)) { chosenOpt = opt; break; }
+            }
+          }
+
+          if (!chosenOpt) {
+            for (const opt of options) {
+              const optText = (await opt.innerText().catch(() => "")).toLowerCase().trim();
+              if (!optText.includes("select") && !optText.includes("choose") && optText.length > 0) {
+                chosenOpt = opt;
+                break;
+              }
+            }
+          }
+
+          if (chosenOpt) {
+            await humanClick(page, chosenOpt).catch(() => chosenOpt.click({ force: true }));
+            console.log(`✅ [WorkableAdapter]: [Combobox] "${qText.slice(0, 45)}..." -> selected`);
+            await page.waitForTimeout(250);
+          }
+        }
+      }
+    } catch (e: any) {
+      console.warn("⚠️ [WorkableAdapter]: Combobox dropdown error:", e.message);
+    }
+
+    // 5. Fill Custom Text & Textarea Fields (excluding readonly / combobox / hidden / system fields)
+    await updateHUDStatus(page, "Answering screening questions...", "Processing custom questions & compensation", "info", 65);
+    const customInputs = await page.locator("input:not([type='hidden']):not([type='file']):not([type='radio']):not([type='checkbox']):not([readonly]):not([role='combobox']):not([aria-haspopup='listbox']):not([tabindex='-1']):not([aria-hidden='true']):not(#firstname):not(#lastname):not(#email):not(#address):not([name='phone']):not(#city):not(#postcode):not(#country), textarea:not(#cover_letter):not(#summary)").all();
     console.log(`📋 [WorkableAdapter]: Found ${customInputs.length} custom input/textarea fields...`);
 
     for (const inp of customInputs) {
-      if (!(await inp.isVisible())) continue;
+      if (!(await inp.isVisible().catch(() => false))) continue;
+
+      const curVal = await inp.inputValue().catch(() => "");
+      if (curVal.trim().length > 0) continue; // Already filled
 
       const qText = await inp.evaluate(el => {
         const aria = el.getAttribute("aria-labelledby");
         if (aria) {
           const lbl = document.getElementById(aria);
-          if (lbl) return lbl.textContent?.trim() || "";
+          if (lbl?.textContent?.trim()) return lbl.textContent.trim();
         }
         const id = el.id;
         if (id) {
           const lbl = document.querySelector(`label[for='${id}']`);
-          if (lbl) return lbl.textContent?.trim() || "";
+          if (lbl?.textContent?.trim()) return lbl.textContent.trim();
           const lbl2 = document.getElementById(`${id}_label`);
-          if (lbl2) return lbl2.textContent?.trim() || "";
+          if (lbl2?.textContent?.trim()) return lbl2.textContent.trim();
         }
         const name = (el as any).name;
         if (name) {
           const lbl = document.querySelector(`label[for='${name}']`);
-          if (lbl) return lbl.textContent?.trim() || "";
-          const lSpan = el.closest("[data-ui='field-container']")?.querySelector("label, span");
-          if (lSpan) return lSpan.textContent?.trim() || "";
+          if (lbl?.textContent?.trim()) return lbl.textContent.trim();
         }
         const dataUi = el.getAttribute("data-ui");
         if (dataUi) {
           const lbl = document.getElementById(`${dataUi}_label`);
-          if (lbl) return lbl.textContent?.trim() || "";
+          if (lbl?.textContent?.trim()) return lbl.textContent.trim();
         }
-        const parentLbl = el.closest("label");
-        if (parentLbl) {
-          const lSpan = parentLbl.querySelector("[id$='_label'], [class*='label']");
-          if (lSpan) return lSpan.textContent?.trim() || "";
-        }
-        return "";
+        const lSpan = el.closest("[data-ui*='field'], .styles--3aPac, div")?.querySelector("[id$='_label'], label, strong, span");
+        if (lSpan?.textContent?.trim()) return lSpan.textContent.trim();
+        return el.getAttribute("placeholder") || "";
       });
 
       const normQ = normalizeLabel(qText);
@@ -440,48 +554,72 @@ export class WorkableAdapter implements ATSAdapter {
 
       // 2. Intelligent heuristics
       if (!targetAnswer) {
-        if (normQ.includes("gbp") || normQ.includes("in gbp")) {
+        if (normQ.includes("legal name") || normQ.includes("social security") || normQ.includes("government issued id")) {
+          targetAnswer = `${profile.firstName} ${profile.lastName}`;
+        } else if (normQ.includes("gbp") || normQ.includes("in gbp")) {
           targetAnswer = "£85,000";
-        } else if (normQ.includes("compensation") || normQ.includes("salary") || normQ.includes("base salary")) {
+        } else if (normQ.includes("compensation") || normQ.includes("salary") || normQ.includes("base salary") || normQ.includes("annual salary") || normQ.includes("desired salary") || normQ.includes("usd")) {
           targetAnswer = "$120,000";
+        } else if (normQ.includes("available to start") || normQ.includes("when can you start") || normQ.includes("start date") || normQ.includes("start")) {
+          targetAnswer = "01/12/2026";
+        } else if (normQ.includes("referral") || normQ.includes("descendant") || normQ.includes("shareholder") || normQ.includes("ouzinkie")) {
+          targetAnswer = "N/A";
         } else if (normQ.includes("french") || normQ.includes("german") || normQ.includes("language") || normQ.includes("fluent")) {
           targetAnswer = "Fluent / Professional working proficiency.";
         } else if (normQ.includes("years of experience") || normQ.includes("how many years")) {
-          targetAnswer = String(profile.yearsOfExperience || 5);
+          targetAnswer = String(profile.yearsOfExperience || 3);
         } else if (normQ.includes("leading product") || normQ.includes("clientfacing") || normQ.includes("describe your experience")) {
           targetAnswer = "In my previous commercial roles, I regularly led product discovery and alignment workshops with enterprise clients, leveraging product telemetry and retention metrics to drive adoption.";
         } else {
-          targetAnswer = suggestAnswerForQuestion(qText);
+          targetAnswer = suggestAnswerForQuestion(qText) || "N/A";
         }
       }
 
       if (targetAnswer) {
-        await fillWithHumanMouse(inp, targetAnswer);
+        try {
+          await fillWithHumanMouse(inp, targetAnswer);
+        } catch {
+          await inp.fill(targetAnswer).catch(() => {});
+        }
         console.log(`✅ [WorkableAdapter]: [Field] "${qText.slice(0, 45)}..." -> "${targetAnswer.slice(0, 35)}..."`);
       }
     }
 
-    // 5. Fill Radio Groups (Yes / No & Multiple Choice e.g. Sponsorship, Hybrid presence)
+    // 6. Fill Radio Groups (Yes / No & Multiple Choice e.g. Sponsorship, Hybrid presence, Terms)
     const fieldsets = await page.locator("fieldset[role='radiogroup']").all();
     console.log(`📋 [WorkableAdapter]: Found ${fieldsets.length} radio groups to evaluate...`);
 
     for (const fs of fieldsets) {
-      const qText = await fs.evaluate(el => {
+      const qInfo = await fs.evaluate(el => {
+        let label = "";
         const aria = el.getAttribute("aria-labelledby");
         if (aria) {
           const lbl = document.getElementById(aria);
-          if (lbl) return lbl.textContent?.trim() || "";
+          if (lbl?.textContent?.trim()) label = lbl.textContent.trim();
         }
-        const dataUi = el.getAttribute("data-ui");
-        if (dataUi) {
-          const lbl = document.getElementById(`${dataUi}_label`);
-          if (lbl) return lbl.textContent?.trim() || "";
+        if (!label) {
+          const dataUi = el.getAttribute("data-ui");
+          if (dataUi) {
+            const lbl = document.getElementById(`${dataUi}_label`);
+            if (lbl?.textContent?.trim()) label = lbl.textContent.trim();
+          }
         }
-        const legend = el.querySelector("legend, [id$='_label']");
-        return legend?.textContent?.trim() || "";
+        if (!label) {
+          const legend = el.querySelector("legend, [id$='_label']");
+          if (legend?.textContent?.trim()) label = legend.textContent.trim();
+        }
+        if (!label) {
+          const parentLabel = el.closest("[data-ui*='field'], .styles--3aPac, div")?.querySelector("[id$='_label'], legend, strong, label");
+          if (parentLabel?.textContent?.trim()) label = parentLabel.textContent.trim();
+        }
+
+        const optionTexts = Array.from(el.querySelectorAll("label, [role='radio'], input")).map(o => o.textContent?.trim() || "").filter(Boolean);
+        return { label, optionTexts };
       });
 
+      const qText = qInfo.label;
       const normQ = normalizeLabel(qText);
+      const optTextsJoined = qInfo.optionTexts.join(" ").toLowerCase();
       let targetAnswer = "";
 
       // 1. Direct answer lookups
@@ -500,16 +638,31 @@ export class WorkableAdapter implements ATSAdapter {
         if (
           normQ.includes("require sponsorship") ||
           normQ.includes("visa sponsorship") ||
-          normQ.includes("sponsorship for employment")
+          normQ.includes("sponsorship for employment") ||
+          normQ.includes("former employee") ||
+          normQ.includes("felony") ||
+          normQ.includes("disciplinary") ||
+          normQ.includes("relatives")
         ) {
           targetAnswer = "NO";
+        } else if (
+          normQ.includes("terms of use") ||
+          normQ.includes("atwill") ||
+          normQ.includes("at-will") ||
+          normQ.includes("employment contract") ||
+          normQ.includes("employment application") ||
+          optTextsJoined.includes("agree to the terms") ||
+          optTextsJoined.includes("i agree")
+        ) {
+          targetAnswer = "AGREE";
         } else if (
           normQ.includes("authorized to work") ||
           normQ.includes("legally authorized") ||
           normQ.includes("hybrid company") ||
           normQ.includes("commit to") ||
           normQ.includes("office 4") ||
-          normQ.includes("office 4x")
+          normQ.includes("office 4x") ||
+          normQ.includes("18 years")
         ) {
           targetAnswer = "YES";
         } else {
@@ -520,19 +673,54 @@ export class WorkableAdapter implements ATSAdapter {
       }
 
       // Click option with authentic human mouse
-      const opt = fs.locator(`[data-ui='option']:has-text('${targetAnswer}'), label:has-text('${targetAnswer}'), [role='radio']:has-text('${targetAnswer}')`).first();
+      let opt: any = null;
+      if (targetAnswer === "AGREE") {
+        opt = fs.locator("label:has-text('I agree'), [role='radio']:has-text('I agree'), [data-ui='option']:has-text('I agree')").first();
+      } else if (targetAnswer === "NO") {
+        opt = fs.locator("label:has-text('No'), [role='radio']:has-text('No'), [data-ui='option']:has-text('No')").first();
+      } else {
+        opt = fs.locator("label:has-text('Yes'), [role='radio']:has-text('Yes'), [data-ui='option']:has-text('Yes')").first();
+      }
+
+      if (await opt.count() === 0) {
+        opt = fs.locator(`[data-ui='option']:has-text('${targetAnswer}'), label:has-text('${targetAnswer}'), [role='radio']:has-text('${targetAnswer}')`).first();
+      }
+
       if (await opt.count() > 0) {
         await opt.scrollIntoViewIfNeeded().catch(() => {});
         await page.waitForTimeout(180);
-        // Move mouse visibly to the radio option and click to select it
         await humanClick(page, opt).catch(() => opt.click({ force: true }));
         console.log(`✅ [WorkableAdapter]: [Radio] "${qText.slice(0, 45)}..." -> ${targetAnswer}`);
-        // Pause so user visibly sees the green selected state before the mouse leaves
-        await page.waitForTimeout(350 + Math.floor(Math.random() * 150));
+        await page.waitForTimeout(300);
       }
     }
 
-    // 6. Select Dropdowns (native <select> and custom comboboxes)
+    // 7. Checkboxes (Terms, acknowledgments, consents, certifications)
+    try {
+      const checkboxes = await page.locator("input[type='checkbox']").all();
+      for (const cb of checkboxes) {
+        const isChecked = await cb.isChecked().catch(() => false);
+        if (isChecked) continue;
+
+        const isRequired = await cb.evaluate((el: HTMLInputElement) => el.required || el.getAttribute("aria-required") === "true").catch(() => false);
+        const labelText = await cb.evaluate((el: HTMLElement) => {
+          const l = el.closest("label") || el.closest("[data-ui*='field']") || el.parentElement;
+          return l?.textContent?.trim() || "";
+        }).catch(() => "");
+        const lowerLabel = labelText.toLowerCase();
+
+        if (isRequired || lowerLabel.includes("agree") || lowerLabel.includes("consent") || lowerLabel.includes("certif") || lowerLabel.includes("authoriz") || lowerLabel.includes("confirm")) {
+          await cb.scrollIntoViewIfNeeded().catch(() => {});
+          await humanClick(page, cb).catch(() => cb.check({ force: true }));
+          console.log(`✅ [WorkableAdapter]: [Checkbox] "${labelText.slice(0, 45)}..." -> checked`);
+          await page.waitForTimeout(200);
+        }
+      }
+    } catch (e: any) {
+      console.warn("⚠️ [WorkableAdapter]: Checkbox handling warning:", e.message);
+    }
+
+    // 8. Select Dropdowns (native <select>)
     const selects = await page.locator("select:not([name*='country_code'])").all();
     for (const sel of selects) {
       if (!(await sel.isVisible().catch(() => false))) continue;
