@@ -333,14 +333,25 @@ export class WorkdayAdapter implements ATSAdapter {
 
     let authenticatedEmail: string | null = null;
 
-    // Try signing in with all candidate emails in priority order
-    for (const email of candidateEmails) {
+    // OPTIMIZATION: If no saved credentials for this domain, only try primary email once
+    // then go straight to Create Account (avoids wasting ~90s on 6 emails × 7 passwords)
+    const emailsToTrySignIn = allKnownCreds.length > 0
+      ? candidateEmails  // try all if we have saved creds
+      : [primaryCandidateEmail, "babufakemail@gmail.com"].filter(Boolean); // only try primary email once
+
+    // Try signing in with candidate emails in priority order
+    for (const email of emailsToTrySignIn) {
       console.log(`👉 [WorkdayAdapter]: Trying Candidate Sign In (${email})...`);
       await updateHUDStatus(page, "Sign In", `Attempting sign in with ${email}...`, "info", 25);
       const ok = await this.attemptSignInWithFallback(page, domain, email, candidatePasswords);
       if (ok) {
         console.log(`🎉 [WorkdayAdapter]: Successfully authenticated with candidate account: ${email}!`);
         authenticatedEmail = email;
+        break;
+      }
+      // If no saved creds and primary email failed, skip straight to Create Account
+      if (allKnownCreds.length === 0) {
+        console.log(`  ⚡ No saved credentials for ${domain} — skipping remaining sign-in attempts, going to Create Account...`);
         break;
       }
     }
