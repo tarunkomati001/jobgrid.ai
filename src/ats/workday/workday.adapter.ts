@@ -1357,18 +1357,38 @@ export class WorkdayAdapter implements ATSAdapter {
       }
     }
 
-    // 2. Country Phone Code dropdown -> +91
-    const isIndia = profile.location ? profile.location.toLowerCase().includes("india") : true;
-    const phoneCodeBtn = page.locator("button[data-automation-id='countryPhoneCode'], button[id*='countryPhoneCode'], div[data-automation-id*='countryPhoneCode'] button").first();
+    // 2. Country Phone Code dropdown — always force correct country code (+1 for US, +91 for India)
+    const isIndia = profile.location ? profile.location.toLowerCase().includes("india") : false;
+    const targetCountryCode = isIndia ? "+91" : "+1";
+    const targetCountryName = isIndia ? "India" : "United States";
+    const phoneCodeBtn = page.locator(
+      "button[data-automation-id='countryPhoneCode'], button[id*='countryPhoneCode'], div[data-automation-id*='countryPhoneCode'] button"
+    ).first();
     if (await phoneCodeBtn.count() > 0 && await phoneCodeBtn.isVisible().catch(() => false)) {
       const curCode = (await phoneCodeBtn.innerText().catch(() => "")).trim();
-      if (!curCode || curCode.includes("Select One") || curCode.includes("Select")) {
-        const targetCode = isIndia ? "+91" : "+1";
+      // Always fix if not already showing the right code
+      const alreadyCorrect = curCode.includes(targetCountryCode) || curCode.toLowerCase().includes(targetCountryName.toLowerCase());
+      if (!alreadyCorrect) {
+        console.log(`  📞 Fixing country phone code: currently "${curCode}" → target "${targetCountryCode}"...`);
         await this.clickWorkdayButton(page, phoneCodeBtn);
-        await page.waitForTimeout(500);
-        const codeOpt = page.locator(`[role='option']:has-text('${targetCode}'), [role='option']:has-text('${isIndia ? "India" : "United States"}')`).first();
-        if (await codeOpt.count() > 0) await codeOpt.click({ force: true, timeout: 2000 }).catch(() => {});
-        await page.waitForTimeout(300);
+        await page.waitForTimeout(600);
+        // Try searching first for faster selection
+        const searchInPopup = page.locator(
+          "input[data-automation-id='searchBox'], div[data-automation-id='promptPopup'] input, input[placeholder*='Search' i]"
+        ).first();
+        if (await searchInPopup.count() > 0 && await searchInPopup.isVisible().catch(() => false)) {
+          await searchInPopup.fill(targetCountryName, { timeout: 2000 }).catch(() => {});
+          await page.waitForTimeout(500);
+        }
+        const codeOpt = page.locator(
+          `[role='option']:has-text('${targetCountryCode}'), [role='option']:has-text('${targetCountryName}'), div[data-automation-id='promptOption']:has-text('${targetCountryName}')`
+        ).first();
+        if (await codeOpt.count() > 0) {
+          await codeOpt.click({ force: true, timeout: 3000 }).catch(() => {});
+        }
+        await page.waitForTimeout(400);
+      } else {
+        console.log(`  📞 Country phone code already correct: "${curCode}"`);
       }
     }
 
@@ -1756,14 +1776,22 @@ export class WorkdayAdapter implements ATSAdapter {
     const targetCity = profile.location ? (isIndia ? profile.location.split(",")[0].trim() : "San Francisco") : "San Francisco";
     const targetPostal = isIndia ? "390001" : "94105";
 
-    // 1. Country Dropdown
+    // 1. Country Dropdown — always enforce correct country (never leave India when profile is US)
     const countryBtn = page.locator("button[data-automation-id='countryDropdown'], button[id*='country--country'], button[id*='country']").first();
     if (await countryBtn.count() > 0 && await countryBtn.isVisible().catch(() => false)) {
       const curText = (await countryBtn.innerText().catch(() => "")).trim();
-      if (!curText || curText.includes("Select One") || curText.includes("Select")) {
-        console.log(`  Selecting country dropdown -> ${targetCountry}...`);
+      const countryAlreadyCorrect = curText.toLowerCase().includes(targetCountry.toLowerCase()) ||
+        (!isIndia && (curText.toLowerCase().includes("united states") || curText.toLowerCase().includes("usa")));
+      if (!countryAlreadyCorrect) {
+        console.log(`  🌍 Fixing country dropdown: currently "${curText}" → target "${targetCountry}"...`);
         await this.clickWorkdayButton(page, countryBtn);
         await page.waitForTimeout(600);
+        // Try searching for the country
+        const searchInPopup = page.locator("input[data-automation-id='searchBox'], div[data-automation-id='promptPopup'] input, input[placeholder*='Search' i]").first();
+        if (await searchInPopup.count() > 0 && await searchInPopup.isVisible().catch(() => false)) {
+          await searchInPopup.fill(isIndia ? "India" : "United States", { timeout: 2000 }).catch(() => {});
+          await page.waitForTimeout(500);
+        }
         const opt = page.locator(`[role='option']:has-text('${targetCountry}'), li:has-text('${targetCountry}'), div[data-automation-id='promptOption']:has-text('${targetCountry}')`).first();
         if (await opt.count() > 0) {
           await opt.click({ force: true }).catch(() => {});
@@ -1772,15 +1800,21 @@ export class WorkdayAdapter implements ATSAdapter {
           if (await firstOpt.count() > 0) await firstOpt.click({ force: true }).catch(() => {});
         }
         await page.waitForTimeout(400);
+      } else {
+        console.log(`  🌍 Country already correct: "${curText}"`);
       }
     }
 
-    // 2. Address Line 1
+    // 2. Address Line 1 — always override with correct US/India address (never leave wrong country)
+    const targetAddr1 = isIndia ? "123 MG Road" : "123 Market Street";
     const addr1Loc = page.locator("input[id*='addressLine1'], input[data-automation-id*='addressLine1']").first();
     if (await addr1Loc.count() > 0 && await addr1Loc.isVisible().catch(() => false)) {
-      const val = await addr1Loc.inputValue().catch(() => "");
-      if (!val.trim()) {
-        await this.setReactInputValue(page, "input[id*='addressLine1'], input[data-automation-id*='addressLine1']", "101 High Street");
+      const val = (await addr1Loc.inputValue().catch(() => "")).trim();
+      // Override if empty OR if it contains wrong country info (India address when profile is US)
+      const hasWrongCountryInAddr = !isIndia && (val.toLowerCase().includes("india") || val.toLowerCase().includes("jaggampeta") || val.toLowerCase().includes("andhra"));
+      if (!val || hasWrongCountryInAddr) {
+        console.log(`  📍 Setting address line 1: "${val || '(empty)'}" → "${targetAddr1}"`);
+        await this.setReactInputValue(page, "input[id*='addressLine1'], input[data-automation-id*='addressLine1']", targetAddr1);
       }
     }
 
@@ -1802,11 +1836,13 @@ export class WorkdayAdapter implements ATSAdapter {
       }
     }
 
-    // 3. City
+    // 3. City — always override if empty or wrong country
     const cityLoc = page.locator("input[id*='city'], input[data-automation-id*='city']").first();
     if (await cityLoc.count() > 0 && await cityLoc.isVisible().catch(() => false)) {
-      const val = await cityLoc.inputValue().catch(() => "");
-      if (!val.trim()) {
+      const val = (await cityLoc.inputValue().catch(() => "")).trim();
+      const hasWrongCity = !isIndia && (val.toLowerCase().includes("india") || val.toLowerCase().includes("jaggampeta") || val.toLowerCase().includes("andhra") || val.toLowerCase().includes("hyderabad") || val.toLowerCase().includes("bangalore") || val.toLowerCase().includes("mumbai"));
+      if (!val || hasWrongCity) {
+        console.log(`  🏙️ Setting city: "${val || '(empty)'}" → "${targetCity}"`);
         await this.setReactInputValue(page, "input[id*='city'], input[data-automation-id*='city']", targetCity);
       }
     }
@@ -1838,11 +1874,14 @@ export class WorkdayAdapter implements ATSAdapter {
       }
     }
 
-    // 5. Postal Code
+    // 5. Postal Code — always override if wrong country zip
     const zipLoc = page.locator("input[id*='postalCode'], input[data-automation-id*='postalCode']").first();
     if (await zipLoc.count() > 0 && await zipLoc.isVisible().catch(() => false)) {
-      const val = await zipLoc.inputValue().catch(() => "");
-      if (!val.trim()) {
+      const val = (await zipLoc.inputValue().catch(() => "")).trim();
+      // Override if empty or if Indian pincode (6 digits starting with specific ranges) when profile is US
+      const hasWrongZip = !isIndia && val.length === 6 && /^[1-9]\d{5}$/.test(val);
+      if (!val || hasWrongZip) {
+        console.log(`  📮 Setting postal code: "${val || '(empty)'}" → "${targetPostal}"`);
         await this.setReactInputValue(page, "input[id*='postalCode'], input[data-automation-id*='postalCode']", targetPostal);
       }
     }
@@ -1861,7 +1900,7 @@ export class WorkdayAdapter implements ATSAdapter {
     const locValue = profile.location || "San Francisco, CA, United States";
     const cityValue = profile.location ? (profile.location.toLowerCase().includes("india") ? profile.location.split(",")[0].trim() : "San Francisco") : "San Francisco";
 
-    await page.evaluate(({ fullLoc, city }) => {
+    await page.evaluate(({ fullLoc, city, isUS }) => {
       const inputs = Array.from(document.querySelectorAll("input:not([type='hidden']), textarea")) as (HTMLInputElement | HTMLTextAreaElement)[];
       for (const inp of inputs) {
         const id = (inp.id || "").toLowerCase();
@@ -1880,7 +1919,9 @@ export class WorkdayAdapter implements ATSAdapter {
 
         if (isLocationField) {
           const val = (inp.value || "").trim();
-          if (val === "2" || val === "" || val === "N/A" || /^\d+$/.test(val)) {
+          const valLow = val.toLowerCase();
+          const isWrongCountryValue = isUS && (valLow.includes("india") || valLow.includes("jaggampeta") || valLow.includes("andhra") || valLow.includes("gujarat") || valLow.includes("rajasthan") || valLow.includes("maharashtra"));
+          if (val === "2" || val === "" || val === "N/A" || /^\d+$/.test(val) || isWrongCountryValue) {
             const target = autoId.includes("city") || aria.includes("city") ? city : fullLoc;
             const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value")?.set ||
                            Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, "value")?.set;
@@ -1902,7 +1943,7 @@ export class WorkdayAdapter implements ATSAdapter {
           }
         }
       }
-    }, { fullLoc: locValue, city: cityValue }).catch(() => {});
+    }, { fullLoc: locValue, city: cityValue, isUS: !locValue.toLowerCase().includes("india") }).catch(() => {});
   }
 
   /**
