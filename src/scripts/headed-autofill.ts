@@ -328,14 +328,16 @@ async function main() {
     ];
   } else if (isWorkdayOnly) {
     console.log("🎯 Filtering queued jobs strictly for WORKDAY ATS only...");
-    const jobsRes = await db.query("SELECT DISTINCT url FROM jobs WHERE (ats = 'WORKDAY' OR url LIKE '%myworkdayjobs.com%') ORDER BY url ASC");
+    const jobsRes = await db.query("SELECT url FROM jobs WHERE (ats = 'WORKDAY' OR url LIKE '%myworkdayjobs.com%') AND status = 'queued' ORDER BY created_at DESC");
     urls = Array.from(new Set(jobsRes.rows.map((row: any) => row.url)));
     if (urls.length === 0) {
       urls = [
-        "https://clarioclinical.wd1.myworkdayjobs.com/en-US/clarioclinical_careers/job/United-States-Remote/Imaging-Research-Associate-I_R18293",
-        "https://alcon.wd5.myworkdayjobs.com/en-US/careers_alcon/job/Mulgrave/Software-Engineer_R-2026-50218-1"
+        "https://workday.wd5.myworkdayjobs.com/en-US/Workday/job/Software-Engineer-Senior-Software-Engineer---AI-Platform--Agent-Runtime-_JR-0109507",
+        "https://jci.wd5.myworkdayjobs.com/en-US/jci/details/Inventory-Analyst_WD30284297",
+        "https://jci.wd5.myworkdayjobs.com/en-US/jci/details/National-Consulting-Engineer-Account-Manager-NCE-AM_WD30283629"
       ];
     }
+    console.log(`📋 Found ${urls.length} queued Workday job(s): ${urls.map(u => u.split('/').slice(2,5).join('/')).join(', ')}`);
   } else if (isGreenhouseOnly) {
     console.log("🎯 Filtering queued jobs strictly for GREENHOUSE ATS only...");
     let dbUrls: string[] = [];
