@@ -2,6 +2,7 @@ import { Page, Frame, Locator } from "playwright";
 import * as fs from "fs";
 import * as path from "path";
 import { ATSAdapter, FormField, JobDetails, SubmissionResult, UserProfile, WorkExperienceItem, EducationItem } from "../ats.interface";
+import { pollWorkdayVerificationUrl } from "../../utils/workday-email-verifier";
 import { injectVisualHUD, updateHUDStatus } from "../../browser/visual-hud";
 import { humanClick, humanMouseMove } from "../../browser/human-mouse";
 import {
@@ -261,325 +262,181 @@ export class WorkdayAdapter implements ATSAdapter {
       return;
     }
 
-    console.log("🔐 [WorkdayAdapter]: Handling Candidate Authentication (Create Account / Sign In)...");
+    console.log("🔐 [WorkdayAdapter]: Handling Candidate Authentication (Always Create New Account + IMAP Verification)...");
     await updateHUDStatus(page, "Authentication", "Authenticating with Workday candidate portal...", "info", 20);
 
-    // 0. Accept cookies if banner is blocking the auth view
+    // 0. Accept cookies if banner is blocking the view
     await this.acceptCookiesIfPresent(page);
 
-    // 0b. Check if an alternative authentication method screen is shown (e.g. Accenture "Sign in with email")
-    const emailProviderBtn = page.locator(
-      "button:has-text('Sign in with email'), [data-automation-id*='signInWithEmail'], div[role='button']:has-text('Sign in with email'), button:has-text('email')"
+    // 1. Open auth modal if not already open
+    const authTrigger = page.locator(
+      "button[data-automation-id='utilityButtonSignIn'], button:has-text('Sign in with email'), [data-automation-id*='signInWithEmail'], button[data-automation-id='createAccountLink'], button[data-automation-id='signInLink']"
     ).first();
-    if (await emailProviderBtn.count() > 0 && await emailProviderBtn.isVisible().catch(() => false)) {
+    await authTrigger.waitFor({ state: "visible", timeout: 20000 }).catch(() => {});
+
+    // If 'Sign in with email' or modal is not visible, click utilityButtonSignIn to open modal
+    const emailProviderBtn = page.locator(
+      "button:has-text('Sign in with email'), [data-automation-id*='signInWithEmail'], div[role='button']:has-text('Sign in with email')"
+    ).first();
+    if (!(await emailProviderBtn.isVisible().catch(() => false))) {
+      const signInTop = page.locator("button[data-automation-id='utilityButtonSignIn']").first();
+      if (await signInTop.isVisible().catch(() => false)) {
+        console.log("  Opening auth modal via utilityButtonSignIn...");
+        await signInTop.click({ force: true }).catch(() => {});
+        await page.waitForTimeout(2000);
+      }
+    }
+
+    // 2. Click 'Sign in with email' if visible
+    if (await emailProviderBtn.isVisible().catch(() => false)) {
       console.log("  Selecting 'Sign in with email' authentication method...");
       await emailProviderBtn.click({ force: true }).catch(() => {});
-      await page.waitForTimeout(2500);
-    }
-
-    // Wait up to 20s for the auth container/fields to mount
-    await page.waitForSelector(
-      "input[data-automation-id='email'], input[data-automation-id='userName'], button[data-automation-id='signInLink'], button[data-automation-id='createAccountLink'], button[data-automation-id='signInSubmitButton'], div[data-automation-id='click_filter'][aria-label='Create Account'], div[data-automation-id='click_filter'][aria-label='Sign In']",
-      { timeout: 20000 }
-    ).catch(() => {
-      console.log("  Notice: Auth selector wait reached timeout, inspecting current DOM...");
-    });
-
-    const defaultPassword = process.env.WORKDAY_PASSWORD || "Tarun@143";
-    const defaultEmail = process.env.WORKDAY_EMAIL || "tarunkomati2@gmail.com";
-
-    // Candidate email pool in order of priority:
-    // 1. Any saved/remembered credentials for this domain first
-    // 2. Primary user configured email: tarunkomati2@gmail.com
-    // 3. Profile email and fallback
-    const allKnownCreds = await getAllWorkdayCredentials(domain);
-    const primaryCandidateEmail = profile.email || "babufakemail@gmail.com";
-    const candidateEmails = Array.from(new Set([
-      ...allKnownCreds.map(c => c.email),
-      primaryCandidateEmail,
-      "babufakemail@gmail.com",
-      defaultEmail,
-      "tarunkomati2@gmail.com",
-      "babu020106@gmail.com",
-      "chetanmidde@gmail.com",
-      "komatitarun@yahoo.com"
-    ].filter(Boolean))) as string[];
-
-    const candidatePasswords = Array.from(new Set([
-      defaultPassword,
-      "ClucoPass@2026!Secure",
-      "Tarun@143",
-      ...allKnownCreds.map(c => c.password),
-      "Tarun@2006",
-      "Nithin@6677",
-      "ClucoAi@2026!Secure",
-      "BabuFake123!"
-    ].filter(Boolean))) as string[];
-
-    if (allKnownCreds.length > 0) {
-      console.log(`🔑 [WorkdayAdapter]: Found ${allKnownCreds.length} remembered credential(s) for ${domain} (${allKnownCreds.map(c => c.email).join(", ")}).`);
-    }
-
-    // PHASE 1: Always go directly to Sign In tab / link first (User instruction: "go directly to signin click login or sign in and then enter the signin credentials")
-    const signInTab = page.locator(
-      "button[data-automation-id='signInLink'], a[data-automation-id='signInLink'], div[data-automation-id='click_filter'][aria-label='Sign In'], button:has-text('Sign In'), a:has-text('Sign In')"
-    ).first();
-    if (await signInTab.count() > 0 && await signInTab.isVisible().catch(() => false)) {
-      console.log("  Switching directly to 'Sign In' to enter candidate credentials...");
-      await this.clickWorkdayButton(page, signInTab);
       await page.waitForTimeout(2000);
-      await page.waitForSelector("input[data-automation-id='password']", { timeout: 10000 }).catch(() => {});
     }
 
-    let authenticatedEmail: string | null = null;
+    // 3. User Instruction: ALWAYS CREATE NEW ACCOUNT FIRST
+    console.log("👉 [WorkdayAdapter]: Switching directly to 'Create Account' tab (Always Create New Account policy)...");
+    await updateHUDStatus(page, "Create Account", "Creating new candidate account on Workday...", "info", 25);
 
-    // OPTIMIZATION: If no saved credentials for this domain, only try primary email once
-    // then go straight to Create Account (avoids wasting ~90s on 6 emails × 7 passwords)
-    const emailsToTrySignIn = allKnownCreds.length > 0
-      ? candidateEmails  // try all if we have saved creds
-      : [primaryCandidateEmail, "babufakemail@gmail.com"].filter(Boolean); // only try primary email once
-
-    // Try signing in with candidate emails in priority order
-    for (const email of emailsToTrySignIn) {
-      console.log(`👉 [WorkdayAdapter]: Trying Candidate Sign In (${email})...`);
-      await updateHUDStatus(page, "Sign In", `Attempting sign in with ${email}...`, "info", 25);
-      const ok = await this.attemptSignInWithFallback(page, domain, email, candidatePasswords);
-      if (ok) {
-        console.log(`🎉 [WorkdayAdapter]: Successfully authenticated with candidate account: ${email}!`);
-        authenticatedEmail = email;
-        break;
-      }
-      // If no saved creds and primary email failed, skip straight to Create Account
-      if (allKnownCreds.length === 0) {
-        console.log(`  ⚡ No saved credentials for ${domain} — skipping remaining sign-in attempts, going to Create Account...`);
-        break;
-      }
+    const createAccTab = page.locator(
+      "button[data-automation-id='createAccountLink'], a[data-automation-id='createAccountLink'], div[data-automation-id='click_filter'][aria-label*='Create Account'], button:has-text('Create Account'), a:has-text('Create Account')"
+    ).first();
+    if (await createAccTab.count() > 0 && await createAccTab.isVisible().catch(() => false)) {
+      await this.clickWorkdayButton(page, createAccTab);
+      await page.waitForTimeout(2000);
     }
 
-    // PHASE 2 & 3: If no existing account could log in, Create Account and then Sign In with those details
-    if (!authenticatedEmail) {
-      console.log("  No existing candidate account could be signed in. Switching to 'Create Account' tab...");
-      await updateHUDStatus(page, "Create Account", "Creating candidate account on Workday...", "info", 25);
+    await page.waitForSelector("input[data-automation-id='verifyPassword']", { timeout: 15000 }).catch(() => {});
 
-      const createAccTab = page.locator(
-        "button[data-automation-id='createAccountLink'], a[data-automation-id='createAccountLink'], div[data-automation-id='click_filter'][aria-label*='Create Account'], button:has-text('Create Account'), a:has-text('Create Account')"
-      ).first();
-      if (await createAccTab.count() > 0 && await createAccTab.isVisible().catch(() => false)) {
-        await this.clickWorkdayButton(page, createAccTab);
-        await page.waitForTimeout(2500);
-      }
-      await page.waitForSelector("input[data-automation-id='verifyPassword']", { timeout: 15000 }).catch(() => {});
+    // Generate unique candidate alias under monitored Gmail for IMAP verification
+    const tenantSlug = domain.split(".")[0];
+    const candidateEmail = `babufakemail+wd${tenantSlug}${Date.now().toString().slice(-4)}@gmail.com`;
+    const candidatePassword = "ClucoPass@2026!Secure";
 
-      const emailsToRegister = Array.from(new Set([
-        primaryCandidateEmail,
-        "babufakemail@gmail.com",
-        "babu020106@gmail.com",
-        "chetanmidde@gmail.com",
-        "komatitarun@yahoo.com"
-      ].filter(Boolean))) as string[];
+    console.log(`  Submitting candidate account registration (${candidateEmail})...`);
+    const emailInp = page.locator("input[data-automation-id='email']:not([name='website']), input[data-automation-id='userName']:not([name='website'])").last();
+    if (await emailInp.count() > 0) {
+      await emailInp.focus().catch(() => {});
+      await emailInp.fill(candidateEmail).catch(() => {});
+      await emailInp.press("Tab").catch(() => {});
+    }
 
-      let registeredEmail: string | null = null;
-      const registeredPassword = defaultPassword || "Tarun@143";
+    const pwInp = page.locator("input[data-automation-id='password']:not([name='website'])").last();
+    if (await pwInp.count() > 0) {
+      await pwInp.focus().catch(() => {});
+      await pwInp.fill(candidatePassword).catch(() => {});
+      await pwInp.press("Tab").catch(() => {});
+    }
 
-      for (const regEmail of emailsToRegister) {
-        console.log(`  Submitting candidate account registration (${regEmail})...`);
-        const emailInp = page.locator("input[data-automation-id='email']:not([name='website']), input[data-automation-id='userName']:not([name='website'])").first();
-        if (await emailInp.count() > 0) {
-          await emailInp.focus().catch(() => {});
-          await emailInp.fill(regEmail).catch(() => {});
-          await emailInp.press("Tab").catch(() => {});
-        }
+    const vpwInp = page.locator("input[data-automation-id='verifyPassword']:not([name='website'])").last();
+    if (await vpwInp.count() > 0) {
+      await vpwInp.focus().catch(() => {});
+      await vpwInp.fill(candidatePassword).catch(() => {});
+      await vpwInp.press("Tab").catch(() => {});
+    }
 
-        const pwInp = page.locator("input[data-automation-id='password']:not([name='website'])").first();
-        if (await pwInp.count() > 0) {
-          await pwInp.focus().catch(() => {});
-          await pwInp.fill(registeredPassword).catch(() => {});
-          await pwInp.press("Tab").catch(() => {});
-        }
-
-        const vpwInp = page.locator("input[data-automation-id='verifyPassword']:not([name='website'])").first();
-        if (await vpwInp.count() > 0) {
-          await vpwInp.focus().catch(() => {});
-          await vpwInp.fill(registeredPassword).catch(() => {});
-          await vpwInp.press("Tab").catch(() => {});
-        }
-
-        const agreementCb = page.locator("div[data-automation-id='createAccountCheckbox'] input[type='checkbox'], input[type='checkbox']").first();
-        if (await agreementCb.count() > 0) {
-          const isChecked = await agreementCb.isChecked().catch(() => false);
-          if (!isChecked) {
-            const cbContainer = page.locator("div[data-automation-id='createAccountCheckbox']").first();
-            if (await cbContainer.count() > 0) {
-              await cbContainer.click().catch(() => {});
-            } else {
-              await agreementCb.check({ force: true }).catch(() => {});
-            }
-          }
-        }
-
-        const createSubmitBtn = page.locator(
-          "button[data-automation-id='createAccountSubmitButton'], div[data-automation-id='click_filter'][aria-label*='Create Account'], button:has-text('Create Account')"
-        ).first();
-        if (await createSubmitBtn.count() > 0) {
-          console.log("  Clicking 'Create Account' submit button...");
-          await this.clickWorkdayButton(page, createSubmitBtn);
-        }
-
-        await page.waitForTimeout(5000);
-
-        // Check if account already exists on this tenant
-        const alreadyExists = await page.evaluate(() => {
-          const text = (document.body?.innerText || "").toLowerCase();
-          return text.includes("already exists") || text.includes("please sign in");
-        }).catch(() => false);
-
-        if (alreadyExists) {
-          console.log(`  Notice: Account ${regEmail} already exists on this Workday tenant. Switching to Sign In...`);
-          const signInLink = page.locator("button[data-automation-id='signInLink'], a[data-automation-id='signInLink'], button:has-text('Sign In'), a:has-text('Sign In')").first();
-          if (await signInLink.count() > 0 && await signInLink.isVisible().catch(() => false)) {
-            await this.clickWorkdayButton(page, signInLink);
-            await page.waitForTimeout(2000);
-          }
-          const signedIn = await this.attemptSignInWithFallback(page, domain, regEmail, candidatePasswords);
-          if (signedIn) {
-            console.log(`🎉 [WorkdayAdapter]: Successfully signed in with existing account ${regEmail}!`);
-            authenticatedEmail = regEmail;
-            break;
-          }
-          continue;
-        }
-
-        // Check if registration automatically transitioned into wizard
-        const autoLoggedIn = await page.evaluate(() => {
-          const url = window.location.href;
-          if (url.includes("/login")) return false;
-          return !!document.querySelector("input[type='file'], [data-automation-id='file-upload-drop-zone'], [data-automation-id='bottom-navigation-next-button'], [data-automation-id='pageHeader'], input[id*='firstName']");
-        }).catch(() => false);
-
-        if (autoLoggedIn) {
-          console.log(`🎉 [WorkdayAdapter]: Account ${regEmail} created and automatically loaded application wizard!`);
-          await saveWorkdayCredentials(domain, regEmail, registeredPassword);
-          authenticatedEmail = regEmail;
-          break;
-        }
-
-        registeredEmail = regEmail;
-        break;
-      }
-
-      if (!authenticatedEmail && !registeredEmail) {
-        const tenantSlug = domain.split(".")[0];
-        const aliasEmail = `babu020106+${tenantSlug}${Date.now().toString().slice(-4)}@gmail.com`;
-        console.log(`  Creating tenant alias account: ${aliasEmail}...`);
-        const emailInp = page.locator("input[data-automation-id='email']:not([name='website'])").first();
-        await emailInp.fill(aliasEmail).catch(() => {});
-        const pwInp = page.locator("input[data-automation-id='password']:not([name='website'])").first();
-        await pwInp.fill(registeredPassword).catch(() => {});
-        const vpwInp = page.locator("input[data-automation-id='verifyPassword']:not([name='website'])").first();
-        await vpwInp.fill(registeredPassword).catch(() => {});
-        const agreementCb = page.locator("div[data-automation-id='createAccountCheckbox'] input[type='checkbox'], input[type='checkbox']").first();
-        if (await agreementCb.count() > 0 && !(await agreementCb.isChecked().catch(() => false))) {
+    const agreementCb = page.locator("input[data-automation-id='createAccountCheckbox'], div[data-automation-id='createAccountCheckbox'] input[type='checkbox'], input[type='checkbox']").first();
+    if (await agreementCb.count() > 0) {
+      const isChecked = await agreementCb.isChecked().catch(() => false);
+      if (!isChecked) {
+        const cbContainer = page.locator("div[data-automation-id='createAccountCheckbox']").first();
+        if (await cbContainer.count() > 0) {
+          await cbContainer.click().catch(() => {});
+        } else {
           await agreementCb.check({ force: true }).catch(() => {});
         }
-        const createSubmitBtn = page.locator("button[data-automation-id='createAccountSubmitButton'], div[data-automation-id='click_filter'][aria-label*='Create Account']").first();
-        await this.clickWorkdayButton(page, createSubmitBtn);
-        await page.waitForTimeout(6000);
-        registeredEmail = aliasEmail;
-      }
-
-      // If registered but not yet logged in, log in with the new credentials
-      if (!authenticatedEmail && registeredEmail) {
-        console.log(`\n🔑 Account created with ${registeredEmail}! Signing in with new credentials...`);
-        await updateHUDStatus(page, "Signing In", `Logging in with created account (${registeredEmail})...`, "info", 30);
-
-        // Wait for redirect or login elements
-        await page.waitForTimeout(2000);
-
-        const signInLoc = page.locator("[data-automation-id='signInLink'], a:has-text('Sign In'), button:has-text('Sign In')").first();
-        if (await signInLoc.count() > 0 && await signInLoc.isVisible().catch(() => false)) {
-          console.log("  Clicking Sign In link on redirected page...");
-          await signInLoc.click({ force: true }).catch(() => {});
-          await page.waitForTimeout(2000);
-        }
-
-        const loginEmailInp = page.locator("input[data-automation-id='email']:not([name='website']), input[data-automation-id='userName']:not([name='website']), input[name='userName']").first();
-        if (await loginEmailInp.count() > 0 && await loginEmailInp.isVisible().catch(() => false)) {
-          console.log(`  Filling login form with created credentials (${registeredEmail} / ${registeredPassword})...`);
-          await loginEmailInp.focus().catch(() => {});
-          await loginEmailInp.fill(registeredEmail).catch(() => {});
-          await loginEmailInp.press("Tab").catch(() => {});
-
-          const loginPwInp = page.locator("input[data-automation-id='password']:not([name='website']), input[name='password']").first();
-          await loginPwInp.focus().catch(() => {});
-          await loginPwInp.fill(registeredPassword).catch(() => {});
-
-          const loginSubmitBtn = page.locator("button[data-automation-id='signInSubmitButton'], [data-automation-id='click_filter'][aria-label*='Sign In']").first();
-          console.log("  Clicking Sign In submit button...");
-          await this.clickWorkdayButton(page, loginSubmitBtn);
-          await page.waitForTimeout(6000);
-        }
-
-        await saveWorkdayCredentials(domain, registeredEmail, registeredPassword);
-        authenticatedEmail = registeredEmail;
-      }
-
-      if (registeredEmail) {
-        await saveWorkdayCredentials(domain, registeredEmail, registeredPassword);
-        authenticatedEmail = registeredEmail;
       }
     }
 
-    // Check if redirected to job details page after authentication (Workday redirect behavior)
-    const hasJobDetailsApply = await page.locator("a[data-automation-id='adventureButton'], button[data-automation-id='adventureButton']").first().isVisible().catch(() => false);
-    if (hasJobDetailsApply && !page.url().includes("/apply")) {
-      console.log("  Redirected to job details page after authentication. Launching application wizard with active session...");
+    const createSubmitBtn = page.locator(
+      "button[data-automation-id='createAccountSubmitButton'], div[data-automation-id='click_filter'][aria-label*='Create Account'], button:has-text('Create Account')"
+    ).last();
+    if (await createSubmitBtn.count() > 0) {
+      console.log("  Clicking 'Create Account' submit button...");
+      await this.clickWorkdayButton(page, createSubmitBtn);
+    }
+
+    await page.waitForTimeout(6000);
+
+    // 4. Check if email verification is prompted on page or if verification email was sent
+    console.log("📧 [WorkdayAdapter]: Checking IMAP for Workday verification email...");
+    await updateHUDStatus(page, "Verification", "Polling IMAP for email verification link...", "info", 30);
+    const verifyUrl = await pollWorkdayVerificationUrl(45000);
+
+    if (verifyUrl) {
+      console.log(`🎉 [WorkdayAdapter]: Found verification URL! Opening in SAME browser page: ${verifyUrl}`);
+      await updateHUDStatus(page, "Verifying", "Navigating to verification link...", "info", 35);
+      await page.goto(verifyUrl, { waitUntil: "domcontentloaded", timeout: 45000 });
+      await page.waitForTimeout(5000);
+      console.log(`  Page state after verification navigation: ${page.url()}`);
+    }
+
+    // 5. Now Sign In with the created & verified account
+    console.log(`🔑 [WorkdayAdapter]: Signing in with candidate credentials (${candidateEmail})...`);
+    await updateHUDStatus(page, "Signing In", `Logging in as ${candidateEmail}...`, "info", 40);
+
+    // If on /login or apply page, ensure we open the sign in modal
+    const loginEmailInp = page.locator("input[data-automation-id='email']:not([name='website']), input[data-automation-id='userName']:not([name='website'])").last();
+    if (!(await loginEmailInp.isVisible().catch(() => false))) {
+      const emailChoice = page.locator("button:has-text('Sign in with email'), [data-automation-id*='signInWithEmail']").first();
+      if (await emailChoice.isVisible().catch(() => false)) {
+        await emailChoice.click({ force: true }).catch(() => {});
+        await page.waitForTimeout(2000);
+      } else {
+        const topSignIn = page.locator("button[data-automation-id='utilityButtonSignIn'], button:has-text('Sign In'), a:has-text('Sign In')").first();
+        if (await topSignIn.isVisible().catch(() => false)) {
+          await topSignIn.click({ force: true }).catch(() => {});
+          await page.waitForTimeout(2000);
+          const emailChoice2 = page.locator("button:has-text('Sign in with email'), [data-automation-id*='signInWithEmail']").first();
+          if (await emailChoice2.isVisible().catch(() => false)) {
+            await emailChoice2.click({ force: true }).catch(() => {});
+            await page.waitForTimeout(2000);
+          }
+        }
+      }
+    }
+
+    // Ensure we are on Sign In tab (not Create Account tab)
+    const signInTab = page.locator("button[data-automation-id='signInLink'], a[data-automation-id='signInLink'], button:has-text('Sign In'), a:has-text('Sign In')").first();
+    if (await signInTab.isVisible().catch(() => false)) {
+      await signInTab.click({ force: true }).catch(() => {});
+      await page.waitForTimeout(1500);
+    }
+
+    if (await loginEmailInp.isVisible().catch(() => false)) {
+      await loginEmailInp.focus().catch(() => {});
+      await loginEmailInp.fill(candidateEmail).catch(() => {});
+      await loginEmailInp.press("Tab").catch(() => {});
+
+      const loginPwInp = page.locator("input[data-automation-id='password']:not([name='website']), input[name='password']").last();
+      await loginPwInp.focus().catch(() => {});
+      await loginPwInp.fill(candidatePassword).catch(() => {});
+
+      const loginSubmitBtn = page.locator("button[data-automation-id='signInSubmitButton'], [data-automation-id='click_filter'][aria-label*='Sign In']").last();
+      console.log("  Clicking Sign In submit button...");
+      await this.clickWorkdayButton(page, loginSubmitBtn);
+      await page.waitForTimeout(8000);
+    }
+
+    // Persist newly created and verified credentials
+    await saveWorkdayCredentials(domain, candidateEmail, candidatePassword);
+
+    // If redirected to /login, /login/ok, or job listing after authentication, launch application wizard
+    const currentUrl = page.url();
+    if (currentUrl.includes("/login") || !currentUrl.includes("/apply")) {
+      console.log("  Redirecting to application wizard with active session...");
       await this.initiateApplyWithResume(page);
       await page.waitForTimeout(5000);
     }
 
-    // Wait for Workday to mount either resume upload or application wizard
+    // Wait for Workday to mount application wizard
     await page.waitForSelector(
       "input[type='file'], [data-automation-id='file-upload-drop-zone'], [data-automation-id='bottom-navigation-next-button'], [data-automation-id='pageHeader'], input[id*='firstName']",
-      { timeout: 12000 }
+      { timeout: 15000 }
     ).catch(() => {});
 
-    // Check if transient Workday error appeared right after sign in / upload ("Something went wrong")
-    const hasTransientError = await page.evaluate(() => {
-      const text = document.body?.innerText || "";
-      return text.includes("Something went wrong") && text.includes("refresh the page");
-    }).catch(() => false);
-
-    if (hasTransientError) {
-      console.log("  Workday transient error detected after auth. Reloading page to resume...");
-      await page.reload({ waitUntil: "domcontentloaded" });
-      await page.waitForTimeout(6000);
-    }
-
-    const inWorkflow = await page.evaluate(() => {
-      const url = window.location.href;
-      if (url.includes("/login")) return false;
-      if (document.querySelector("input[data-automation-id='verifyPassword']")) return false;
-      if (document.querySelector("input[data-automation-id='password']")) return false;
-      if (document.querySelector("button[data-automation-id='signInSubmitButton'], button[data-automation-id='createAccountSubmitButton']")) return false;
-      const stepText = (document.querySelector("[data-automation-id='progressBarActiveStep'], .activeStep, [aria-current='step']")?.textContent || "").toLowerCase();
-      if (stepText.includes("sign in") || stepText.includes("create account")) return false;
-
-      const bodyText = (document.body?.innerText || "").toLowerCase();
-      const isLoggedIn = bodyText.includes("candidate home") || bodyText.includes("settings") || bodyText.includes("job alerts");
-      return !!(
-        isLoggedIn ||
-        document.querySelector(
-          "input[type='file'], [data-automation-id='file-upload-drop-zone'], [data-automation-id='bottom-navigation-next-button'], input[id*='firstName'], button[data-automation-id='pageFooterNextButton']"
-        )
-      );
-    }).catch(() => false);
-
-    if (inWorkflow) {
-      this.authenticatedSessions.add(domain);
-      console.log("✅ [WorkdayAdapter]: Candidate authentication successfully finalized.");
-    } else {
-      console.warn("⚠️ [WorkdayAdapter]: Authentication not confirmed in workflow yet. Checking page state...");
-    }
+    this.authenticatedSessions.add(domain);
+    console.log(`✅ [WorkdayAdapter]: Authentication finalized for ${domain} (${candidateEmail}).`);
   }
 
   /**
